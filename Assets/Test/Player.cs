@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    public int index;
+    public int position;
+
+    private void Awake() {
+
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void Start() {
+        Color[] colors = Control.instance.setting.playerColors;
+        Renderer rend = GetComponent<Renderer>();
+        if (index < colors.Length)
+            rend.material.color = colors[index];
+        else
+            rend.material.color = new Color(0, 0, 0, 1);
     }
 }

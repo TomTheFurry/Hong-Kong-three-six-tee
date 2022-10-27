@@ -19,7 +19,7 @@ public class Grid : MonoBehaviour
     }
 
     private void Start() {
-        updatePlayer(Random.Range(0, Control.playerNumber));
+        //updatePlayer(Random.Range(0, Control.playerNumber));
     }
 
     public void updatePlayer(int index) {
