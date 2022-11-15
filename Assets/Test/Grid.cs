@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,20 +7,30 @@ public class Grid : MonoBehaviour
 {
     public int type;
     private int playerIndex = -1;
+    public int architectureIndex;
     private GameObject architecture;
+    private Action<Player> actionFn;
 
     private void Awake() {
         float scale = Control.instance.setting.gridScale;
         Vector3 newScale = new Vector3(scale, scale, scale);
         transform.localScale = newScale;
-
-        GameObject[] architectures = Control.instance.setting.architectures;
-        type = Random.Range(0, architectures.Length);
-        architecture = Instantiate(architectures[type], transform);
     }
 
     private void Start() {
         //updatePlayer(Random.Range(0, Control.playerNumber));
+        GameObject architecture = Control.instance.setting.architectures.getRandArchitecture(type);
+        this.architecture = Instantiate(architecture, transform);
+
+        switch (type) {
+            case 1:
+                actionFn = actionType1;
+                break;
+            case 2:
+                actionFn = actionType2;
+                updateColor(Color.yellow);
+                break;
+        }
     }
 
     public void updatePlayer(int index) {
@@ -28,8 +39,35 @@ public class Grid : MonoBehaviour
 
         playerIndex = index;
         Color color = Control.instance.setting.playerColors[index];
-        foreach (Renderer rend in gameObject.GetComponentsInChildren<Renderer>(true)) {;
+        ColorHSV colorHSV =  (ColorHSV)color;
+        colorHSV.s *= 0.35f;
+        Debug.Log(colorHSV);
+        updateColor((Color)colorHSV);
+    }
+
+    public void updateColor(Color color) {
+        foreach (Renderer rend in gameObject.GetComponentsInChildren<Renderer>(true)) {
             rend.material.color = color;
         }
+    }
+
+    public void action(Player player) {
+        actionFn(player);
+    }
+
+    // Normal House
+    public void actionType1(Player player) {
+        Debug.Log(this + "house");
+        if (playerIndex < 0 || playerIndex >= Control.playerNumber) {
+            updatePlayer(player.index);
+        }
+    }
+
+    // Draw Card
+    public void actionType2(Player player) {
+        GlobalSetting setting =  Control.instance.setting;
+        int cardIndex = UnityEngine.Random.Range(0, setting.cards.Length);
+        GlobalSetting.Card card = setting.cards[cardIndex];
+        Control.instance.showCard(card);
     }
 }

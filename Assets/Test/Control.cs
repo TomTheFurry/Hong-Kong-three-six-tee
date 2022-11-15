@@ -11,7 +11,6 @@ public class Control : MonoBehaviour
     private const int mapSize = 10 * 4;
     private const int gridSize = 10;
     private const int randRange = 6;
-    public Button btn;
 
     // set var
     public GameObject playerPrefab;
@@ -20,6 +19,7 @@ public class Control : MonoBehaviour
 
     public Text txtNextAction;
     public Text txtButton;
+    public Text txtCard;
 
     public static Control instance;
 
@@ -62,7 +62,10 @@ public class Control : MonoBehaviour
             maps[i] = obj;
 
             obj.name = "Grid" + (i + 1);
-            
+            // for test
+            int rand = Random.Range(1, 3 + 1);
+            obj.GetComponent<Grid>().type = rand == 2 ? 2 : 1;
+
             if (i < mapLineSize) {
                 obj.transform.localPosition = new Vector3(startPos.x + gridScale, 0, startPos.y);
             }
@@ -83,45 +86,40 @@ public class Control : MonoBehaviour
 
     private void Start() {
         foreach (GameObject player in players) {
-            setPlayerPos(player);
+            setPlayerPos(player.GetComponent<Player>());
         }
 
         setActionText();
     }
 
-    public void setPlayerPos(GameObject player) {
+    public void setPlayerPos(Player player) {
         float playerNum = players.Length;
         float i = 0.5f;
-        int pos = player.GetComponent<Player>().position;
+        int pos = player.position;
         Transform gridTrs = maps[pos].transform;
         Vector3 rot = new Vector3(0, (i + player.GetComponent<Player>().index) / playerNum * 360f, 0);
 
-        player.transform.position = gridTrs.position + gridTrs.localScale / 2 + new Vector3(0, setting.gridScale * gridSize, 0);
+        player.transform.position = gridTrs.position + gridTrs.localScale / 2 + Vector3.up * setting.gridScale * gridSize;
         player.transform.Rotate(rot);
         player.transform.position += player.transform.forward * gridTrs.localScale.x * gridSize / 5;
 
         player.transform.rotation = Quaternion.identity;
     }
 
-    public static Vector3 calPos(float distance, float degrees) {
-        float radians = degrees * Mathf.Deg2Rad;
-        float x = Mathf.Cos(radians);
-        float y = Mathf.Sin(radians);
-        return new Vector3(x, 0, y);
-    }
+    public void action() {
+        hideCard();
 
-    private void Update() {
-        
-    }
-
-    public void Action() {
         Player player = players[actionIndex].GetComponent<Player>();
         int pos = player.position;
         int randNum = Random.Range(1, 1 + randRange);
         player.position = (pos + randNum) % mapSize;
-        setPlayerPos(player.gameObject);
+        setPlayerPos(player);
         actionIndex = (actionIndex + 1) % playerNumber;
         txtButton.text = randNum.ToString();
+        // grid
+        Grid grid = maps[player.position].GetComponent<Grid>();
+        grid.action(player);
+        //grid.updateColor(Color.gray);
         setActionText();
     }
 
@@ -132,5 +130,21 @@ public class Control : MonoBehaviour
         else
             txtNextAction.color = new Color(0, 0, 0, 1);
         txtNextAction.text = (actionIndex + 1).ToString();
+    }
+
+    public void hideCard() {
+        txtCard.gameObject.SetActive(false);
+    }
+
+    public void showCard(GlobalSetting.Card card) {
+        txtCard.gameObject.SetActive(true);
+        txtCard.text = card.description;
+    }
+
+    public static Vector3 calPos(float distance, float degrees) {
+        float radians = degrees * Mathf.Deg2Rad;
+        float x = Mathf.Cos(radians);
+        float y = Mathf.Sin(radians);
+        return new Vector3(x, 0, y);
     }
 }
