@@ -422,10 +422,10 @@ RectTransform:
   m_Father: {fileID: 296478458}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 853.5, y: -45}
-  m_SizeDelta: {x: 91, y: 90}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -45, y: -45}
+  m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &773856657
 MonoBehaviour:
@@ -784,8 +784,20 @@ MonoBehaviour:
     type2:
     - {fileID: 252092986962074554, guid: 33a5eb49e8407944087514a8c1dab958, type: 3}
   cards:
-  - description: Advance one space
+  - description: Advance two space
+    MoveForward:
+      target: 1
+      step: 2
+    MoveBack:
+      target: 0
+      step: 0
   - description: Back one space
+    MoveForward:
+      target: 0
+      step: 0
+    MoveBack:
+      target: 1
+      step: 1
 --- !u!114 &1254219277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -856,10 +868,10 @@ RectTransform:
   m_Father: {fileID: 296478458}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -404.5, y: 160.5}
-  m_SizeDelta: {x: -809, y: -321}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 45, y: -45}
+  m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1475872317
 MonoBehaviour:

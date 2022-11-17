@@ -45,11 +45,19 @@ public class GlobalSetting : MonoBehaviour {
 
     [Serializable]
     public struct Card {
-        public string description;
+        [Serializable]
+        public struct CardEffect {
+            public bool target;
+            public int step;
+        }
 
+        public string description;
+        public CardEffect MoveForward;
+        public CardEffect MoveBack;
     }
 
     private void Awake() {
+        return;
         int i = cards.Length;
         int addCard = 10;
         Card[] temp = new Card[cards.Length + addCard];

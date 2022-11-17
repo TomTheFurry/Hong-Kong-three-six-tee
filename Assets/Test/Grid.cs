@@ -9,7 +9,8 @@ public class Grid : MonoBehaviour
     private int playerIndex = -1;
     public int architectureIndex;
     private GameObject architecture;
-    private Action<Player> actionFn;
+    private Action<Player, bool> actionFn;
+    Coroutine coroutine;
 
     private void Awake() {
         float scale = Control.instance.setting.gridScale;
@@ -41,7 +42,6 @@ public class Grid : MonoBehaviour
         Color color = Control.instance.setting.playerColors[index];
         ColorHSV colorHSV =  (ColorHSV)color;
         colorHSV.s *= 0.35f;
-        Debug.Log(colorHSV);
         updateColor((Color)colorHSV);
     }
 
@@ -51,23 +51,46 @@ public class Grid : MonoBehaviour
         }
     }
 
-    public void action(Player player) {
-        actionFn(player);
+    public void action(Player player, bool byEffect) {
+        actionFn(player, byEffect);
     }
 
     // Normal House
-    public void actionType1(Player player) {
-        Debug.Log(this + "house");
+    public void actionType1(Player player, bool byEffect) {
+        if (byEffect)
+            return;
         if (playerIndex < 0 || playerIndex >= Control.playerNumber) {
             updatePlayer(player.index);
         }
     }
 
     // Draw Card
-    public void actionType2(Player player) {
+    public void actionType2(Player player, bool byEffect) {
+        if (byEffect)
+            return;
         GlobalSetting setting =  Control.instance.setting;
         int cardIndex = UnityEngine.Random.Range(0, setting.cards.Length);
         GlobalSetting.Card card = setting.cards[cardIndex];
         Control.instance.showCard(card);
+
+        coroutine = StartCoroutine(afterActionType2(card, player));
+    }
+
+    public IEnumerator afterActionType2(GlobalSetting.Card card, Player player) {
+        do {
+            //if (Input.GetKey(KeyCode.W)) {
+            if (Input.GetMouseButton(0)) {
+                // move to forward
+                if (card.MoveForward.target) {
+                    Control.instance.moveForward(player, card.MoveForward.step, true);
+                }
+                if (card.MoveBack.target) {
+                    Control.instance.moveBack(player, card.MoveBack.step, true);
+                }
+                Control.instance.hideCard();
+                StopCoroutine(coroutine);
+            }
+            yield return new WaitForEndOfFrame();
+        } while (true);
     }
 }

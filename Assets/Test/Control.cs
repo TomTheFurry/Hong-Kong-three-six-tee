@@ -107,20 +107,49 @@ public class Control : MonoBehaviour
     }
 
     public void action() {
-        hideCard();
-
         Player player = players[actionIndex].GetComponent<Player>();
-        int pos = player.position;
-        int randNum = Random.Range(1, 1 + randRange);
-        player.position = (pos + randNum) % mapSize;
-        setPlayerPos(player);
+        moveForwardRand(player, false);
+
+        // after action 
         actionIndex = (actionIndex + 1) % playerNumber;
+        setActionText();
+    }
+
+    public int rollDisk() {
+        int randNum = Random.Range(1, 1 + randRange);
+        // other disk code
         txtButton.text = randNum.ToString();
+
+        return randNum;
+    }
+
+    public void moveForwardRand(Player player, bool byEffect) {
+        moveForward(player, rollDisk(), byEffect);
+    }
+
+    public void moveForward(Player player, int step, bool byEffect) {
+        int pos = player.position;
+        player.position = (pos + step) % mapSize;
+        setPlayerPos(player);
+        afterMove(player, byEffect);
+    }
+
+    public void moveBackRand(Player player, bool byEffect) {
+        moveBack(player, rollDisk(), byEffect);
+    }
+
+    public void moveBack(Player player, int step, bool byEffect) {
+        int pos = player.position;
+        player.position = (pos + mapSize - step) % mapSize;
+        setPlayerPos(player);
+        afterMove(player, byEffect);
+    }
+
+    public void afterMove(Player player, bool byEffect) {
         // grid
         Grid grid = maps[player.position].GetComponent<Grid>();
-        grid.action(player);
+        grid.action(player, byEffect);
         //grid.updateColor(Color.gray);
-        setActionText();
     }
 
     public void setActionText() {
