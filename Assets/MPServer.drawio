@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-01-09T13:50:00.351Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="8Dbhv_A5bpd3HL8542rg" version="16.2.6" type="github">
+<mxfile host="app.diagrams.net" modified="2023-01-09T14:08:17.464Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="svYYKvbeUAoHv-co4FXe" version="16.2.6" type="github">
   <diagram id="NTqNDYjO7tPKsiqi-gnh" name="Page-1">
     <mxGraphModel dx="1422" dy="754" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -7,13 +7,13 @@
         <mxCell id="ImZ4WvExJ2NDALbuqCKL-1" value="Photon PUN&lt;br&gt;Match Making&lt;br&gt;Service" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="354" y="310" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="ImZ4WvExJ2NDALbuqCKL-2" value="Player B" style="points=[[0.35,0,0],[0.98,0.51,0],[1,0.71,0],[0.67,1,0],[0,0.795,0],[0,0.65,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.user;fillColor=#005073;strokeColor=none;" vertex="1" parent="1">
+        <mxCell id="ImZ4WvExJ2NDALbuqCKL-2" value="Player B&lt;br&gt;(Client)" style="points=[[0.35,0,0],[0.98,0.51,0],[1,0.71,0],[0.67,1,0],[0,0.795,0],[0,0.65,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.user;fillColor=#005073;strokeColor=none;" vertex="1" parent="1">
           <mxGeometry x="550" y="250" width="50" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="ImZ4WvExJ2NDALbuqCKL-3" value="Player A&lt;br&gt;(Room Owner)" style="points=[[0.35,0,0],[0.98,0.51,0],[1,0.71,0],[0.67,1,0],[0,0.795,0],[0,0.65,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.user;fillColor=#005073;strokeColor=none;" vertex="1" parent="1">
+        <mxCell id="ImZ4WvExJ2NDALbuqCKL-3" value="Player A&lt;br&gt;(Host)" style="points=[[0.35,0,0],[0.98,0.51,0],[1,0.71,0],[0.67,1,0],[0,0.795,0],[0,0.65,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.user;fillColor=#005073;strokeColor=none;" vertex="1" parent="1">
           <mxGeometry x="240" y="270" width="50" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="ImZ4WvExJ2NDALbuqCKL-4" value="Player C" style="points=[[0.35,0,0],[0.98,0.51,0],[1,0.71,0],[0.67,1,0],[0,0.795,0],[0,0.65,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.user;fillColor=#005073;strokeColor=none;" vertex="1" parent="1">
+        <mxCell id="ImZ4WvExJ2NDALbuqCKL-4" value="Player C&lt;br&gt;(Client)" style="points=[[0.35,0,0],[0.98,0.51,0],[1,0.71,0],[0.67,1,0],[0,0.795,0],[0,0.65,0]];verticalLabelPosition=bottom;sketch=0;html=1;verticalAlign=top;aspect=fixed;align=center;pointerEvents=1;shape=mxgraph.cisco19.user;fillColor=#005073;strokeColor=none;" vertex="1" parent="1">
           <mxGeometry x="540" y="360" width="50" height="50" as="geometry" />
         </mxCell>
         <mxCell id="ImZ4WvExJ2NDALbuqCKL-5" value="Player Account and&lt;br&gt;&amp;nbsp;Database Server" style="aspect=fixed;perimeter=ellipsePerimeter;html=1;align=center;shadow=0;dashed=0;spacingTop=3;image;image=img/lib/active_directory/database_server.svg;" vertex="1" parent="1">
