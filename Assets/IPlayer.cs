@@ -1,0 +1,21 @@
+using System.Collections;
+using System.Collections.Generic;
+
+using Photon.Pun;
+using Photon.Realtime;
+
+using UnityEngine;
+
+[RequireComponent(typeof(PhotonView))]
+public abstract class PlayerObjBase : MonoBehaviourPun, IPunInstantiateMagicCallback
+{
+    public GamePlayer gamePlayer { get; private set; }
+    
+    public virtual void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        // the Player should already be created, and thus the tag object should already be instantiated
+        gamePlayer = info.photonView.Owner;
+        gamePlayer.PlayerObj = this;
+        Debug.Log($"{gamePlayer} instantiated a {this}");
+    }
+}

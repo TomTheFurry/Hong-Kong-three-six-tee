@@ -12,10 +12,21 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class PunConnect : MonoBehaviour, IMatchmakingCallbacks
 {
     public RectTransform OnJoinRoomMenu = null;
+    public GameObject BeforeConnected;
+    public GameObject AfterConnected;
+
+    private void SetConnected()
+    {
+        bool connected = PhotonNetwork.InLobby;
+        BeforeConnected.SetActive(!connected);
+        AfterConnected.SetActive(connected);
+
+    }
 
     public void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
+        SetConnected();
     }
 
     public void OnDisable()
@@ -27,13 +38,15 @@ public class PunConnect : MonoBehaviour, IMatchmakingCallbacks
     {
         Debug.Assert(PhotonNetwork.InLobby);
     }
-
+    
     public void QuickConnect()
     {
         AssertState();
         PhotonNetwork.JoinRandomOrCreateRoom();
+        SetConnected();
     }
 
+    void Update() { SetConnected(); }
 
     public void OnJoinedRoom()
     {

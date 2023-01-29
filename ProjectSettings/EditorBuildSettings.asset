@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Mini/MiniTable.unity
+    guid: f64cd9ef6c2eaed43a0a6f951d13f8cd
   m_configObjects: {}

@@ -16,7 +16,7 @@ public class UiTempUtil : MonoBehaviour
             ActiveMenu.gameObject.SetActive(false);
         }
         ActiveMenu = menu;
-        ActiveMenu.gameObject.SetActive(true);
+        ActiveMenu?.gameObject.SetActive(true);
     }
 
     public bool EnableOnlyIfMaster = false;

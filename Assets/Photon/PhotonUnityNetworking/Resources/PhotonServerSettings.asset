@@ -40,6 +40,8 @@ MonoBehaviour:
   - PlayerRolledDice
   - PlayerSelectedPiece
   - ClientTrySelectPiece
+  - UpdateControlState
+  - StateChangeChooseOrder
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
