@@ -14,6 +14,7 @@ using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Object = UnityEngine.Object;
@@ -280,6 +281,28 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public IEnumerable<KeyValuePair<int, PlayerState>> PlayersIter => Players.Select((p, i) => new KeyValuePair<int, PlayerState>(i, p)).Where(p => p.Value != null);
     public int PlayerCount { get; private set; } = 0;
 
+    public enum LocalPlayerState
+    {
+        NotPlaying = 0,
+        IsMaster = 1,
+        InRoom = 2,
+        HasNetworkBody = 4,
+        InGame = 8,
+    }
+    private LocalPlayerState _localState = LocalPlayerState.NotPlaying;
+    public static UnityEvent<LocalPlayerState, LocalPlayerState> OnLocalPlayerTypeChanged = new();
+    public LocalPlayerState LocalState
+    {
+        get => _localState;
+        set
+        {
+            if (_localState == value) return;
+            var old = _localState;
+            _localState = value;
+            OnLocalPlayerTypeChanged.Invoke(old, value);
+        }
+    }
+
     //
     // public bool FindIdxForPunPlayer(PunConnection punPlayer, out int idx, out PlayerState state, out bool isReconnect)
     // {
@@ -374,6 +397,15 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     {
         if (otherPlayer.TagObject is not GamePlayer player) return;
         JoinedPlayersLock.EnterWriteLock();
+        if (IsMaster && player.Piece != null)
+        {
+            player.Piece.SetOwner(null);
+        }
+        if (IsMaster && player.PlayerObj != null)
+        {
+            Debug.Log("Backup method removing left player obj");
+            PhotonNetwork.Destroy(player.PlayerObj.gameObject); // TODO: Fix these removal for rejoin logic
+        }
         try
         {
             bool v = JoinedPlayers.Remove(player);
@@ -394,8 +426,6 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public void OnCreateRoomFailed(short returnCode, string message) { }
     
     public void OnJoinedRoom() {
-        //if (PhotonNetwork.IsMasterClient)
-        //{
         JoinedPlayersLock.EnterWriteLock();
         foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
         {
@@ -403,7 +433,14 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
             bool v = JoinedPlayers.Add(p);
         }
         JoinedPlayersLock.ExitWriteLock();
-        //}
+
+        var state = LocalPlayerState.InRoom;
+        if (IsMaster)
+        {
+            state |= LocalPlayerState.IsMaster;
+        }
+        LocalState |= state;
+
         //TODO: If vr, spawn vr control
         PhotonNetwork.Instantiate("PlayerPc", Vector3.zero, Quaternion.identity);
     }
@@ -413,12 +450,29 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
 
     public void OnLeftRoom()
     {
+        if (PhotonNetwork.LocalPlayer.TagObject is GamePlayer player)
+        {
+            if (player.Piece != null) player.Piece.Owner = null;
+            Object.Destroy(player.PlayerObj);
+            player.PlayerObj = null;
+        }
         PhotonNetwork.LocalPlayer.TagObject = null;
+        LocalState = LocalPlayerState.NotPlaying;
     }
     
     public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged) { }
     public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps) { }
-    public void OnMasterClientSwitched(Player newMasterClient) { }
+    public void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (newMasterClient == PhotonNetwork.LocalPlayer)
+        {
+            LocalState |= LocalPlayerState.IsMaster;
+        }
+        else
+        {
+            LocalState &= ~LocalPlayerState.IsMaster;
+        }
+    }
 
     [PunRPC]
     public void StateChangeChooseOrder(Player[] idxPlayers)

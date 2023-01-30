@@ -21,15 +21,7 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(PhotonView))]
 public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 {
-    private GamePlayer _owner;
-    public GamePlayer Owner
-    {
-        get => _owner;
-        set
-        {
-            _owner = value;
-        }
-    }
+    public GamePlayer Owner;
 
     public bool ControlOverrideByServer { get; private set; } = true;
 

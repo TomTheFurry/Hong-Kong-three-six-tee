@@ -17,5 +17,20 @@ public abstract class PlayerObjBase : MonoBehaviourPun, IPunInstantiateMagicCall
         gamePlayer = info.photonView.Owner;
         gamePlayer.PlayerObj = this;
         Debug.Log($"{gamePlayer} instantiated a {this}");
+        if (gamePlayer.PunConnection == PhotonNetwork.LocalPlayer)
+        {
+            Game.Instance.LocalState |= Game.LocalPlayerState.HasNetworkBody;
+        }
     }
+
+    public void OnDestroy()
+    {
+        gamePlayer.PlayerObj = null;
+        if (gamePlayer.PunConnection == PhotonNetwork.LocalPlayer)
+        {
+            Game.Instance.LocalState &= ~Game.LocalPlayerState.HasNetworkBody;
+        }
+    }
+
+
 }
