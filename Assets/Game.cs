@@ -48,6 +48,7 @@ public class GamePlayer
     public Piece Piece = null;
     public int Idx = -1;
     public ControlType Control = ControlType.Unknown;
+    public HashSet<GameObject> Holding = new();
 
     public GamePlayer(Player punConnection)
     {
@@ -523,8 +524,20 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public void OnDisconnected(DisconnectCause cause)
     {
         Debug.Log($"Disconnected: {cause}");
+        if (cause == DisconnectCause.ExceptionOnConnect)
+        {
+            Debug.Log($"Retrying connection in 3 seconds...");
+            StartCoroutine(RetryConnection());
+        }
     }
-    
+
+    private IEnumerator RetryConnection()
+    {
+        yield return new WaitForSeconds(3);
+        Debug.Log($"Connecting...");
+        PhotonNetwork.ConnectUsingSettings();
+    }
+
     public void OnRegionListReceived(RegionHandler regionHandler) { }
     public void OnCustomAuthenticationResponse(Dictionary<string, object> data) { }
     public void OnCustomAuthenticationFailed(string debugMessage) { }

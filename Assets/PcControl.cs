@@ -1,15 +1,18 @@
-/*using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Control))]
-public class PCControl : MonoBehaviour
+[RequireComponent(typeof(PlayerPc))]
+[RequireComponent(typeof(Rigidbody))]
+public class PcControl : MonoBehaviour
 {
-    public Rigidbody target;
+    private Rigidbody rb;
+    private PlayerPc pc;
     public Transform grabSource;
-    public PCGrabInteractable grabbedObject = null;
+    public PCGrabInteractable grabbedObject => pc.gamePlayer.Holding.FirstOrDefault().GetComponent<PCGrabInteractable>();
     public new Camera camera;
 
     public InputActionReference MoveAction;
@@ -18,25 +21,40 @@ public class PCControl : MonoBehaviour
     public InputActionReference HoldRotateAction;
     public InputActionReference RaiseLowerGrabAction;
     public InputActionReference FlipClubAction;
+    public InputActionReference JumpAction;
 
-    public float moveForce = 2;
-    public float moveTargetSpeed = 10;
+    public float moveForce = 200;
+    public float moveTargetSpeed = 50;
+    public float jumpForce = 50;
 
     public float grabRange = 100;
     public float grabSphere = 1f;
     private Vector2 grabHoldRotation;
     private bool ClubFlipped = false;
 
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
     void Update()
     {
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         var move = MoveAction.action.ReadValue<Vector2>();
         var look = LookAction.action.ReadValue<Vector2>();
 
-        var relVel = target.transform.InverseTransformDirection(target.velocity);
+        var relVel = transform.InverseTransformDirection(rb.velocity);
+        relVel.y = 0;
         var targetVel = Vector3.Normalize(new Vector3(move.x, 0, move.y)) * moveTargetSpeed;
+        targetVel.y = 0;
         float maxAccel = moveForce * Time.deltaTime;
         var accel = Vector3.ClampMagnitude(targetVel - relVel, maxAccel);
-        target.AddRelativeForce(accel, ForceMode.VelocityChange);
+        rb.AddRelativeForce(accel, ForceMode.VelocityChange);
+
+        if (JumpAction.action.triggered)
+        {
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+        }
 
         if (grabbedObject != null && RaiseLowerGrabAction.action.ReadValue<float>() != 0f)
         {
@@ -60,7 +78,7 @@ public class PCControl : MonoBehaviour
         else
         {
             grabHoldRotation = Vector2.zero;
-            target.transform.rotation *= Quaternion.Euler(0, look.x, 0);
+            rb.transform.rotation *= Quaternion.Euler(0, look.x, 0);
             float pitch = camera.transform.localEulerAngles.x;
             pitch = (pitch + 180) % 360 - 180;
             pitch = Mathf.Clamp(pitch - look.y, -90, 90);
@@ -74,7 +92,6 @@ public class PCControl : MonoBehaviour
             if (grabbedObject != null)
             {
                 grabbedObject.ReleaseObject();
-                grabbedObject = null;
             }
             else
             {
@@ -85,7 +102,6 @@ public class PCControl : MonoBehaviour
                     if (hit.rigidbody != null && hit.rigidbody.TryGetComponent<PCGrabInteractable>(out var grab))
                     {
                         grab.TryGrabObject(grabSource, () => {
-                            grabbedObject = grab;
                             Debug.Log("Grabbed");
                         });
                     }
@@ -102,8 +118,8 @@ public class PCControl : MonoBehaviour
 
     public void Teleport(Vector3 pos)
     {
-        target.transform.position = pos;
+        rb.transform.position = pos;
     }
 
-    public Transform GetTransform() => target.transform;
-}*/
+    public Transform GetTransform() => rb.transform;
+}

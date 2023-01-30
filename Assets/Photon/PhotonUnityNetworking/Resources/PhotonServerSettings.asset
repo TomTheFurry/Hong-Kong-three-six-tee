@@ -20,7 +20,7 @@ MonoBehaviour:
     AppVersion: 0
     UseNameServer: 1
     FixedRegion: 
-    Server: 127.0.0.1
+    Server: 172.19.84.33
     Port: 5058
     ProxyServer: 
     Protocol: 0
@@ -42,6 +42,9 @@ MonoBehaviour:
   - ClientTrySelectPiece
   - UpdateControlState
   - StateChangeChooseOrder
+  - NotifyChangeOwner
+  - NotifyFailedGrab
+  - RequestGrabObject
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

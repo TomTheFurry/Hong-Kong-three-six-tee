@@ -25,6 +25,7 @@ public abstract class PlayerObjBase : MonoBehaviourPun, IPunInstantiateMagicCall
 
     public void OnDestroy()
     {
+        if (gameObject == null) return;
         gamePlayer.PlayerObj = null;
         if (gamePlayer.PunConnection == PhotonNetwork.LocalPlayer)
         {
