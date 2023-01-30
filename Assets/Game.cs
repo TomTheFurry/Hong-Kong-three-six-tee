@@ -137,6 +137,7 @@ public class RPCEventSelectPiece : RPCEvent
 public class RPCEventRollDice : RPCEvent
 {
     public GamePlayer GamePlayer;
+    public Piece PieceTemplate;
     public override void Fail()
     {
         // Drop the rpc
@@ -552,4 +553,11 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
         Object.Destroy(gameObject);
     }
 
+    [PunRPC]
+    public void ClientTryRollDice(int pieceIdx, PhotonMessageInfo info)
+    {
+        Debug.Log($"Client try roll dice");
+        Debug.Assert(photonView.IsMine);
+        EventsToProcess.Add(new RPCEventRollDice { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
+    }
 }
