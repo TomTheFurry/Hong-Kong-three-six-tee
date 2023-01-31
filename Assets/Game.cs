@@ -189,7 +189,7 @@ public class StateStartup : GameState
     public override void Update(ref GameState state)
     {
         Game.Instance.JoinedPlayersLock.EnterUpgradeableReadLock();
-        
+
         CanStart = Game.Instance.JoinedPlayers.Count(p => p.Piece != null && p.PlayerObj != null && p.Control != GamePlayer.ControlType.Unknown) >= 2;
         if (MasterSignalStartGame && CanStart)
         {
@@ -224,13 +224,14 @@ public class StateStartup : GameState
                 {
                     PhotonNetwork.Destroy(piece.gameObject);
                 }
+                piece.photonView.RPC("UpdataOwnerMaterial", RpcTarget.AllBufferedViaServer);
             }
 
             // Go to next stage (and signal all players)
             state = new StateChooseOrder();
             Game.Instance.photonView.RPC("StateChangeChooseOrder", RpcTarget.AllBufferedViaServer, Game.Instance.IdxToPlayer.Select(p => p.PunConnection).ToArray() as object);
         }
-        
+
         Game.Instance.JoinedPlayersLock.ExitUpgradeableReadLock();
     }
 }
@@ -251,6 +252,7 @@ public class StateChooseOrder : GameState
             if (RolledDice[eRollDice.GamePlayer.Idx] != 0) return false;
             RolledDice[eRollDice.GamePlayer.Idx] = Random.Range(1, 7);
             eRollDice.Success(RolledDice[eRollDice.GamePlayer.Idx]);
+            return true;
         }
         return false;
     }
@@ -261,13 +263,43 @@ public class StateChooseOrder : GameState
         {
             //nextState = new StateChooseAction();
             //return true;
+            state = new StateRound();
         }
-        // return false;
     }
 }
 
+public class StateRound : GameState
+{
+    public readonly int[] RolledDice;
 
 
+    public StateRound()
+    {
+        RolledDice = new int[Game.Instance.IdxToPlayer.Length];
+    }
+
+    public override bool ProcessEvent(RPCEvent e)
+    {
+        if (e is RPCEventRollDice eRollDice)
+        {
+            int idx = eRollDice.GamePlayer.Idx;
+            if (RolledDice[idx] != 0) return false;
+            RolledDice[idx] = Random.Range(1, 7);
+            eRollDice.Success(RolledDice[idx]);
+            
+            return true;
+        }
+        return false;
+    }
+
+    public override void Update(ref GameState state)
+    {
+        if (RolledDice.All(d => d != 0))
+        {
+            state = new StateRound();
+        }
+    }
+}
 
 public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IPunPrefabPool, IMatchmakingCallbacks
 {
@@ -291,6 +323,8 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public GameState State = null;
     
     public PlayerState[] Players = null;
+
+    public int[] playerOrder = null;
     
     public IEnumerable<KeyValuePair<int, PlayerState>> PlayersIter => Players.Select((p, i) => new KeyValuePair<int, PlayerState>(i, p)).Where(p => p.Value != null);
     public int PlayerCount { get; private set; } = 0;

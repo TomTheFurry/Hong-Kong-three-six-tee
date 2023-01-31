@@ -107,6 +107,19 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         }
     }
 
+    [PunRPC]
+    public void UpdataOwnerMaterial()
+    {
+        Material mat = GetComponent<Renderer>().material;
+        foreach (Transform transform in Owner?.PlayerObj.transform)
+        {
+            if (transform.name.Equals("Capsule"))
+            {
+                transform.GetComponent<Renderer>().material = mat;
+            }
+        }
+    }
+
     public void Teleport()
     {
         if (CurrentTile == null) return;
