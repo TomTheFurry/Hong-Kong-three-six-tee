@@ -138,7 +138,7 @@ public class RPCEventSelectPiece : RPCEvent
 public class RPCEventRollDice : RPCEvent
 {
     public GamePlayer GamePlayer;
-    public Piece PieceTemplate;
+    
     public override void Fail()
     {
         // Drop the rpc
@@ -147,6 +147,16 @@ public class RPCEventRollDice : RPCEvent
     public void Success(int number)
     {
         Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+    }
+}
+
+public class RPCEventRollChooseOrder : RPCEventRollDice
+{
+    public Piece PieceTemplate;
+
+    public override void Fail()
+    {
+        // Drop the rpc
     }
 }
 
@@ -236,7 +246,7 @@ public class StateChooseOrder : GameState
     
     public override bool ProcessEvent(RPCEvent e)
     {
-        if (e is RPCEventRollDice eRollDice)
+        if (e is RPCEventRollChooseOrder eRollDice)
         {
             if (RolledDice[eRollDice.GamePlayer.Idx] != 0) return false;
             RolledDice[eRollDice.GamePlayer.Idx] = Random.Range(1, 7);
@@ -255,6 +265,8 @@ public class StateChooseOrder : GameState
         // return false;
     }
 }
+
+
 
 
 public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IPunPrefabPool, IMatchmakingCallbacks
@@ -575,6 +587,6 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     {
         Debug.Log($"Client try roll dice");
         Debug.Assert(photonView.IsMine);
-        EventsToProcess.Add(new RPCEventRollDice { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
+        EventsToProcess.Add(new RPCEventRollDice { GamePlayer = info.Sender });
     }
 }

@@ -3564,6 +3564,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d180334d35f7a394092a283ee4b58c2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanvasUI: {fileID: 0}
 --- !u!114 &1073483899 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5077954126677835986, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
