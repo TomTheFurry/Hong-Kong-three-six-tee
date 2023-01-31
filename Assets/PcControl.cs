@@ -32,6 +32,9 @@ public class PcControl : MonoBehaviour
     private Vector2 grabHoldRotation;
     private bool ClubFlipped = false;
 
+    public bool ProcessMouseAction = false;
+    public bool ProcessKeyboardAction = false;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -40,9 +43,8 @@ public class PcControl : MonoBehaviour
 
     void Update()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        var move = MoveAction.action.ReadValue<Vector2>();
-        var look = LookAction.action.ReadValue<Vector2>();
+        var move = !ProcessKeyboardAction ? default : MoveAction.action.ReadValue<Vector2>();
+        var look = !ProcessMouseAction ? default : LookAction.action.ReadValue<Vector2>();
 
         var relVel = transform.InverseTransformDirection(rb.velocity);
         relVel.y = 0;
@@ -52,12 +54,12 @@ public class PcControl : MonoBehaviour
         var accel = Vector3.ClampMagnitude(targetVel - relVel, maxAccel);
         rb.AddRelativeForce(accel, ForceMode.VelocityChange);
 
-        if (JumpAction.action.triggered)
+        if (ProcessKeyboardAction && JumpAction.action.triggered)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
 
-        if (grabbedObject != null && RaiseLowerGrabAction.action.ReadValue<float>() != 0f)
+        if (ProcessKeyboardAction && grabbedObject != null && RaiseLowerGrabAction.action.ReadValue<float>() != 0f)
         {
             var loc = grabSource.localPosition;
             loc.y -= RaiseLowerGrabAction.action.ReadValue<float>() / 5000f;
@@ -65,7 +67,7 @@ public class PcControl : MonoBehaviour
             grabSource.localPosition = loc;
         }
 
-        if (grabbedObject != null && HoldRotateAction.action.ReadValue<float>() != 0f)
+        if (ProcessKeyboardAction && grabbedObject != null && HoldRotateAction.action.ReadValue<float>() != 0f)
         {
             grabHoldRotation += look * new Vector2(1, 0.2f);
             grabHoldRotation.x = Math.Clamp(grabHoldRotation.x, -60, 60);
@@ -87,7 +89,7 @@ public class PcControl : MonoBehaviour
             grabSource.localEulerAngles = new Vector3(pitch, 0, 0);
         }
 
-        if (GrabAction.action.triggered)
+        if (ProcessMouseAction && GrabAction.action.triggered)
         {
 
             if (grabbedObject != null)
@@ -109,7 +111,7 @@ public class PcControl : MonoBehaviour
                 }
             }
         }
-        if (FlipClubAction.action.triggered) ClubFlipped = !ClubFlipped;
+        if (ProcessKeyboardAction && FlipClubAction.action.triggered) ClubFlipped = !ClubFlipped;
 
         if (ClubFlipped)
         {

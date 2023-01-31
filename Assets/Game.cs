@@ -406,7 +406,7 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
         if (IsMaster && player.PlayerObj != null)
         {
             Debug.Log("Backup method removing left player obj");
-            PhotonNetwork.Destroy(player.PlayerObj.gameObject); // TODO: Fix these removal for rejoin logic
+            //PhotonNetwork.Destroy(player.PlayerObj.gameObject); // TODO: Fix these removal for rejoin logic
         }
         try
         {
