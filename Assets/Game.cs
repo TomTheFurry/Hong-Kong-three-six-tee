@@ -491,6 +491,7 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     [PunRPC]
     public void StateChangeChooseOrder(Player[] idxPlayers)
     {
+        Debug.Log($"Game state changed to 'Choose Order'.");
         if (photonView.IsMine) return; // ignore
         IdxToPlayer = idxPlayers.Select(p => (GamePlayer)p).ToArray();
         for (var i = 0; i < IdxToPlayer.Length; i++)

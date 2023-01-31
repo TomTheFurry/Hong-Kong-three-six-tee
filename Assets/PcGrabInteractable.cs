@@ -8,7 +8,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PCGrabInteractable : MonoBehaviourPun
+public class PcGrabInteractable : MonoBehaviourPun
 {
     public int ownerID = -1;
     public bool IsGrabbed => ownerID != -1;

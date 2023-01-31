@@ -20,10 +20,5 @@ public class StartGameBtn : MonoBehaviour
     void Update()
     {
         btn.interactable = Game.Instance.State is StateStartup startup && startup.CanStart;
-
-        if (Game.Instance.State is StateChooseOrder chooseOrder)
-        {
-            GetComponent<UiTempUtil>().SetActiveMenu(null); // todo
-        }
     }
 }
