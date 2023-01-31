@@ -525,7 +525,11 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public void OnDisconnected(DisconnectCause cause)
     {
         Debug.Log($"Disconnected: {cause}");
-        if (cause == DisconnectCause.ExceptionOnConnect)
+        if (cause != DisconnectCause.ApplicationQuit &&
+            cause != DisconnectCause.DisconnectByClientLogic &&
+            cause != DisconnectCause.DisconnectByServerLogic &&
+            cause != DisconnectCause.DisconnectByDisconnectMessage &&
+            cause != DisconnectCause.DisconnectByOperationLimit)
         {
             Debug.Log($"Retrying connection in 3 seconds...");
             StartCoroutine(RetryConnection());
