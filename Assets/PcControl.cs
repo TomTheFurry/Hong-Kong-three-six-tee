@@ -12,7 +12,7 @@ public class PcControl : MonoBehaviour
     private Rigidbody rb;
     private PlayerPc pc;
     public Transform grabSource;
-    public PCGrabInteractable grabbedObject => pc.gamePlayer.Holding.FirstOrDefault().GetComponent<PCGrabInteractable>();
+    public PCGrabInteractable grabbedObject => pc.gamePlayer.Holding.FirstOrDefault()?.GetComponent<PCGrabInteractable>();
     public new Camera camera;
 
     public InputActionReference MoveAction;
@@ -35,6 +35,7 @@ public class PcControl : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        pc = GetComponent<PlayerPc>();
     }
 
     void Update()
