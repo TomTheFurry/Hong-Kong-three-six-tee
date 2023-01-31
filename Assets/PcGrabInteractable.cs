@@ -8,6 +8,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(PhotonView))]
 public class PcGrabInteractable : MonoBehaviourPun
 {
     public int ownerID = -1;
@@ -82,7 +83,7 @@ public class PcGrabInteractable : MonoBehaviourPun
                 if (photonView.IsMine)
                 {
                     photonView.TransferOwnership(PhotonNetwork.MasterClient);
-                    photonView.RPC("NotifyChangeOwner", RpcTarget.OthersBuffered, PhotonNetwork.MasterClient, true);
+                    photonView.RPC("NotifyChangeOwner", RpcTarget.OthersBuffered, player, true);
                 }
             }
         }
@@ -123,7 +124,7 @@ public class PcGrabInteractable : MonoBehaviourPun
             return;
         }
         photonView.TransferOwnership(PhotonNetwork.MasterClient);
-        photonView.RPC("NotifyChangeOwner", RpcTarget.AllBuffered, PhotonNetwork.MasterClient, true);
+        photonView.RPC("NotifyChangeOwner", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer, true);
     }
 
     public void FixedUpdate()
