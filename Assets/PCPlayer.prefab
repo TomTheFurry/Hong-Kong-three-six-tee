@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1290317229601337370}
   - component: {fileID: 5595389396932327271}
   - component: {fileID: 6786816903108831014}
+  - component: {fileID: 5105010159836782664}
   m_Layer: 0
   m_Name: PCPlayer
   m_TagString: Untagged
@@ -117,8 +118,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EnableOnLocal: 1
   Scripts:
-  - {fileID: 5595389396932327271}
+  - {fileID: 5105010159836782664}
   - {fileID: 6786816903108831014}
+  - {fileID: 5595389396932327271}
 --- !u!114 &5595389396932327271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,6 +177,21 @@ MonoBehaviour:
   jumpForce: 50
   grabRange: 100
   grabSphere: 1
+  ProcessMouseAction: 0
+  ProcessKeyboardAction: 0
+--- !u!114 &5105010159836782664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686343533326279625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d180334d35f7a394092a283ee4b58c2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CanvasUI: {fileID: 0}
 --- !u!1 &2069073072195907289
 GameObject:
   m_ObjectHideFlags: 0
