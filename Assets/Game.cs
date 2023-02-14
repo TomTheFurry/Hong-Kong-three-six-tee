@@ -287,9 +287,40 @@ public class StateChooseOrder : GameState
 
 public class StateRolledDice : GameState
 {
+    public readonly int[] RolledDice;
+
+    public StateRolledDice()
+    {
+        RolledDice = Game.Instance.round.RolledDice;
+    }
+
+    public override bool ProcessEvent(RPCEvent e)
+    {
+        if (e is RPCEventRollDice eRollDice)
+        {
+            int idx = eRollDice.GamePlayer.Idx;
+            if (RolledDice[idx] != 0) return false;
+            RolledDice[idx] = Random.Range(1, 7);
+            eRollDice.Success(RolledDice[idx]);
+        }
+        return base.ProcessEvent(e);
+    }
     public override void Update(ref GameState state)
     {
+        state = Game.Instance.round.stateRound;
+    }
+}
 
+public class StateUseProps : GameState
+{
+    public override bool ProcessEvent(RPCEvent e)
+    {
+        return base.ProcessEvent(e);
+    }
+
+    public override void Update(ref GameState stateAtomic)
+    {
+        throw new NotImplementedException();
     }
 }
 
@@ -302,14 +333,13 @@ public class StateNewRound : GameState
 
     public override void Update(ref GameState state)
     {
-        state = new StateRound();
+        state = Game.Instance.round.stateRound;
     }
 }
 
 public class StateRound : GameState
 {
     public readonly int[] RolledDice;
-
 
     public StateRound()
     {
@@ -350,10 +380,12 @@ public class StateRound : GameState
 public struct RoundData
 {
     public readonly int[] RolledDice;
+    public StateRound stateRound;
 
     public RoundData(Game g)
     {
         RolledDice = new int[g.IdxToPlayer.Length];
+        stateRound = new StateRound();
     }
 }
 
