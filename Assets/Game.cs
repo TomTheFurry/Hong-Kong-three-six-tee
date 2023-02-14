@@ -162,7 +162,12 @@ public class RPCEventRollChooseOrder : RPCEventRollDice
 
 public abstract class GameState
 {
-    public abstract bool ProcessEvent(RPCEvent e);
+    protected GameState nextState = null;
+    protected RPCEvent nextEvent = null;
+    public virtual bool ProcessEvent(RPCEvent e)
+    {
+        return false;
+    }
     public abstract void Update(ref GameState stateAtomic);
 }
 
@@ -217,6 +222,10 @@ public class StateStartup : GameState
                 Game.Instance.IdxToPlayer[player.Idx] = player;
             }
             Debug.Log($"IdxToPlayer: {string.Join('\n', Game.Instance.IdxToPlayer.Select((i, p) => $"{i}: {p}"))}");
+
+            // Init PlayerOrder
+            Game.Instance.playerOrder = new int[idx];
+
             // Remove unused pieces
             foreach (var piece in Game.Instance.PiecesTemplate)
             {
@@ -238,20 +247,22 @@ public class StateStartup : GameState
 
 public class StateChooseOrder : GameState
 {
-    public readonly int[] RolledDice;
+    public readonly int[][] RolledDice;
 
     public StateChooseOrder()
     {
-        RolledDice = new int[Game.Instance.IdxToPlayer.Length];
+        RolledDice = new int[Game.Instance.IdxToPlayer.Length][];
     }
     
     public override bool ProcessEvent(RPCEvent e)
     {
         if (e is RPCEventRollChooseOrder eRollDice)
         {
-            if (RolledDice[eRollDice.GamePlayer.Idx] != 0) return false;
-            RolledDice[eRollDice.GamePlayer.Idx] = Random.Range(1, 7);
-            eRollDice.Success(RolledDice[eRollDice.GamePlayer.Idx]);
+            if (RolledDice[eRollDice.GamePlayer.Idx][1] != 0) return false;
+            int rnd = Random.Range(1, 100);
+            if (RolledDice.Any(d => d[1] == rnd)) return false;
+            RolledDice[eRollDice.GamePlayer.Idx] = new int[] {eRollDice.GamePlayer.Idx, rnd};
+            eRollDice.Success(rnd);
             return true;
         }
         return false;
@@ -259,12 +270,39 @@ public class StateChooseOrder : GameState
 
     public override void Update(ref GameState state)
     {
-        if (RolledDice.All(d => d != 0))
+        if (RolledDice.All(d => d[1] != 0))
         {
             //nextState = new StateChooseAction();
             //return true;
-            state = new StateRound();
+            int i = 0;
+            foreach (int[] order in RolledDice.OrderBy(d => d[1]))
+            {
+                Game.Instance.playerOrder[i++] = order[0];
+            }
+
+            state = new StateNewRound();
         }
+    }
+}
+
+public class StateRolledDice : GameState
+{
+    public override void Update(ref GameState state)
+    {
+
+    }
+}
+
+public class StateNewRound : GameState
+{
+    public StateNewRound()
+    {
+        Game.Instance.round = new RoundData(Game.Instance);
+    }
+
+    public override void Update(ref GameState state)
+    {
+        state = new StateRound();
     }
 }
 
@@ -275,18 +313,22 @@ public class StateRound : GameState
 
     public StateRound()
     {
-        RolledDice = new int[Game.Instance.IdxToPlayer.Length];
+        RolledDice = Game.Instance.round.RolledDice;
     }
 
     public override bool ProcessEvent(RPCEvent e)
     {
+        if (nextState != null) return false;
+
         if (e is RPCEventRollDice eRollDice)
         {
-            int idx = eRollDice.GamePlayer.Idx;
-            if (RolledDice[idx] != 0) return false;
-            RolledDice[idx] = Random.Range(1, 7);
-            eRollDice.Success(RolledDice[idx]);
-            
+            //int idx = eRollDice.GamePlayer.Idx;
+            //if (RolledDice[idx] != 0) return false;
+            //RolledDice[idx] = Random.Range(1, 7);
+            //eRollDice.Success(RolledDice[idx]);
+            nextState = new StateRolledDice();
+            nextEvent = eRollDice;
+
             return true;
         }
         return false;
@@ -294,10 +336,24 @@ public class StateRound : GameState
 
     public override void Update(ref GameState state)
     {
-        if (RolledDice.All(d => d != 0))
-        {
-            state = new StateRound();
+        if (nextState != null) {
+            state = nextState;
+            Game.Instance.EventsToProcess.Add(nextEvent);
         }
+        else if (RolledDice.All(d => d != 0))
+        {
+            state = new StateNewRound();
+        }
+    }
+}
+
+public struct RoundData
+{
+    public readonly int[] RolledDice;
+
+    public RoundData(Game g)
+    {
+        RolledDice = new int[g.IdxToPlayer.Length];
     }
 }
 
@@ -321,7 +377,8 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public static Game Instance;
 
     public GameState State = null;
-    
+    public RoundData round;
+
     public PlayerState[] Players = null;
 
     public int[] playerOrder = null;
