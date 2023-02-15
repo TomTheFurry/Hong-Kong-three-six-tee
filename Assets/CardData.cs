@@ -28,7 +28,7 @@ public class CardData : ScriptableObject
     public enum EffectType
     {
         MoveForward,
-        MoveBack
+        MoveBackward,
     }
 }
 
@@ -59,6 +59,14 @@ public class CardDataBase_Editor : Editor
         list.drawHeaderCallback = (Rect rect) => {
             EditorGUI.LabelField(rect, "Effects");
         };
+        list.onAddDropdownCallback = (Rect buttonRect, ReorderableList l) => {
+            var menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Move/Forward"), false, clickHandler,
+                new EffectCreationParams() { Type = CardData.EffectType.MoveForward });
+            menu.AddItem(new GUIContent("Move/Backward"), false, clickHandler,
+                new EffectCreationParams() { Type = CardData.EffectType.MoveBackward });
+            menu.ShowAsContext();
+        };
     }
 
     public override void OnInspectorGUI()
@@ -66,11 +74,29 @@ public class CardDataBase_Editor : Editor
         CardData script = (CardData)target;
 
         script.cardName = EditorGUILayout.TextField("Name", script.cardName);
-        script.cardDescription = EditorGUILayout.TextField("Description", script.cardDescription);
+        EditorGUILayout.LabelField("Description");
+        script.cardDescription = EditorGUILayout.TextArea(
+            script.cardDescription, GUILayout.ExpandHeight(true), GUILayout.MinHeight(80));
 
         serializedObject.Update();
         list.DoLayoutList();
         serializedObject.ApplyModifiedProperties();
+    }
+
+    private void clickHandler(object target)
+    {
+        EffectCreationParams data = (EffectCreationParams)target;
+        int index = list.serializedProperty.arraySize;
+        list.serializedProperty.arraySize++;
+        list.index = index;
+        SerializedProperty element = list.serializedProperty.GetArrayElementAtIndex(index);
+        element.FindPropertyRelative("effect").enumValueIndex = (int)data.Type;
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private struct EffectCreationParams
+    {
+        public CardData.EffectType Type;
     }
 }
 #endif

@@ -281,6 +281,7 @@ public class StateChooseOrder : GameState
             }
 
             state = new StateNewRound();
+            Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
         }
     }
 }
@@ -373,6 +374,7 @@ public class StateRound : GameState
         else if (RolledDice.All(d => d != 0))
         {
             state = new StateNewRound();
+            Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
         }
     }
 }
@@ -622,6 +624,14 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
             IdxToPlayer[i].Idx = i;
         }
         State = new StateChooseOrder();
+    }
+
+    [PunRPC]
+    void StateChangeNewRound()
+    {
+        Debug.Log($"Game state changed to 'New Round'.");
+        if (photonView.IsMine) return; // ignore
+        State = new StateNewRound();
     }
 
     [PunRPC]
