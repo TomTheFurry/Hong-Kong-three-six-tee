@@ -11,12 +11,22 @@ public class GameTile : MonoBehaviour
     [SerializeReference]
     public GameTile NextTile = null;
 
+    
+
     // Auto config
     [HideInInspector]
     [SerializeReference]
     public GameTile PrevTile = null;
 
     private bool maybeDup = true;
+
+    private void Awake()
+    {
+        
+    }
+
+
+    #region UNITY_EDITOR
 #if UNITY_EDITOR
 
     public void RecheckLinks(bool overrideOthers = false)
@@ -156,5 +166,5 @@ public class GameTile : MonoBehaviour
     }
 
 #endif
-
+    #endregion
 }

@@ -13,9 +13,10 @@ using UnityEditorInternal;
 public class CardData : ScriptableObject
 {
     public string cardName;
+    [TextArea(5,8)]
     public string cardDescription;
 
-
+    [HideInInspector]
     public List<Effect> effects;
 
     [Serializable]
@@ -71,12 +72,9 @@ public class CardDataBase_Editor : Editor
 
     public override void OnInspectorGUI()
     {
-        CardData script = (CardData)target;
+        DrawDefaultInspector();
 
-        script.cardName = EditorGUILayout.TextField("Name", script.cardName);
-        EditorGUILayout.LabelField("Description");
-        script.cardDescription = EditorGUILayout.TextArea(
-            script.cardDescription, GUILayout.ExpandHeight(true), GUILayout.MinHeight(80));
+        CardData script = (CardData)target;
 
         serializedObject.Update();
         list.DoLayoutList();

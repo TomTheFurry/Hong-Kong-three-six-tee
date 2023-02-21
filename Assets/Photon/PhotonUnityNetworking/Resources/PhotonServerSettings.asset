@@ -47,6 +47,7 @@ MonoBehaviour:
   - RequestGrabObject
   - ClientTryRollDice
   - UpdataOwnerMaterial
+  - StateChangeNewRound
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
