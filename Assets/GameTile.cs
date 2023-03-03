@@ -14,7 +14,7 @@ public class GameTile : MonoBehaviour
     
 
     // Auto config
-    [HideInInspector]
+    //[HideInInspector]
     [SerializeReference]
     public GameTile PrevTile = null;
 
