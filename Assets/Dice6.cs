@@ -36,6 +36,7 @@ public class Dice6 : MonoBehaviourPun
         if (TryGetComponent(out PcGrabInteractable grab))
         {
             grab.GrabCondition = PcGrabCondition;
+            grab.OnReleased.AddListener(PcRollDiceOnGrabRelease);
         }
     }
 
