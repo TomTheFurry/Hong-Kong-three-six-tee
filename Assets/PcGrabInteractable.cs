@@ -8,7 +8,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(PhotonView))]
+[RequireComponent(typeof(PhotonView), typeof(Rigidbody))]
 public class PcGrabInteractable : MonoBehaviourPun
 {
     public int ownerID = -1;
@@ -28,20 +28,30 @@ public class PcGrabInteractable : MonoBehaviourPun
 
     public bool noGravityAfterGrab = true;
 
-    public UnityEvent<Transform> OnGrabbed;
+    public UnityEvent<GamePlayer> OnGrabbed;
+    public UnityEvent<GamePlayer> OnReleased;
+
+    public Func<GamePlayer, bool> GrabCondition = _ => true;
 
     public void TryGrabObject(Transform grabber, Action onSuccess)
     {
-        if (IsGrabbedByMe || PhotonNetwork.InLobby || !PhotonNetwork.IsConnected)
+        if (IsGrabbedByMe)
+        {
+            Debug.LogError("Already grabbed by me");
+            return;
+        }
+        
+        GamePlayer grabPlayer = PhotonNetwork.LocalPlayer;
+        if (PhotonNetwork.InLobby || !PhotonNetwork.IsConnected)
         {
             // Skip sync stuff
             CurrentLocalGrabber = grabber;
-            ((GamePlayer)PhotonNetwork.LocalPlayer).Holding.Add(gameObject);
-            OnGrabbed.Invoke(grabber);
+            grabPlayer.Holding.Add(gameObject);
+            OnGrabbed.Invoke(grabPlayer);
             onSuccess();
 
         }
-        else if (IsGrabbed)
+        else if (IsGrabbed || !GrabCondition(grabPlayer))
         {
             // Return
         }
@@ -59,13 +69,14 @@ public class PcGrabInteractable : MonoBehaviourPun
         if (isReleasing)
         {
             ((GamePlayer)player).Holding.Remove(gameObject);
+            OnReleased.Invoke(player);
             ownerID = -1;
             return;
         }
         ownerID = player.ActorNumber;
         ((GamePlayer)player).Holding.Add(gameObject);
 
-        OnGrabbed.Invoke(((GamePlayer)player).PlayerObj.transform);
+        OnGrabbed.Invoke(player);
 
         if (player.IsLocal)
         {
@@ -105,6 +116,13 @@ public class PcGrabInteractable : MonoBehaviourPun
             photonView.RPC("NotifyFailedGrab", info.Sender, "Object is already grabbed");
             return;
         }
+        if (!GrabCondition(info.Sender))
+        {
+            Debug.Log("Grab condition failed");
+            photonView.RPC("NotifyFailedGrab", info.Sender, "Grab condition failed");
+            return;
+        }
+
         Debug.Log("Grab request received by " + info.Sender.ActorNumber);
         photonView.TransferOwnership(info.Sender);
         photonView.RPC("NotifyChangeOwner", RpcTarget.AllBuffered, info.Sender, false);
@@ -117,10 +135,13 @@ public class PcGrabInteractable : MonoBehaviourPun
             Debug.LogError("Object is not grabbed by this player");
             return;
         }
+        var temp = CurrentLocalGrabber;
         CurrentLocalGrabber = null;
         if (!PhotonNetwork.InRoom)
         {
             Debug.Log("Release object noted, and no sync needed because we are in lobby");
+            GamePlayer player = PhotonNetwork.LocalPlayer;
+            OnReleased.Invoke(player);
             return;
         }
         photonView.TransferOwnership(PhotonNetwork.MasterClient);
