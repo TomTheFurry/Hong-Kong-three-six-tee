@@ -6,8 +6,14 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
+    public static GameTile StartTile => Instance.StartingTile;
+    static Board Instance;
     public GameTile StartingTile = null;
-    
+
+    private void Start() {
+        Instance = this;
+    }
+
     public void OnDrawGizmos()
     {
         if (StartingTile != null)

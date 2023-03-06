@@ -150,6 +150,20 @@ public class RPCEventRollDice : RPCEvent
     }
 }
 
+public class RPCEventPieceMove : RPCEvent {
+    public GamePlayer GamePlayer;
+    public Piece Piece;
+    public int MoveStep;
+
+    public override void Fail() {
+        // Drop the rpc
+    }
+
+    public void Success(int number) {
+        Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+    }
+}
+
 public class RPCEventRollChooseOrder : RPCEventRollDice
 {
     public Piece PieceTemplate;
@@ -233,7 +247,10 @@ public class StateStartup : GameState
                 {
                     PhotonNetwork.Destroy(piece.gameObject);
                 }
-                piece.photonView.RPC("UpdataOwnerMaterial", RpcTarget.AllBufferedViaServer);
+                else {
+                    piece.photonView.RPC("UpdataOwnerMaterial", RpcTarget.AllBufferedViaServer);
+                    piece.photonView.RPC("InitCurrentTile", RpcTarget.AllBufferedViaServer);
+                }
             }
 
             // Go to next stage (and signal all players)
@@ -282,6 +299,22 @@ public class StateChooseOrder : GameState
 
             state = new StateNewRound();
             Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
+        }
+    }
+}
+
+public class StatePieceMove : GameState {
+    bool isMoveOver = false;
+    public override bool ProcessEvent(RPCEvent e) {
+        if (e is RPCEventPieceMove ePieceMove) {
+            ePieceMove.Piece.MoveForward(ePieceMove.MoveStep);
+            return true;
+        }
+        return false;
+    }
+    public override void Update(ref GameState state) {
+        if (isMoveOver) {
+            state = Game.Instance.round.stateRound;
         }
     }
 }
@@ -353,10 +386,6 @@ public class StateRound : GameState
 
         if (e is RPCEventRollDice eRollDice)
         {
-            //int idx = eRollDice.GamePlayer.Idx;
-            //if (RolledDice[idx] != 0) return false;
-            //RolledDice[idx] = Random.Range(1, 7);
-            //eRollDice.Success(RolledDice[idx]);
             nextState = new StateRolledDice();
             nextEvent = eRollDice;
 

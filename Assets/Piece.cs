@@ -120,6 +120,11 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         }
     }
 
+    [PunRPC]
+    public void InitCurrentTile() {
+        CurrentTile = Board.StartTile;
+    }
+
     public void Teleport()
     {
         if (CurrentTile == null) return;
