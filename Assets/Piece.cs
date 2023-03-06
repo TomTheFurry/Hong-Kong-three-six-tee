@@ -123,6 +123,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     [PunRPC]
     public void InitCurrentTile() {
         CurrentTile = Board.StartTile;
+        Teleport();
     }
 
     public void Teleport()
@@ -140,6 +141,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         sj.connectedAnchor = CurrentTile.transform.position;
     }
 
+    [PunRPC]
     public void MoveForward(int number)
     {
         while (number-- != 0)

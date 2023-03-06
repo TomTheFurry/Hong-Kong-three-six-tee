@@ -9,8 +9,9 @@ public class Board : MonoBehaviour
     public static GameTile StartTile => Instance.StartingTile;
     static Board Instance;
     public GameTile StartingTile = null;
-
-    private void Start() {
+    
+    private void Awake()
+    {
         Instance = this;
     }
 

@@ -303,48 +303,6 @@ public class StateChooseOrder : GameState
     }
 }
 
-public class StatePieceMove : GameState {
-    bool isMoveOver = false;
-    public override bool ProcessEvent(RPCEvent e) {
-        if (e is RPCEventPieceMove ePieceMove) {
-            ePieceMove.Piece.MoveForward(ePieceMove.MoveStep);
-            return true;
-        }
-        return false;
-    }
-    public override void Update(ref GameState state) {
-        if (isMoveOver) {
-            state = Game.Instance.round.stateRound;
-        }
-    }
-}
-
-public class StateRolledDice : GameState
-{
-    public readonly int[] RolledDice;
-
-    public StateRolledDice()
-    {
-        RolledDice = Game.Instance.round.RolledDice;
-    }
-
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (e is RPCEventRollDice eRollDice)
-        {
-            int idx = eRollDice.GamePlayer.Idx;
-            if (RolledDice[idx] != 0) return false;
-            RolledDice[idx] = Random.Range(1, 7);
-            eRollDice.Success(RolledDice[idx]);
-        }
-        return base.ProcessEvent(e);
-    }
-    public override void Update(ref GameState state)
-    {
-        state = Game.Instance.round.stateRound;
-    }
-}
-
 public class StateUseProps : GameState
 {
     public override bool ProcessEvent(RPCEvent e)
@@ -407,6 +365,54 @@ public class StateRound : GameState
         }
     }
 }
+
+public class StateRolledDice : GameState
+{
+    public readonly int[] RolledDice;
+
+    public StateRolledDice()
+    {
+        RolledDice = Game.Instance.round.RolledDice;
+    }
+
+    public override bool ProcessEvent(RPCEvent e)
+    {
+        if (e is RPCEventRollDice eRollDice)
+        {
+            int idx = eRollDice.GamePlayer.Idx;
+            if (RolledDice[idx] != 0) return false;
+            RolledDice[idx] = Random.Range(1, 7);
+            eRollDice.Success(RolledDice[idx]);
+        }
+        return base.ProcessEvent(e);
+    }
+    public override void Update(ref GameState state)
+    {
+        state = Game.Instance.round.stateRound;
+    }
+}
+
+public class StatePieceMove : GameState
+{
+    bool isMoveOver = false;
+    public override bool ProcessEvent(RPCEvent e)
+    {
+        if (e is RPCEventPieceMove ePieceMove)
+        {
+            ePieceMove.Piece.photonView.RPC("MoveForward", RpcTarget.AllBufferedViaServer, ePieceMove.MoveStep);
+            return true;
+        }
+        return false;
+    }
+    public override void Update(ref GameState state)
+    {
+        if (isMoveOver)
+        {
+            state = Game.Instance.round.stateRound;
+        }
+    }
+}
+
 
 public struct RoundData
 {
