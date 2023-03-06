@@ -20,7 +20,7 @@ MonoBehaviour:
     AppVersion: 0
     UseNameServer: 1
     FixedRegion: 
-    Server: 
+    Server: 172.19.84.35
     Port: 5058
     ProxyServer: 
     Protocol: 0
@@ -51,6 +51,7 @@ MonoBehaviour:
   - RollByPhysics
   - RpcCancelRoll
   - RpcStartRoll
+  - InitCurrentTile
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

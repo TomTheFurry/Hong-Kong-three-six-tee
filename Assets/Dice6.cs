@@ -115,6 +115,7 @@ public class Dice6 : MonoBehaviourPun
             if (face != 0)
             {
                 IsRolling = false;
+                Debug.Log($"Rolled a {face}!");
                 if (diceRollCallback != null)
                 {
                     diceRollCallback(face);
@@ -188,6 +189,7 @@ public class Dice6 : MonoBehaviourPun
             throw new InvalidOperationException("The dice is already rolling.");
         }
 
+        Debug.Log($"Start roll for {player}");
         diceRollCallback = callback;
         photonView.RPC(nameof(RpcStartRoll), RpcTarget.All, player.PunConnection);
     }
@@ -210,7 +212,8 @@ public class Dice6 : MonoBehaviourPun
         {
             throw new InvalidOperationException("No callback was registered for the roll.");
         }
-        
+
+        Debug.Log($"Cancel roll");
         diceRollCallback = null;
         photonView.RPC(nameof(RpcCancelRoll), RpcTarget.All);
     }
