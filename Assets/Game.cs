@@ -138,6 +138,7 @@ public class RPCEventSelectPiece : RPCEvent
 public class RPCEventRollDice : RPCEvent
 {
     public GamePlayer GamePlayer;
+    public Dice6 Dice;
     
     public override void Fail()
     {
@@ -164,256 +165,6 @@ public class RPCEventPieceMove : RPCEvent {
     }
 }
 
-public class RPCEventRollChooseOrder : RPCEventRollDice
-{
-    public Piece PieceTemplate;
-
-    public override void Fail()
-    {
-        // Drop the rpc
-    }
-}
-
-public abstract class GameState
-{
-    protected GameState nextState = null;
-    protected RPCEvent nextEvent = null;
-    public virtual bool ProcessEvent(RPCEvent e)
-    {
-        return false;
-    }
-    public abstract void Update(ref GameState stateAtomic);
-}
-
-public class StateStartup : GameState
-{
-    public bool CanStart = false;
-    public bool MasterSignalStartGame = false;
-    
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (e is RPCEventNewPlayer eNewPlayer)
-        {
-            //Game.Instance.photonView.RPC("PlayerJoined", RpcTarget.AllBufferedViaServer, eNewPlayer.PunPlayer, eNewPlayer.PunPlayer);
-            return true;
-        }
-        if (e is RPCEventSelectPiece eSelectPiece)
-        {
-            eSelectPiece.Process();
-            return true;
-        }
-        return false;
-    }
-
-    public override void Update(ref GameState state)
-    {
-        Game.Instance.JoinedPlayersLock.EnterUpgradeableReadLock();
-
-        CanStart = Game.Instance.JoinedPlayers.Count(p => p.Piece != null && p.PlayerObj != null && p.Control != GamePlayer.ControlType.Unknown) >= 2;
-        if (MasterSignalStartGame && CanStart)
-        {
-            Debug.Log("Starting game...");
-            // Kick all players that are not ready
-            foreach (var player in Game.Instance.JoinedPlayers)
-            {
-                if (player.Piece == null || player.PlayerObj == null || player.Control == GamePlayer.ControlType.Unknown)
-                {
-                    Debug.Log($"Player {player} Kicked: Not ready before master started game");
-                    PhotonNetwork.CloseConnection(player);
-                }
-            }
-
-            // Setup idx for all players
-            int idx = 0;
-            foreach (var player in Game.Instance.JoinedPlayers)
-            {
-                player.Idx = idx++;
-            }
-
-            Game.Instance.IdxToPlayer = new GamePlayer[idx];
-            foreach (var player in Game.Instance.JoinedPlayers)
-            {
-                Game.Instance.IdxToPlayer[player.Idx] = player;
-            }
-            Debug.Log($"IdxToPlayer: {string.Join('\n', Game.Instance.IdxToPlayer.Select((i, p) => $"{i}: {p}"))}");
-
-            // Init PlayerOrder
-            Game.Instance.playerOrder = new int[idx];
-
-            // Remove unused pieces
-            foreach (var piece in Game.Instance.PiecesTemplate)
-            {
-                if (piece.Owner == null)
-                {
-                    PhotonNetwork.Destroy(piece.gameObject);
-                }
-                else {
-                    piece.photonView.RPC("UpdataOwnerMaterial", RpcTarget.AllBufferedViaServer);
-                    piece.photonView.RPC("InitCurrentTile", RpcTarget.AllBufferedViaServer);
-                }
-            }
-
-            // Go to next stage (and signal all players)
-            state = new StateChooseOrder();
-            Game.Instance.photonView.RPC("StateChangeChooseOrder", RpcTarget.AllBufferedViaServer, Game.Instance.IdxToPlayer.Select(p => p.PunConnection).ToArray() as object);
-        }
-
-        Game.Instance.JoinedPlayersLock.ExitUpgradeableReadLock();
-    }
-}
-
-public class StateChooseOrder : GameState
-{
-    public readonly int[][] RolledDice;
-
-    public StateChooseOrder()
-    {
-        RolledDice = new int[Game.Instance.IdxToPlayer.Length][];
-    }
-    
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (e is RPCEventRollChooseOrder eRollDice)
-        {
-            if (RolledDice[eRollDice.GamePlayer.Idx][1] != 0) return false;
-            int rnd = Random.Range(1, 100);
-            if (RolledDice.Any(d => d[1] == rnd)) return false;
-            RolledDice[eRollDice.GamePlayer.Idx] = new int[] {eRollDice.GamePlayer.Idx, rnd};
-            eRollDice.Success(rnd);
-            return true;
-        }
-        return false;
-    }
-
-    public override void Update(ref GameState state)
-    {
-        if (RolledDice.All(d => d[1] != 0))
-        {
-            //nextState = new StateChooseAction();
-            //return true;
-            int i = 0;
-            foreach (int[] order in RolledDice.OrderBy(d => d[1]))
-            {
-                Game.Instance.playerOrder[i++] = order[0];
-            }
-
-            state = new StateNewRound();
-            Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
-        }
-    }
-}
-
-public class StateUseProps : GameState
-{
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        return base.ProcessEvent(e);
-    }
-
-    public override void Update(ref GameState stateAtomic)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class StateNewRound : GameState
-{
-    public StateNewRound()
-    {
-        Game.Instance.round = new RoundData(Game.Instance);
-    }
-
-    public override void Update(ref GameState state)
-    {
-        state = Game.Instance.round.stateRound;
-    }
-}
-
-public class StateRound : GameState
-{
-    public readonly int[] RolledDice;
-
-    public StateRound()
-    {
-        RolledDice = Game.Instance.round.RolledDice;
-    }
-
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (nextState != null) return false;
-
-        if (e is RPCEventRollDice eRollDice)
-        {
-            nextState = new StateRolledDice();
-            nextEvent = eRollDice;
-
-            return true;
-        }
-        return false;
-    }
-
-    public override void Update(ref GameState state)
-    {
-        if (nextState != null) {
-            state = nextState;
-            Game.Instance.EventsToProcess.Add(nextEvent);
-        }
-        else if (RolledDice.All(d => d != 0))
-        {
-            state = new StateNewRound();
-            Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
-        }
-    }
-}
-
-public class StateRolledDice : GameState
-{
-    public readonly int[] RolledDice;
-
-    public StateRolledDice()
-    {
-        RolledDice = Game.Instance.round.RolledDice;
-    }
-
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (e is RPCEventRollDice eRollDice)
-        {
-            int idx = eRollDice.GamePlayer.Idx;
-            if (RolledDice[idx] != 0) return false;
-            RolledDice[idx] = Random.Range(1, 7);
-            eRollDice.Success(RolledDice[idx]);
-        }
-        return base.ProcessEvent(e);
-    }
-    public override void Update(ref GameState state)
-    {
-        state = Game.Instance.round.stateRound;
-    }
-}
-
-public class StatePieceMove : GameState
-{
-    bool isMoveOver = false;
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (e is RPCEventPieceMove ePieceMove)
-        {
-            ePieceMove.Piece.photonView.RPC("MoveForward", RpcTarget.AllBufferedViaServer, ePieceMove.MoveStep);
-            return true;
-        }
-        return false;
-    }
-    public override void Update(ref GameState state)
-    {
-        if (isMoveOver)
-        {
-            state = Game.Instance.round.stateRound;
-        }
-    }
-}
-
-
 public struct RoundData
 {
     public readonly int[] RolledDice;
@@ -422,7 +173,7 @@ public struct RoundData
     public RoundData(Game g)
     {
         RolledDice = new int[g.IdxToPlayer.Length];
-        stateRound = new StateRound();
+        stateRound = new StateRound(RolledDice);
     }
 }
 
@@ -670,6 +421,14 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     }
 
     [PunRPC]
+    void StateChangeRound()
+    {
+        Debug.Log($"Game state changed to 'Round'.");
+        if (photonView.IsMine) return; // ignore
+        State = round.stateRound;
+    }
+
+    [PunRPC]
     public void PlayerRolledDice(Player player, int dice)
     {
         Debug.Log($"Player {player.NickName} rolled {dice}");
@@ -690,6 +449,16 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
         Debug.Log($"Client {info.Sender} try select piece {pieceIdx}");
         Debug.Assert(photonView.IsMine);
         EventsToProcess.Add(new RPCEventSelectPiece { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
+    }
+
+    [PunRPC]
+    public void ClientTryRollDice(int viewId, PhotonMessageInfo info)
+    {
+        Debug.Log($"Client {info.Sender} try roll dice");
+        Debug.Assert(photonView.IsMine);
+        EventsToProcess.Add(new RPCEventRollDice {
+            GamePlayer = info.Sender, Dice = PhotonNetwork.GetPhotonView(viewId).GetComponent<Dice6>()
+        });
     }
 
     public void OnConnected()
@@ -749,13 +518,5 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public void Destroy(GameObject gameObject)
     {
         Object.Destroy(gameObject);
-    }
-
-    [PunRPC]
-    public void ClientTryRollDice(int pieceIdx, PhotonMessageInfo info)
-    {
-        Debug.Log($"Client try roll dice");
-        Debug.Assert(photonView.IsMine);
-        EventsToProcess.Add(new RPCEventRollDice { GamePlayer = info.Sender });
     }
 }

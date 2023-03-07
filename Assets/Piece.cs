@@ -126,6 +126,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         Teleport();
     }
 
+    [PunRPC]
     public void Teleport()
     {
         if (CurrentTile == null) return;

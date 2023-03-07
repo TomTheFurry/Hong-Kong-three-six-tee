@@ -36,7 +36,16 @@ public class Dice6 : MonoBehaviourPun
         if (TryGetComponent(out PcGrabInteractable grab))
         {
             grab.GrabCondition = PcGrabCondition;
+            grab.OnGrabbed.AddListener(OnGrab);
             grab.OnReleased.AddListener(PcRollDiceOnGrabRelease);
+        }
+    }
+
+    public void OnGrab(GamePlayer grabber)
+    {
+        if (photonView.IsMine)
+        {
+            Game.Instance.photonView.RPC("ClientTryRollDice", RpcTarget.MasterClient, photonView.ViewID);
         }
     }
 
@@ -100,7 +109,7 @@ public class Dice6 : MonoBehaviourPun
     
     private void FixedUpdate()
     {
-        if (rb.velocity.magnitude < 0.1f && rb.angularVelocity.magnitude < 0.1f)
+        if (rb.velocity.magnitude < 10f && rb.angularVelocity.magnitude < 10f)
         {
             idleCount++;
         }
@@ -168,7 +177,7 @@ public class Dice6 : MonoBehaviourPun
     public GamePlayer PlayerWaitingForRoll { get; private set; }
     public bool IsAwaitingRoll => PlayerWaitingForRoll != null;
 
-    private Action<int> diceRollCallback;
+    public Action<int> diceRollCallback;
 
     /// <summary>
     /// Start the roll for the given player. <br/>
@@ -244,7 +253,7 @@ public class Dice6 : MonoBehaviourPun
 
     public void PcRollDiceOnGrabRelease(GamePlayer grabber)
     {
-        if (PlayerWaitingForRoll == grabber)
+        if (PlayerWaitingForRoll == grabber || PlayerWaitingForRoll == null)
         {
             RollByPhysics();
         }
