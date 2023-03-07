@@ -8,7 +8,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(PhotonView), typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody))]
 public class PcGrabInteractable : MonoBehaviourPun
 {
     public int ownerID = -1;
