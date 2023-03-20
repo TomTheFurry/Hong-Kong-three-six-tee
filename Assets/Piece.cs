@@ -33,6 +33,9 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 
     private Rigidbody rb;
     private SpringJoint sj;
+
+    private bool moving = false;
+    public Action movingCallBack;
     
     public void Start()
     {
@@ -46,7 +49,8 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     private float t = 0;
     public void Update()
     {
-        if (Time.timeSinceLevelLoad - t > 0)
+        // *** not used
+        if (false && Time.timeSinceLevelLoad - t > 0)
         {
             t+= Random.Range(0.5f, 2f);
             MoveForward(1);
@@ -67,6 +71,12 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             Nametag.transform.LookAt(Camera.main.transform); // LookAt() doesn't correct for roll
             Nametag.transform.Rotate(0, 180, 0, Space.Self);
 
+            if (moving && Vector3.Distance(CurrentTile.transform.position, transform.position) < 0.1f)
+            {
+                if (movingCallBack != null) movingCallBack();
+                movingCallBack = null;
+                moving = false;
+            }
         }
     }
 
@@ -149,6 +159,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         {
             CurrentTile = CurrentTile.NextTile;
         }
+        moving = true;
         UpdatePin();
     }
     

@@ -161,19 +161,42 @@ public class RPCEventPieceMove : RPCEvent {
     }
 
     public void Success(int number) {
-        Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+    }
+}
+
+public class RPCEventUseProps : RPCEvent
+{
+    public GamePlayer GamePlayer;
+
+    public override void Fail()
+    {
+        // Drop the rpc
+    }
+
+    public void Success(int number)
+    {
+        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
     }
 }
 
 public struct RoundData
 {
+    public static StateRound StateRound;
+
     public readonly int[] RolledDice;
-    public StateRound stateRound;
+    public int actionOrderIdx;
 
     public RoundData(Game g)
     {
         RolledDice = new int[g.IdxToPlayer.Length];
-        stateRound = new StateRound(RolledDice);
+        StateRound = new StateRound(RolledDice);
+        actionOrderIdx = 0;
+    }
+
+    public bool NextPlayer()
+    {
+        return ++actionOrderIdx >= RolledDice.Length;
     }
 }
 
@@ -197,10 +220,12 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public static Game Instance;
 
     public GameState State = null;
-    public RoundData round;
+    public RoundData roundData;
 
     public PlayerState[] Players = null;
 
+    // get the player index which need to action
+    public static int ActionPlayerIdx => Instance.playerOrder[Instance.roundData.actionOrderIdx];
     public int[] playerOrder = null;
     
     public IEnumerable<KeyValuePair<int, PlayerState>> PlayersIter => Players.Select((p, i) => new KeyValuePair<int, PlayerState>(i, p)).Where(p => p.Value != null);
@@ -425,7 +450,7 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     {
         Debug.Log($"Game state changed to 'Round'.");
         if (photonView.IsMine) return; // ignore
-        State = round.stateRound;
+        State = RoundData.StateRound;
     }
 
     [PunRPC]
