@@ -16,9 +16,15 @@ public class SkyboxPlayer : MonoBehaviour
 
     public int DefaultVideoIndex = 0;
 
+    public Texture2D DefaultTexture;
+
     void Start()
     {
         videoPlayer = GetComponent<VideoPlayer>();
+        if (DefaultTexture != null)
+        {
+            Graphics.Blit(DefaultTexture, videoPlayer.targetTexture);
+        }
         StartVideo(DefaultVideoIndex);
         videoPlayer.Play();
     }
