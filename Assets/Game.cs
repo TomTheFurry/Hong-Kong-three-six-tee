@@ -182,7 +182,13 @@ public class RPCEventUseProps : RPCEvent
 
 public struct RoundData
 {
-    public static StateRound StateRound;
+    private static StateRound _stateRound;
+    public static StateRound StateRound {
+        get {
+            Debug.Log($"Round -- Player: {Game.ActionPlayer.PunConnection.NickName} action");
+            return _stateRound;
+        }
+    }
 
     public readonly int[] RolledDice;
     public int actionOrderIdx;
@@ -190,10 +196,17 @@ public struct RoundData
     public RoundData(Game g)
     {
         RolledDice = new int[g.IdxToPlayer.Length];
-        StateRound = new StateRound(RolledDice);
+        _stateRound = new StateRound(RolledDice);
         actionOrderIdx = 0;
     }
 
+    /// <summary>
+    /// Change the action player index to next player.
+    /// </summary>
+    /// <returns>
+    /// True when have next action player<br/>
+    /// False when no next action player
+    /// </returns>
     public bool NextPlayer()
     {
         return ++actionOrderIdx >= RolledDice.Length;
@@ -225,6 +238,7 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     public PlayerState[] Players = null;
 
     // get the player index which need to action
+    public static GamePlayer ActionPlayer => Instance.IdxToPlayer[ActionPlayerIdx];
     public static int ActionPlayerIdx => Instance.playerOrder[Instance.roundData.actionOrderIdx];
     public int[] playerOrder = null;
     
@@ -441,7 +455,7 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     void StateChangeNewRound()
     {
         Debug.Log($"Game state changed to 'New Round'.");
-        if (photonView.IsMine) return; // ignore
+        //if (photonView.IsMine) return; // ignore
         State = new StateNewRound();
     }
 
@@ -449,8 +463,16 @@ public class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallbacks, IP
     void StateChangeRound()
     {
         Debug.Log($"Game state changed to 'Round'.");
-        if (photonView.IsMine) return; // ignore
+        //if (photonView.IsMine) return; // ignore
         State = RoundData.StateRound;
+    }
+
+    [PunRPC]
+    void StateChangeTurnEnd()
+    {
+        Debug.Log($"Game state changed to 'Turn End'.");
+        //if (photonView.IsMine) return; // ignore
+        State = new StateTurnEnd();
     }
 
     [PunRPC]

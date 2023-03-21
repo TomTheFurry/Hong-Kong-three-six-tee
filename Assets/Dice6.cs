@@ -43,7 +43,7 @@ public class Dice6 : MonoBehaviourPun
 
     public void OnGrab(GamePlayer grabber)
     {
-        if (photonView.IsMine)
+        if (PhotonNetwork.LocalPlayer == grabber.PunConnection)
         {
             Game.Instance.photonView.RPC("ClientTryRollDice", RpcTarget.MasterClient, photonView.ViewID);
         }

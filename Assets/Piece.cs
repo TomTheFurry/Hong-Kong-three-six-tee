@@ -35,6 +35,9 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     private SpringJoint sj;
 
     private bool moving = false;
+    /// <summary>
+    /// Will be called when piece move end
+    /// </summary>
     public Action movingCallBack;
     
     public void Start()
@@ -64,6 +67,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         }
         else
         {
+
             Nametag.gameObject.SetActive(true);
             Nametag.text = Owner.PunConnection.NickName;
 
@@ -71,7 +75,14 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             Nametag.transform.LookAt(Camera.main.transform); // LookAt() doesn't correct for roll
             Nametag.transform.Rotate(0, 180, 0, Space.Self);
 
-            if (moving && Vector3.Distance(CurrentTile.transform.position, transform.position) < 0.1f)
+            Vector2 tilePos = new Vector2(CurrentTile.transform.position.x, CurrentTile.transform.position.z);
+            Vector2 piecePos = new Vector2(transform.position.x, transform.position.z);
+            if (moving)
+            {
+                Debug.Log(Vector2.Distance(tilePos, piecePos));
+                GetComponent<Rigidbody>().WakeUp();
+            }
+            if (moving && Vector2.Distance(tilePos, piecePos) < 0.1f)
             {
                 if (movingCallBack != null) movingCallBack();
                 movingCallBack = null;

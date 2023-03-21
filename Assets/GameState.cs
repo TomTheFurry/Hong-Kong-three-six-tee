@@ -174,17 +174,15 @@ public class StateRound : GameState
 
         if (e is RPCEventRollDice eRollDice)
         {
+            Debug.Log($"Round -- Player: {Game.ActionPlayer.PunConnection.NickName} action -- {eRollDice.GamePlayer.Idx} -- {Game.ActionPlayerIdx}");
+
             if (eRollDice.GamePlayer.Idx != Game.ActionPlayerIdx) return false;
 
             if (RolledDice[eRollDice.GamePlayer.Idx] != 0) return false;
             eRollDice.Dice.diceRollCallback = (int result) => {
-                if (RolledDice.Any(d => d == result))
-                {
-                    eRollDice.Fail();
-                    return;
-                }
                 RolledDice[eRollDice.GamePlayer.Idx] = result;
 
+                // push a piece move event
                 Game.Instance.EventsToProcess.Add(new RPCEventPieceMove()
                 {
                     GamePlayer = eRollDice.GamePlayer,
@@ -197,17 +195,10 @@ public class StateRound : GameState
         }
         else if (e is RPCEventPieceMove ePieceMove)
         {
+            // when piece move end
             ePieceMove.Piece.movingCallBack = () => {
-                if (Game.Instance.roundData.NextPlayer())
-                {
-                    Game.Instance.State = RoundData.StateRound;
-                    Game.Instance.photonView.RPC("StateChangeRound", RpcTarget.AllBufferedViaServer);
-                }
-                else
-                {
-                    Game.Instance.State = new StateNewRound();
-                    Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
-                }
+                Debug.Log("move end");
+                Game.Instance.State = new StateTurnEnd();
             };
             ePieceMove.Piece.photonView.RPC("MoveForward", RpcTarget.AllBufferedViaServer, ePieceMove.MoveStep);
             return true;
@@ -221,12 +212,29 @@ public class StateRound : GameState
 
     public override void Update(ref GameState state)
     {
-        if (nextState != null)
+        //if (RolledDice.All(d => d != 0))
+        //{
+        //    state = new StateNewRound();
+        //    Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
+        //}
+    }
+}
+
+public class StateTurnEnd : GameState
+{
+    public override bool ProcessEvent(RPCEvent e)
+    {
+        return false;
+    }
+
+    public override void Update(ref GameState state)
+    {
+        if (Game.Instance.roundData.NextPlayer())
         {
-            state = nextState;
-            Game.Instance.EventsToProcess.Add(nextEvent);
+            state = RoundData.StateRound;
+            Game.Instance.photonView.RPC("StateChangeRound", RpcTarget.AllBufferedViaServer);
         }
-        else if (RolledDice.All(d => d != 0))
+        else
         {
             state = new StateNewRound();
             Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
