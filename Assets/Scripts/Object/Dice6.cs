@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+
 using Photon.Pun;
 using Photon.Realtime;
 
@@ -16,10 +18,7 @@ public class Dice6 : MonoBehaviourPun
 
     private Rigidbody rb;
 
-    private void Awake()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    private void Awake() { rb = GetComponent<Rigidbody>(); }
 
     private void Start()
     {
@@ -76,14 +75,11 @@ public class Dice6 : MonoBehaviourPun
         }
         return 0;
     }
-    
+
     private int idleCount = 0;
     private const int IDLE_COUNT_THRESHOLD = 30;
-    
-    public bool IsStopped()
-    {
-        return idleCount > IDLE_COUNT_THRESHOLD || rb.IsSleeping();
-    }
+
+    public bool IsStopped() { return idleCount > IDLE_COUNT_THRESHOLD || rb.IsSleeping(); }
 
     public void Freeze()
     {
@@ -92,11 +88,8 @@ public class Dice6 : MonoBehaviourPun
         rb.angularVelocity = Vector3.zero;
     }
 
-    public void Unfreeze()
-    {
-        rb.isKinematic = false;
-    }
-    
+    public void Unfreeze() { rb.isKinematic = false; }
+
     private void FixedUpdate()
     {
         if (rb.velocity.magnitude < 10f && rb.angularVelocity.magnitude < 10f)
@@ -123,7 +116,7 @@ public class Dice6 : MonoBehaviourPun
             }
         }
     }
-    
+
     private void OnDrawGizmos()
     {
         var up = transform.up;
@@ -167,7 +160,20 @@ public class Dice6 : MonoBehaviourPun
     public GamePlayer PlayerWaitingForRoll { get; private set; }
     public bool IsAwaitingRoll => PlayerWaitingForRoll != null;
 
+    public Task OnDiceCompleteTask;
     public Action<int> diceRollCallback;
+
+    public async Task<int> StartRoll(GamePlayer player)
+    {
+        var t = new TaskCompletionSource<int>();
+        StartRoll(player, v => t.SetResult(v));
+        int value = await t.Task;
+        if (value == -1)
+        {
+            throw new OperationCanceledException("Roll was cancelled.");
+        }
+        return value;
+    }
 
     /// <summary>
     /// Start the roll for the given player. <br/>

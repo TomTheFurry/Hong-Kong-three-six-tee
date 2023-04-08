@@ -7,16 +7,21 @@ using UnityEngine;
 
 public partial class Game {
     [PunRPC]
-    public void StateChangeChooseOrder(Player[] idxPlayers)
+    public void SetIdxToPlayer(Player[] idxPlayers)
     {
-        Debug.Log($"Game state changed to 'Choose Order'.");
+        Debug.Log($"SetIdxToPlayer Rpc....");
         if (photonView.IsMine) return; // ignore
         IdxToPlayer = idxPlayers.Select(p => (GamePlayer)p).ToArray();
         for (var i = 0; i < IdxToPlayer.Length; i++)
         {
             IdxToPlayer[i].Idx = i;
         }
-        State = new StateChooseOrder();
+    }
+
+    [PunRPC]
+    public void SetPlayerOrder(int[] orders)
+    {
+
     }
 
     [PunRPC]

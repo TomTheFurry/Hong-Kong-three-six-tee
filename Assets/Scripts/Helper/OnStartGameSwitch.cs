@@ -6,7 +6,7 @@ public class OnStartGameSwitch : MonoBehaviour
 {
     void Update()
     {
-        if (Game.Instance.State is StateChooseOrder chooseOrder)
+        if (Game.Instance.State is StateRollOrder chooseOrder)
         {
             GetComponent<UiTempUtil>().SetActiveMenu(null); // todo
         }

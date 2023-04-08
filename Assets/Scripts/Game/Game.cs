@@ -33,38 +33,6 @@ using Random = UnityEngine.Random;
 //     GameEnd
 // }
 
-public struct RoundData
-{
-    private static StateRound _stateRound;
-    public static StateRound StateRound {
-        get {
-            Debug.Log($"Round -- Player: {Game.ActionPlayer.PunConnection.NickName} action");
-            return _stateRound;
-        }
-    }
-
-    public readonly int[] RolledDice;
-    public int actionOrderIdx;
-
-    public RoundData(Game g)
-    {
-        RolledDice = new int[g.IdxToPlayer.Length];
-        _stateRound = new StateRound(RolledDice);
-        actionOrderIdx = 0;
-    }
-
-    /// <summary>
-    /// Change the action player index to next player.
-    /// </summary>
-    /// <returns>
-    /// True when have next action player<br/>
-    /// False when no next action player
-    /// </returns>
-    public bool NextPlayer()
-    {
-        return ++actionOrderIdx >= RolledDice.Length;
-    }
-}
 
 public partial class Game
 {
@@ -73,6 +41,7 @@ public partial class Game
     public ReaderWriterLockSlim JoinedPlayersLock = new();
     public SortedSet<GamePlayer> JoinedPlayers = new(Comparer<GamePlayer>.Create((a, b) => a.PunConnection.ActorNumber.CompareTo(b.PunConnection.ActorNumber)));
     public GamePlayer[] IdxToPlayer = null;
+    public int PlayerCount => IdxToPlayer.Length;
 
     public class PlayerState
     {
@@ -96,7 +65,6 @@ public partial class Game
     public int[] playerOrder = null;
     
     public IEnumerable<KeyValuePair<int, PlayerState>> PlayersIter => Players.Select((p, i) => new KeyValuePair<int, PlayerState>(i, p)).Where(p => p.Value != null);
-    public int PlayerCount { get; private set; } = 0;
 
     public enum LocalPlayerState
     {

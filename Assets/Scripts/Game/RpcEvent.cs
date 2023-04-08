@@ -1,5 +1,6 @@
 
 using System.Linq;
+using System.Threading.Tasks;
 
 using Photon.Pun;
 
@@ -55,6 +56,7 @@ public class RPCEventRollDice : RPCEvent
 {
     public GamePlayer GamePlayer;
     public Dice6 Dice;
+    public Task<int> RollTask;
     
     public override void Fail()
     {
