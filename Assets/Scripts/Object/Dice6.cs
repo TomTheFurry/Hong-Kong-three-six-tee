@@ -1,18 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Net;
-
-using JetBrains.Annotations;
-
 using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
-
-using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Dice6 : MonoBehaviourPun
