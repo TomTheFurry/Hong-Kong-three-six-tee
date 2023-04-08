@@ -1,17 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using UnityEditor;
 
 using UnityEngine;
 
-public class GameTile : MonoBehaviour
+public abstract class GameTile : MonoBehaviour
 {
     // Config this
     [SerializeReference]
     public GameTile NextTile = null;
-
-    
 
     // Auto config
     //[HideInInspector]
@@ -24,7 +23,10 @@ public class GameTile : MonoBehaviour
     {
         
     }
-
+    
+    public abstract bool NeedActionOnEnterTile(GamePlayer player);
+    public abstract bool NeedActionOnExitTile(GamePlayer player);
+    public abstract Task ActionsOnStop(GamePlayer player);
 
     #region UNITY_EDITOR
 #if UNITY_EDITOR
@@ -167,4 +169,25 @@ public class GameTile : MonoBehaviour
 
 #endif
     #endregion
+}
+
+public abstract class OwnableTile : GameTile
+{
+
+}
+
+public abstract class EffectsTile : GameTile
+{
+}
+
+public class ChanceTile : EffectsTile
+{
+}
+
+public class PoliceTile : EffectsTile
+{
+}
+
+public class TransportTile : OwnableTile
+{
 }

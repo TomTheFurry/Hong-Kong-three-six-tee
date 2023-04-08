@@ -6,6 +6,7 @@ public class RoundData
 {
     public static Game Game => Game.Instance;
 
+    public int RoundIdx = 0;
     public int ActiveOrderIdx;
     [NotNull]
     public StateTurn CurrentTurnState;
@@ -33,11 +34,45 @@ public class RoundData
     /// </returns>
     public bool NextPlayer()
     {
+        if (ActiveOrderIdx+1 >= Game.IdxToPlayer.Length) return false;
         ActiveOrderIdx++;
-        if (ActiveOrderIdx >= Game.IdxToPlayer.Length)
+        return true;
+    }
+
+    public void NextRound()
+    {
+        RoundIdx++;
+        ActiveOrderIdx = 0;
+    }
+
+    public int ScanForNextActionSteps(int maxSteps)
+    {
+        GamePlayer player = CurrentTurnState.CurrentPlayer;
+        GameTile tile = player.Tile;
+        if (tile.NeedActionOnExitTile(player)) return 0;
+
+        int steps = 1;
+        while (steps < maxSteps)
         {
-            ActiveOrderIdx = 0;
-            return false;
+            if (tile.NeedActionsOnPassBy(CurrentTurnState.CurrentPlayer))
+            {
+                return steps;
+            }
+            tile = tile.NextTile;
+            steps++;
         }
+        return -1;
+    }
+
+    public GameTile ActivePlayerTile => CurrentTurnState.CurrentPlayer.Tile;
+
+    public GameTile GetTileAt(int stepsForward)
+    {
+        GameTile tile = CurrentTurnState.CurrentPlayer.Tile;
+        for (int i = 0; i < stepsForward; i++)
+        {
+            tile = tile.NextTile;
+        }
+        return tile;
     }
 }

@@ -13,6 +13,7 @@ public class GamePlayer
     public readonly Player PunConnection;
     public PlayerObjBase PlayerObj = null;
     public Piece Piece = null;
+    public GameTile Tile = null;
     public int Idx = -1;
     public ControlType Control = ControlType.Unknown;
     public HashSet<GameObject> Holding = new();

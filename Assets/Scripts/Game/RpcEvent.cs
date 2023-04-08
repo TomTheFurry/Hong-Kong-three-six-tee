@@ -69,6 +69,22 @@ public class RPCEventRollDice : RPCEvent
     }
 }
 
+public class RPCEventUseItem : RPCEvent
+{
+    public GamePlayer GamePlayer;
+    public object Item; // TODO: Define item type
+
+    public override void Fail()
+    {
+        // Drop the rpc
+    }
+
+    public void Success(int number)
+    {
+        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+    }
+}
+
 public class RPCEventPieceMove : RPCEvent {
     public GamePlayer GamePlayer;
     public Piece Piece;
@@ -79,21 +95,6 @@ public class RPCEventPieceMove : RPCEvent {
     }
 
     public void Success(int number) {
-        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
-    }
-}
-
-public class RPCEventUseProps : RPCEvent
-{
-    public GamePlayer GamePlayer;
-
-    public override void Fail()
-    {
-        // Drop the rpc
-    }
-
-    public void Success(int number)
-    {
         //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
     }
 }

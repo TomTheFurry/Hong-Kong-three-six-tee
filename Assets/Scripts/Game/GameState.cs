@@ -419,15 +419,33 @@ public class StateTurn : NestedGameState
     
     public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Deferred;
     protected override GameState OnClientEvent(IClientEvent e) => null;
-    protected override GameState OnStateReturnControl(GameStateReturn @return) => null;
+
+    protected override GameState OnStateReturnControl(GameStateReturn @return)
+    {
+        if (ChildState is StateEndTurn)
+        {
+            bool val = (@return as GameStateReturn<bool>)!.Data;
+            if (val)
+            {
+                // Next turn
+                return new StateTurn(Parent, Round);
+            }
+            else
+            {
+                // End game
+                return new GameStateReturn(Parent);
+            }
+        }
+        return null;
+    }
+
     protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
     
     protected override GameState ClientCreateState(ClientEventSwitchState s)
     {
         switch (s.StateType)
         {
-            case "PlayerAction":
-                return new StatePlayerAction(this);
+            case "StatePlayerAction": return new StatePlayerAction(this);
             default:
                 return null;
         }
@@ -448,8 +466,27 @@ public class StateTurn : NestedGameState
         }
 
         public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Deferred;
-        protected override GameState OnClientEvent(IClientEvent e) => null;
-        protected override GameState OnStateReturnControl(GameStateReturn @return) => null;
+
+        protected override GameState OnClientEvent(IClientEvent e)
+        {
+            if (e is ClientEventStringData d && d.Key == "RollDice")
+            {
+                var dice = SerializerUtil.Deserialize<int>(d.Data);
+                return new StateTurnEffects(Parent, dice);
+            }
+            return null;
+        }
+
+        protected override GameState OnStateReturnControl(GameStateReturn r)
+        {
+            if (r is GameStateReturn<int> rInt)
+            {
+                // Rolled dice.
+                return new StateTurnEffects(Parent, rInt.Data);
+            }
+            return null;
+        }
+
         protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
 
         protected override GameState ClientCreateState(ClientEventSwitchState s)
@@ -458,6 +495,8 @@ public class StateTurn : NestedGameState
             {
                 case "WaitForAction":
                     return new StateWaitForAction(this);
+                case "StatePlayerItemEffects":
+                    return new StatePlayerItemEffects(this, SerializerUtil.DeserializeItem(s.ConstructorData));
                 default:
                     return null;
             }
@@ -467,8 +506,11 @@ public class StateTurn : NestedGameState
         {
             [CanBeNull]
             public RPCEventRollDice RollEvent;
+
+            public int RolledDice = 0;
             [CanBeNull]
             public object UseItem; // TODO: change type to item type
+
 
             [NotNull]
             public new StatePlayerAction Parent;
@@ -487,47 +529,254 @@ public class StateTurn : NestedGameState
                     if (eUse.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null) return EventResult.Invalid;
                     UseItem = eUse.Item;
                 }
+                return EventResult.Invalid;
+            }
+
+            public override GameState Update()
+            {
+                if (RollEvent == null && UseItem == null) return null;
+
+                if (RollEvent != null)
+                {
+                    if (RollEvent.RollTask.IsCompleted)
+                    {
+                        if (RollEvent.RollTask.IsCompletedSuccessfully && RollEvent.RollTask.Result > 0)
+                        {
+                            RollEvent.Success(RollEvent.RollTask.Result);
+                            Parent.SendClientStateEvent("RollDice", SerializerUtil.Serialize(RollEvent.RollTask.Result));
+                            return new GameStateReturn<int>(Parent, RollEvent.RollTask.Result);
+                        }
+                        else
+                        {
+                            RollEvent.Fail();
+                            RollEvent = null;
+                        }
+                    }
+                }
+                else if (UseItem != null)
+                {
+                    SendClientSetReturnState<StatePlayerItemEffects>(SerializerUtil.SerializeItem(UseItem)); // TODO: omehow
+                    return new StatePlayerItemEffects(Parent, UseItem);
+                }
+                return null;
+            }
+
+            protected override GameState OnClientUpdate(IClientEvent e)
+            {
+                if (e is ClientEventStringData d && d.Key == "RollDice")
+                {
+                    RolledDice = SerializerUtil.Deserialize<int>(d.Data);
+                }
+                return null;
+            }
+        }
+
+        public class StatePlayerItemEffects : GameState // TODO: Items
+        {
+        }
+    }
+
+    public class StateTurnEffects : NestedGameState
+    {
+        [NotNull]
+        public new StateTurn Parent;
+
+        public int Steps;
+
+        public StateTurnEffects([NotNull] StateTurn parent, int steps) : base(parent)
+        {
+            Parent = parent;
+            Steps = steps;
+        }
+        
+
+        public override GameState OnSelfUpdate()
+        {
+            // Start of turn.
+            SendClientSetState<StateExitTile>();
+            ChildState = new StateExitTile(this);
+            return null;
+        }
+    
+        public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Deferred;
+        protected override GameState OnClientEvent(IClientEvent e) => null;
+
+        protected override GameState OnStateReturnControl(GameStateReturn @return)
+        {
+            if (ChildState is StateEnterTile)
+            {
+                // Now, should be at a tile.
+                if (Steps > 0)
+                {
+                    SendClientSetState<StateEnterTile>();
+                    ChildState = new StateEnterTile(this);
+                    return null;
+                }
                 else
                 {
-                    return EventResult.Invalid;
+                    SendClientSetState<StateStepOnTile>();
+                    return new StateStepOnTile(this);
                 }
-
             }
-            public override GameState Update() => null;
+            else if (ChildState is StateStepOnTile)
+            {
+                SendClientSetReturnState<StateEndTurn>();
+                return new StateEndTurn(Parent);
+            }
+            return null;
+        }
+
+
+        protected override GameState OnClientStateReturnControl(GameStateReturn @return)
+        {
+
+        }
+    
+        protected override GameState ClientCreateState(ClientEventSwitchState s)
+        {
+            switch (s.StateType)
+            {
+                case "StateExitTile": return new StateExitTile(this);
+                case "GameStateReturn": return new GameStateReturn(this);
+                default:
+                    return null;
+            }
+        }
+
+        public class StateExitTile : GameStateLeaf
+        {
+            [NotNull]
+            public new StateTurnEffects Parent;
+            public StateExitTile([NotNull] StateTurnEffects parent) : base(parent) => Parent = parent;
+            public override EventResult ProcessEvent(RPCEvent e) => EventResult.Deferred;
+
+            public override GameState Update()
+            {
+                GameTile tile = Parent.Parent.Round.ActivePlayerTile;
+                if (tile.NeedActionOnExitTile(Parent.Parent.CurrentPlayer))
+                {
+                    // todo
+                }
+                else
+                {
+                    SendClientSetReturnState<StateEnterTile>();
+                    return new StateEnterTile(Parent);
+                }
+                return null;
+            }
+
+            protected override GameState OnClientUpdate(IClientEvent e) => null;
+        }
+        
+        public class StateEnterTile : GameStateLeaf
+        {
+            [NotNull]
+            public new StateTurnEffects Parent;
+            public Task Animation;
+            public StateEnterTile([NotNull] StateTurnEffects parent) : base(parent)
+            {
+                Parent = parent;
+                Parent.Steps--;
+                Animation = Parent.Parent.CurrentPlayer.MoveToTile(Parent.Parent.Round.ActivePlayerTile.NextTile);
+            }
+
+            public override EventResult ProcessEvent(RPCEvent e) => EventResult.Deferred;
+
+            public override GameState Update()
+            {
+                if (!Animation.IsCompleted) return null; // wait for animation
+
+                GameTile tile = Parent.Parent.Round.ActivePlayerTile;
+                if (tile.NeedActionOnEnterTile(Parent.Parent.CurrentPlayer))
+                {
+                    // todo
+                }
+                else
+                {
+                    return new GameStateReturn(Parent);
+                }
+                return null;
+            }
+
             protected override GameState OnClientUpdate(IClientEvent e) => null;
         }
 
-        public class StatePlayerItemEffects : GameState
+        public class StateStepOnTile : GameStateLeaf
         {
-            public override void Update(ref GameState stateAtomic) { }
-        }
+            [NotNull]
+            public new StateTurnEffects Parent;
+            public Task Animation;
 
-        public class StateThrownDice : GameState
-        {
-            public override void Update(ref GameState stateAtomic) { }
-        }
+            public StateStepOnTile([NotNull] StateTurnEffects parent) : base(parent)
+            {
+                Parent = parent;
+                GameTile tile = Parent.Parent.Round.ActivePlayerTile;
+                Animation = tile.ActionsOnStop(Parent.Parent.CurrentPlayer);
+            }
+            public override EventResult ProcessEvent(RPCEvent e) => EventResult.Deferred;
 
-        public class StateThrownItem : GameState
-        {
-            public override void Update(ref GameState stateAtomic) { }
+            public override GameState Update()
+            {
+                if (!Animation.IsCompleted) return null; // wait for animation
+                return new GameStateReturn(Parent);
+            }
+            protected override GameState OnClientUpdate(IClientEvent e) => null;
         }
     }
 
-    public class StateTurnEffects : GameState
+    public class StateEndTurn : NestedGameState
     {
-        public override void Update(ref GameState stateAtomic) { }
-    }
+        [NotNull]
+        public new StateTurn Parent;
 
-    public class StateNewTurn : GameState
-    {
-        public override void Update(ref GameState stateAtomic) { }
-    }
+        public bool IsEndRound;
 
-    public class StateEndTurn : GameState
-    {
-        public override void Update(ref GameState stateAtomic) { }
+        public StateEndTurn([NotNull] StateTurn parent) : base(parent)
+        {
+            Parent = parent;
+            var turn = Parent.Round;
+            IsEndRound = turn.NextPlayer();
+        }
+
+        public override GameState OnSelfUpdate()
+        {
+            if (!IsEndRound)
+            {
+                return new GameStateReturn<bool>(Parent, false);
+            }
+            // check for bankrupt
+            // check for end game
+            bool isEndGame = false; //TODO
+
+            if (isEndGame)
+            {
+                // todo end game screen
+                return new GameStateReturn<bool>(Parent, true);
+            }
+            else
+            {
+                Parent.Round.NextRound();
+                return new GameStateReturn<bool>(Parent, false);
+            }
+        }
+
+
+        public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Deferred;
+        protected override GameState OnClientEvent(IClientEvent e) => null;
+        protected override GameState OnStateReturnControl(GameStateReturn @return) => null;
+        protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
+        protected override GameState ClientCreateState(ClientEventSwitchState s) => null;
     }
 }
+
+
+
+
+
+
+
+
+
 
 
 
