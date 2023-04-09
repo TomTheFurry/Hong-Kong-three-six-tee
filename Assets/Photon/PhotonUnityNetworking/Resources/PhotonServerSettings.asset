@@ -52,6 +52,11 @@ MonoBehaviour:
   - RpcCancelRoll
   - RpcStartRoll
   - InitCurrentTile
+  - MoveForward
+  - RevealOrHideObject
+  - StateChangeRound
+  - StateChangeTurnEnd
+  - Teleport
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
