@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Photon.Realtime;
 
@@ -39,4 +40,10 @@ public class GamePlayer
     }
 
     public override string ToString() => (PunConnection.IsLocal ? "[Local]" : "") + (PunConnection.IsMasterClient ? "[Master]" : "") + $"[{Idx}] {PunConnection.NickName} ({Control} controlling {Piece})";
+
+    public Task MoveToTile(GameTile nextTile)
+    {
+        Tile = nextTile;
+        return Piece.MoveToTile(nextTile);
+    }
 }

@@ -159,8 +159,7 @@ public class Dice6 : MonoBehaviourPun
 
     public GamePlayer PlayerWaitingForRoll { get; private set; }
     public bool IsAwaitingRoll => PlayerWaitingForRoll != null;
-
-    public Task OnDiceCompleteTask;
+    
     public Action<int> diceRollCallback;
 
     public async Task<int> StartRoll(GamePlayer player)

@@ -1,6 +1,10 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 
+using Photon.Pun;
+
+using UnityEngine;
+
 public static class SerializerUtil
 {
     public static byte[] Serialize<T>(T raw) where T : unmanaged
@@ -61,6 +65,14 @@ public static class SerializerUtil
 
     public static ItemBase DeserializeItem(byte[] arr)
     {
-        
+        var id = Deserialize<int>(arr.Take(4).ToArray());
+        var instanceId = Deserialize<int>(arr.Skip(4).Take(4).ToArray());
+        PhotonView view = PhotonView.Find(instanceId);
+        ItemBase item = view.TryGetComponent(out ItemBase itemBase) ? itemBase : null;
+        if (item == null)
+        {
+            Debug.LogError($"Item {instanceId} of {id} not found");
+        }
+        return item;
     }
 }

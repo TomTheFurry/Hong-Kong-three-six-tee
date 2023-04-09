@@ -68,11 +68,12 @@ public abstract class ItemBase : MonoBehaviourPun
     public int Id { get; set; }
     public int InstanceId => photonView.InstantiationId;
     public abstract bool IsUsable { get; }
-    public abstract UseItemStateBase GetUseItemState();
+    public abstract UseItemStateBase GetUseItemState(StateTurn.StatePlayerAction parent);
 
 
 }
 
+/*
 public class PlaceOnTileItem : ItemBase
 {
     public bool IsUsable => true;
@@ -82,4 +83,5 @@ public class PlaceOnTileItem : ItemBase
         //todo
     }
 }
+*/
 

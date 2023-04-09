@@ -72,7 +72,7 @@ public class RPCEventRollDice : RPCEvent
 public class RPCEventUseItem : RPCEvent
 {
     public GamePlayer GamePlayer;
-    public object Item; // TODO: Define item type
+    public ItemBase Item; // TODO: Define item type
 
     public override void Fail()
     {

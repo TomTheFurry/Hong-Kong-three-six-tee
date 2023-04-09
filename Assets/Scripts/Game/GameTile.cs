@@ -170,24 +170,3 @@ public abstract class GameTile : MonoBehaviour
 #endif
     #endregion
 }
-
-public abstract class OwnableTile : GameTile
-{
-
-}
-
-public abstract class EffectsTile : GameTile
-{
-}
-
-public class ChanceTile : EffectsTile
-{
-}
-
-public class PoliceTile : EffectsTile
-{
-}
-
-public class TransportTile : OwnableTile
-{
-}

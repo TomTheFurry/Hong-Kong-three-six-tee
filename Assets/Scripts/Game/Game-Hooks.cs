@@ -18,7 +18,13 @@ public partial class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallb
         bool v = JoinedPlayers.Add(p);
         JoinedPlayersLock.ExitWriteLock();
         Debug.Assert(v, "Dup player detected!");
-        if (photonView.IsMine) EventsToProcess.Add(new RPCEventNewPlayer { GamePlayer = p });
+        if (photonView.IsMine)
+        {
+            lock (EventsToProcess)
+            {
+                EventsToProcess.AddLast(new RPCEventNewPlayer{GamePlayer = newPlayer});
+            }
+        }
     }
 
     public void OnPlayerLeftRoom(Player otherPlayer)

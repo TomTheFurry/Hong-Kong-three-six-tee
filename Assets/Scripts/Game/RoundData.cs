@@ -45,25 +45,6 @@ public class RoundData
         ActiveOrderIdx = 0;
     }
 
-    public int ScanForNextActionSteps(int maxSteps)
-    {
-        GamePlayer player = CurrentTurnState.CurrentPlayer;
-        GameTile tile = player.Tile;
-        if (tile.NeedActionOnExitTile(player)) return 0;
-
-        int steps = 1;
-        while (steps < maxSteps)
-        {
-            if (tile.NeedActionsOnPassBy(CurrentTurnState.CurrentPlayer))
-            {
-                return steps;
-            }
-            tile = tile.NextTile;
-            steps++;
-        }
-        return -1;
-    }
-
     public GameTile ActivePlayerTile => CurrentTurnState.CurrentPlayer.Tile;
 
     public GameTile GetTileAt(int stepsForward)

@@ -11,6 +11,7 @@ using ExitGames.Client.Photon;
 using JetBrains.Annotations;
 
 using Photon.Pun;
+using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -34,7 +35,7 @@ using Random = UnityEngine.Random;
 // }
 
 
-public partial class Game
+public partial class Game : IStateRunner
 {
     public static bool IsMaster => Instance.photonView.IsMine;
 
@@ -61,7 +62,7 @@ public partial class Game
 
     // get the player index which need to action
     public static GamePlayer ActionPlayer => Instance.IdxToPlayer[ActionPlayerIdx];
-    public static int ActionPlayerIdx => Instance.playerOrder[Instance.roundData.actionOrderIdx];
+    public static int ActionPlayerIdx => Instance.playerOrder[Instance.roundData.ActiveOrderIdx];
     public int[] playerOrder = null;
     
     public IEnumerable<KeyValuePair<int, PlayerState>> PlayersIter => Players.Select((p, i) => new KeyValuePair<int, PlayerState>(i, p)).Where(p => p.Value != null);
@@ -122,7 +123,9 @@ public partial class Game
     //     return true;
     // }
 
-    public ConcurrentBag<RPCEvent> EventsToProcess = new();
+    // Note: ALWAYS use lock()... on this
+    public LinkedList<RPCEvent> EventsToProcess = new();
+    public LinkedList<(string[], IClientEvent)> ClientEventsToProcess = new();
 
     public Piece[] PiecesTemplate;
     
@@ -147,7 +150,7 @@ public partial class Game
     public void Start()
     {
         Instance = this;
-        State = new StateStartup();
+        State = new StateStartup(this);
         PhotonNetwork.PrefabPool = this;
         PhotonNetwork.AddCallbackTarget(this);
         PhotonNetwork.ConnectUsingSettings();
@@ -155,16 +158,149 @@ public partial class Game
 
     public void LateUpdate()
     {
+        if (State == null || State is GameStateReturn) return; // not running
+
         if (photonView.IsMine)
         {
-            while (EventsToProcess.TryTake(out var e))
+            lock (EventsToProcess)
             {
-                if (!State.ProcessEvent(e))
+                var node = EventsToProcess.First;
+                while (node != null)
                 {
-                    e.Fail();
+                    var next = node.Next;
+                    var e = node.Value;
+                    var result = State.ProcessEvent(e);
+                    switch (result)
+                    {
+                        case EventResult.Consumed:
+                            EventsToProcess.Remove(node);
+                            break;
+                        case EventResult.Invalid:
+                            EventsToProcess.Remove(node);
+                            e.Fail();
+                            break;
+                        case EventResult.Deferred:
+                            break;
+                    }
+                    node = next;
                 }
             }
-            State.Update(ref State);
+            var nextState = State.Update();
+            if (nextState != null) State = nextState;
+        }
+        else
+        {
+            lock (ClientEventsToProcess)
+            {
+                var node = ClientEventsToProcess.First;
+                while (node != null)
+                {
+                    var next = node.Next;
+                    var (tree, e) = node.Value;
+                    var result = State.ClientUpdate(tree, e);
+                    if (result != null) State = result;
+                    ClientEventsToProcess.Remove(node);
+                    node = next;
+                }
+
+            }
+            
+        }
+    }
+
+
+    bool IStateRunner.IsMaster => IsMaster;
+
+    public void SendClientStateEvent(IEnumerable<string> tree, IClientEvent e)
+    {
+        string[] treeArr = tree.ToArray();
+        int typeId = e switch
+        {
+            ClientEventSwitchState _ => 0,
+            ClientEventString _ => 1,
+            ClientEventStringData _ => 2,
+            _ => throw new ArgumentOutOfRangeException(nameof(e), e, null)
+        };
+        string key = e switch
+        {
+            ClientEventSwitchState s => s.StateType,
+            ClientEventString s => s.Key,
+            ClientEventStringData s => s.Key,
+            _ => throw new ArgumentOutOfRangeException(nameof(e), e, null)
+        };
+        byte[] data = e switch
+        {
+            ClientEventSwitchState s => s.ConstructorData,
+            ClientEventStringData s => s.Data,
+            _ => Array.Empty<byte>(),
+        };
+        photonView.RPC(nameof(ClientStateEvent), RpcTarget.Others, treeArr, typeId, key, data);
+    }
+
+    public void SendClientStateEvent(IClientEvent e) => SendClientStateEvent(Array.Empty<string>(), e);
+
+    [PunRPC]
+    public void ClientStateEvent(string[] tree, int typeId, string key, byte[] data)
+    {
+        IClientEvent e = typeId switch
+        {
+            0 => new ClientEventSwitchState { ConstructorData = data, StateType = key },
+            1 => new ClientEventString { Key = key },
+            2 => new ClientEventStringData { Key = key, Data = data },
+            _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
+        };
+        lock (ClientEventsToProcess)
+        {
+            ClientEventsToProcess.AddLast((tree, e));
+        }
+    }
+
+    [PunRPC]
+    public void SetIdxToPlayer(Player[] idxPlayers)
+    {
+        Debug.Log($"SetIdxToPlayer Rpc....");
+        if (photonView.IsMine) return; // ignore
+        IdxToPlayer = idxPlayers.Select(p => (GamePlayer)p).ToArray();
+        for (var i = 0; i < IdxToPlayer.Length; i++)
+        {
+            IdxToPlayer[i].Idx = i;
+        }
+    }
+    [PunRPC]
+    public void PlayerRolledDice(Player player, int dice)
+    {
+        Debug.Log($"Player {player.NickName} rolled {dice}");
+    }
+    [PunRPC]
+    public void PlayerSelectedPiece(Player player, int pieceIdx)
+    {
+        Debug.Log($"Player {player.NickName} selected piece {pieceIdx}");
+        //var p = Players[IPlayer.From(player)];
+        //p.Piece = Game.Instance.Pieces[pieceIdx];
+        //p.Piece.Owner = p.Player;
+    }
+
+    [PunRPC]
+    public void ClientTrySelectPiece(int pieceIdx, PhotonMessageInfo info)
+    {
+        Debug.Log($"Client {info.Sender} try select piece {pieceIdx}");
+        Debug.Assert(photonView.IsMine);
+        lock (EventsToProcess)
+        {
+            EventsToProcess.AddLast(new RPCEventSelectPiece { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
+        }
+    }
+
+    [PunRPC]
+    public void ClientTryRollDice(int viewId, PhotonMessageInfo info)
+    {
+        Debug.Log($"Client {info.Sender} try roll dice");
+        Debug.Assert(photonView.IsMine);
+        lock (EventsToProcess)
+        {
+            EventsToProcess.AddLast(new RPCEventRollDice {
+                GamePlayer = info.Sender, Dice = PhotonNetwork.GetPhotonView(viewId).GetComponent<Dice6>()
+            });
         }
     }
 }

@@ -486,6 +486,22 @@ public class StateTurn : NestedGameState
                 // Rolled dice.
                 return new StateTurnEffects(Parent, rInt.Data);
             }
+            if (ChildState is UseItemStateBase)
+            {
+                if (r is GameStateReturn<bool> shouldSkipTurn)
+                {
+                    if (shouldSkipTurn.Data)
+                    {
+                        return new StateEndTurn(Parent);
+                    }
+                    else
+                    {
+                        return new StateWaitForAction(this);
+                    }
+                }
+
+            }
+
             return null;
         }
 
@@ -509,7 +525,7 @@ public class StateTurn : NestedGameState
 
             public int RolledDice = 0;
             [CanBeNull]
-            public object UseItem; // TODO: change type to item type
+            public ItemBase UseItem;
 
 
             [NotNull]
@@ -526,7 +542,7 @@ public class StateTurn : NestedGameState
                 }
                 else if (e is RPCEventUseItem eUse)
                 {
-                    if (eUse.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null) return EventResult.Invalid;
+                    if (eUse.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null || !eUse.Item.IsUsable) return EventResult.Invalid;
                     UseItem = eUse.Item;
                 }
                 return EventResult.Invalid;
@@ -555,9 +571,8 @@ public class StateTurn : NestedGameState
                 }
                 else if (UseItem != null)
                 {
-
-
-                    return new StatePlayerItemEffects(Parent, UseItem);
+                    SendClientStateEvent("UseItem", SerializerUtil.SerializeItem(UseItem));
+                    return UseItem.GetUseItemState(Parent);
                 }
                 return null;
             }
@@ -567,6 +582,11 @@ public class StateTurn : NestedGameState
                 if (e is ClientEventStringData d && d.Key == "RollDice")
                 {
                     RolledDice = SerializerUtil.Deserialize<int>(d.Data);
+                }
+                else if (e is ClientEventStringData d2 && d2.Key == "UseItem")
+                {
+                    UseItem = SerializerUtil.DeserializeItem(d2.Data);
+                    return UseItem.GetUseItemState(Parent);
                 }
                 return null;
             }
@@ -625,11 +645,8 @@ public class StateTurn : NestedGameState
         }
 
 
-        protected override GameState OnClientStateReturnControl(GameStateReturn @return)
-        {
+        protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
 
-        }
-    
         protected override GameState ClientCreateState(ClientEventSwitchState s)
         {
             switch (s.StateType)

@@ -15,6 +15,7 @@ using UnityEngine;
 using TMPro;
 
 using Random = UnityEngine.Random;
+using System.Threading.Tasks;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(SpringJoint))]
@@ -33,7 +34,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 
     private Rigidbody rb;
     private SpringJoint sj;
-
+    
     private bool moving = false;
     /// <summary>
     /// Will be called when piece move end
@@ -84,7 +85,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             }
             if (moving && Vector2.Distance(tilePos, piecePos) < 0.1f)
             {
-                if (movingCallBack != null) movingCallBack();
+                movingCallBack?.Invoke();
                 movingCallBack = null;
                 moving = false;
             }
@@ -161,6 +162,18 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     private void UpdatePin()
     {
         sj.connectedAnchor = CurrentTile.transform.position;
+    }
+
+    public Task MoveToTile(GameTile tile)
+    {
+        CurrentTile = tile;
+        var t = new TaskCompletionSource<int>();
+        moving = false;
+        movingCallBack = () => t.SetResult(0);
+        moving = true;
+        UpdatePin();
+        return Task.WhenAny(t.Task, Task.Delay(2000))
+            .ContinueWith((t) => { moving = false; });
     }
 
     [PunRPC]
