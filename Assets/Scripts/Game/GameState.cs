@@ -395,7 +395,7 @@ public class StateRollOrder : GameStateLeaf
 
 public class StateTurn : NestedGameState
 {
-    private readonly RoundData Round;
+    public readonly RoundData Round;
     public readonly int CurrentOrderIdx;
     public int CurrentPlayerIdx => Game.Instance.playerOrder[CurrentOrderIdx];
     [NotNull]
@@ -474,6 +474,8 @@ public class StateTurn : NestedGameState
                 var dice = SerializerUtil.Deserialize<int>(d.Data);
                 return new StateTurnEffects(Parent, dice);
             }
+            
+
             return null;
         }
 
@@ -495,8 +497,6 @@ public class StateTurn : NestedGameState
             {
                 case "WaitForAction":
                     return new StateWaitForAction(this);
-                case "StatePlayerItemEffects":
-                    return new StatePlayerItemEffects(this, SerializerUtil.DeserializeItem(s.ConstructorData));
                 default:
                     return null;
             }
@@ -555,7 +555,8 @@ public class StateTurn : NestedGameState
                 }
                 else if (UseItem != null)
                 {
-                    SendClientSetReturnState<StatePlayerItemEffects>(SerializerUtil.SerializeItem(UseItem)); // TODO: omehow
+
+
                     return new StatePlayerItemEffects(Parent, UseItem);
                 }
                 return null;
@@ -570,10 +571,7 @@ public class StateTurn : NestedGameState
                 return null;
             }
         }
-
-        public class StatePlayerItemEffects : GameState // TODO: Items
-        {
-        }
+        
     }
 
     public class StateTurnEffects : NestedGameState
@@ -766,149 +764,5 @@ public class StateTurn : NestedGameState
         protected override GameState OnStateReturnControl(GameStateReturn @return) => null;
         protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
         protected override GameState ClientCreateState(ClientEventSwitchState s) => null;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public class StateRound : GameState
-{
-    public readonly int[] RolledDice;
-
-    public StateRound(int[] Roll)
-    {
-        RolledDice = Roll;
-    }
-
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        if (nextState != null) return false;
-
-        if (e is RPCEventRollDice eRollDice)
-        {
-            Debug.Log($"Round -- Player: {Game.ActionPlayer.PunConnection.NickName} action -- {eRollDice.GamePlayer.Idx} -- {Game.ActionPlayerIdx}");
-
-            if (eRollDice.GamePlayer.Idx != Game.ActionPlayerIdx) return false;
-
-            if (RolledDice[eRollDice.GamePlayer.Idx] != 0) return false;
-            eRollDice.Dice.diceRollCallback = (int result) => {
-                RolledDice[eRollDice.GamePlayer.Idx] = result;
-
-                // push a piece move event
-                Game.Instance.EventsToProcess.Add(new RPCEventPieceMove()
-                {
-                    GamePlayer = eRollDice.GamePlayer,
-                    Piece = eRollDice.GamePlayer.Piece,
-                    MoveStep = result
-                });
-                eRollDice.Success(result);
-            };
-            return true;
-        }
-        else if (e is RPCEventPieceMove ePieceMove)
-        {
-            // when piece move end
-            ePieceMove.Piece.movingCallBack = () => {
-                Debug.Log("move end");
-                Game.Instance.State = new StateTurnEnd();
-            };
-            ePieceMove.Piece.photonView.RPC("MoveForward", RpcTarget.AllBufferedViaServer, ePieceMove.MoveStep);
-            return true;
-        }
-        else if (e is RPCEventUseProps eUseProps)
-        {
-            
-        }
-        return false;
-    }
-
-    public override void Update(ref GameState state)
-    {
-        //if (RolledDice.All(d => d != 0))
-        //{
-        //    state = new StateNewRound();
-        //    Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
-        //}
-    }
-}
-
-public class StateTurnEnd : GameState
-{
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        return false;
-    }
-
-    public override void Update(ref GameState state)
-    {
-        if (Game.Instance.roundData.NextPlayer())
-        {
-            state = RoundData.StateRound;
-            Game.Instance.photonView.RPC("StateChangeRound", RpcTarget.AllBufferedViaServer);
-        }
-        else
-        {
-            state = new StateNewRound();
-            Game.Instance.photonView.RPC("StateChangeNewRound", RpcTarget.AllBufferedViaServer);
-        }
-    }
-}
-
-//public class StatePieceMove : GameState
-//{
-//    bool isMoveOver = false;
-//    public override bool ProcessEvent(RPCEvent e)
-//    {
-//        if (e is RPCEventPieceMove ePieceMove)
-//        {
-//            ePieceMove.Piece.photonView.RPC("MoveForward", RpcTarget.AllBufferedViaServer, ePieceMove.MoveStep);
-//            return true;
-//        }
-//        return false;
-//    }
-//    public override void Update(ref GameState state)
-//    {
-//        if (isMoveOver)
-//        {
-//            state = RoundData.StateRound;
-//        }
-//    }
-//}
-
-
-public class StateUseProps : GameState
-{
-    public override bool ProcessEvent(RPCEvent e)
-    {
-        return base.ProcessEvent(e);
-    }
-
-    public override void Update(ref GameState stateAtomic)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.InteropServices;
 
 public static class SerializerUtil
@@ -49,5 +50,17 @@ public static class SerializerUtil
         }
         Marshal.FreeHGlobal(ptr);
         return raw;
+    }
+
+    public static byte[] SerializeItem(ItemBase item)
+    {
+        byte[] id = Serialize(item.Id);
+        byte[] instanceId = Serialize(item.InstanceId);
+        return id.Concat(instanceId).ToArray();
+    }
+
+    public static ItemBase DeserializeItem(byte[] arr)
+    {
+        
     }
 }
