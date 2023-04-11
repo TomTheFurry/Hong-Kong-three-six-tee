@@ -239,6 +239,8 @@ public class StateStartup : GameStateLeaf
             if (MasterSignalStartGame && CanStart)
             {
                 Debug.Log("Starting game...");
+                PhotonNetwork.CurrentRoom.IsOpen = false;
+                PhotonNetwork.CurrentRoom.IsVisible = false;
 
                 // Kick all players that are not ready
                 foreach (var player in Game.Instance.JoinedPlayers)
