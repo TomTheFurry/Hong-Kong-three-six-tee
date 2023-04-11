@@ -41,6 +41,12 @@ public class RoundData
         return true;
     }
 
+    public GamePlayer PeekNextPlayer()
+    {
+        int nextIdx = ActiveOrderIdx + 1 % Game.IdxToPlayer.Length;
+        return Game.IdxToPlayer[Game.playerOrder[nextIdx]];
+    }
+
     public void NextRound()
     {
         RoundIdx++;

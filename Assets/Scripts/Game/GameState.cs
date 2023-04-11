@@ -303,6 +303,18 @@ public class StateStartup : GameStateLeaf
 
 public class StateRollOrder : GameStateLeaf
 {
+    private struct RolledDice
+    {
+        public int Idx;
+        public int RollNum;
+
+        public void Deconstruct(out int idx, out int rollNum)
+        {
+            idx = Idx;
+            rollNum = RollNum;
+        }
+    }
+
     public readonly int[] RollNumByIdx;
     private LinkedList<RPCEventRollDice> activeRolls = new();
 
@@ -339,6 +351,7 @@ public class StateRollOrder : GameStateLeaf
                     {
                         RollNumByIdx[e.GamePlayer.Idx] = e.RollTask.Result;
                         e.Success(e.RollTask.Result);
+                        SendClientStateEvent("PlayerRolled", SerializerUtil.Serialize(new RolledDice { Idx = e.GamePlayer.Idx, RollNum = e.RollTask.Result }));
                     }
                     else
                     {
@@ -377,7 +390,14 @@ public class StateRollOrder : GameStateLeaf
 
     protected override GameState OnClientUpdate(IClientEvent e)
     {
-        if (e is ClientEventStringData d && d.Key == "PlayerOrder")
+        if (e is ClientEventStringData sd && sd.Key == "PlayerRolled")
+        {
+            var (idx, roll) = SerializerUtil.Deserialize<RolledDice>(sd.Data);
+            GamePlayer player = Game.Instance.IdxToPlayer[idx];
+            Debug.Log($"Player {player} Rolled: {roll}");
+            RollNumByIdx[idx] = roll;
+        }
+        else if (e is ClientEventStringData d && d.Key == "PlayerOrder")
         {
             int[] playerOrders = SerializerUtil.DeserializeArray<int>(d.Data);
             Debug.Log($"Player Order: {playerOrders}");
@@ -612,13 +632,14 @@ public class StateTurn : NestedGameState
         [NotNull]
         public new StateTurn Parent;
 
+        public readonly int TotalSteps;
         public int Steps;
 
         public StateTurnEffects([NotNull] StateTurn parent, int steps) : base(parent)
         {
             Parent = parent;
-            Steps = steps;
-            Debug.Log($"Turn Effects: Player {Parent.CurrentPlayer} rolled dice {steps}");
+            TotalSteps = Steps = steps;
+            Debug.Log($"Turn Effects: Player {Parent.CurrentPlayer} rolled dice {TotalSteps}");
         }
         
 
@@ -760,16 +781,20 @@ public class StateTurn : NestedGameState
         public new StateTurn Parent;
 
         public bool IsEndRound;
+        private Task delay;
 
         public StateEndTurn([NotNull] StateTurn parent) : base(parent)
         {
             Parent = parent;
             var turn = Parent.Round;
             IsEndRound = turn.NextPlayer();
+            delay = Task.Delay(1000);
         }
 
         public override GameState OnSelfUpdate()
         {
+            if (!delay.IsCompleted) return null;
+
             Debug.Log($"Turn end for Player {Parent.CurrentPlayer}");
             if (!IsEndRound)
             {

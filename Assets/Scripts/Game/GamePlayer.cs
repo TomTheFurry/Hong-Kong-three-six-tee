@@ -27,6 +27,7 @@ public class GamePlayer
     public LinkedList<ItemBase> Items = new();
     public double Funds = 1000;
 
+    public string Name => PunConnection.NickName;
 
     
 
