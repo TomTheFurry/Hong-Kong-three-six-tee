@@ -82,7 +82,7 @@ public class Dice6 : MonoBehaviourPun
 
 
     [CanBeNull]
-    private GamePlayer PlayerRolling;
+    public GamePlayer PlayerRolling;
 
     [CanBeNull]
     private volatile TaskCompletionSource<(GamePlayer, int)> OnRollComplete;
@@ -114,10 +114,13 @@ public class Dice6 : MonoBehaviourPun
         if (IsRolling && (IsStopped() || IsInvalid()))
         {
             var face = IsInvalid() ? -1 : GetCurrentDiceFace();
+            if (face == 0) face = -1;
             Debug.Log($"Rolled {face}!");
             var obj = OnRollComplete;
             OnRollComplete = null;
             obj.SetResult((PlayerRolling, face));
+            PlayerRolling = null;
+            IsRolling = false;
         }
     }
 

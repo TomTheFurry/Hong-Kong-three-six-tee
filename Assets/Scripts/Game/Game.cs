@@ -14,6 +14,7 @@ using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Events;
 
 using Random = UnityEngine.Random;
@@ -166,6 +167,22 @@ public partial class Game : IStateRunner
         PhotonNetwork.ConnectUsingSettings();
     }
 
+    private GameState ClientCreateState(ClientEventSwitchState s)
+    {
+        return s.StateType switch
+        {
+            nameof(StateStartup) => new StateStartup(this),
+            nameof(StateRollOrder) => new StateRollOrder(this),
+            nameof(StateTurn) => new StateTurn(this, roundData),
+            _ => throw new Exception($"Unknown state type {s.StateType}")
+        };
+    }
+
+    private void OnClientEvent(IClientEvent e)
+    {
+        Debug.LogError($"Unknown event {e}");
+    }
+
     public void LateUpdate()
     {
         if (State == null || State is GameStateReturn) return; // not running
@@ -207,14 +224,26 @@ public partial class Game : IStateRunner
                 {
                     var next = node.Next;
                     var (tree, e) = node.Value;
-                    var result = State.ClientUpdate(tree, e);
-                    if (result != null) State = result;
+
+                    GameState nextState = null;
+                    if (tree.Length != 0)
+                    {
+                        Assert.AreEqual(State.GetType().Name, tree[0]);
+                        nextState = State.ClientUpdate(tree[1..], e);
+                    }
+                    else if (e is ClientEventSwitchState stateEvent)
+                    {
+                        nextState = ClientCreateState(stateEvent);
+                    }
+                    else
+                    {
+                         OnClientEvent(e);
+                    }
+                    if (nextState != null) State = nextState;
                     ClientEventsToProcess.Remove(node);
                     node = next;
                 }
-
             }
-            
         }
     }
 
@@ -224,6 +253,7 @@ public partial class Game : IStateRunner
     public void SendClientStateEvent(IEnumerable<string> tree, IClientEvent e)
     {
         string[] treeArr = tree.ToArray();
+        Debug.Log($"ClientStateEvent sent at [{treeArr}]: {e}");
         int typeId = e switch
         {
             ClientEventSwitchState _ => 0,
@@ -259,6 +289,8 @@ public partial class Game : IStateRunner
             2 => new ClientEventStringData { Key = key, Data = data },
             _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
         };
+
+        Debug.Log($"ClientStateEvent received at [{tree}]: {e}");
         lock (ClientEventsToProcess)
         {
             ClientEventsToProcess.AddLast((tree, e));
@@ -275,6 +307,7 @@ public partial class Game : IStateRunner
         {
             IdxToPlayer[i].Idx = i;
         }
+        Instance.playerOrder = new int[IdxToPlayer.Length];
     }
     [PunRPC]
     public void PlayerSelectedPiece(Player player, int pieceIdx)
@@ -293,19 +326,6 @@ public partial class Game : IStateRunner
         lock (EventsToProcess)
         {
             EventsToProcess.AddLast(new RPCEventSelectPiece { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
-        }
-    }
-
-    [PunRPC]
-    public void ClientTryRollDice(int viewId, PhotonMessageInfo info)
-    {
-        Debug.Log($"Client {info.Sender} try roll dice");
-        Debug.Assert(photonView.IsMine);
-        lock (EventsToProcess)
-        {
-            EventsToProcess.AddLast(new RPCEventRollDice {
-                GamePlayer = info.Sender, Dice = PhotonNetwork.GetPhotonView(viewId).GetComponent<Dice6>()
-            });
         }
     }
 }

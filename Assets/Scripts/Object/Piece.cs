@@ -164,7 +164,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     {
         if (CurrentTile != null)
         {
-            sj.connectedAnchor = CurrentTile.transform.position;
+            sj.connectedAnchor = CurrentTile.transform.position + Vector3.up *1f;
         }
     }
 

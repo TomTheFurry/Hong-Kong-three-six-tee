@@ -109,6 +109,7 @@ public partial class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallb
         {
             LocalState &= ~LocalPlayerState.IsMaster;
         }
+        PhotonNetwork.Disconnect(); // for now cant handle master switch
     }
 
 

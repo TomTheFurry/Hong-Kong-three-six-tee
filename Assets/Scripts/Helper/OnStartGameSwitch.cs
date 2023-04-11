@@ -8,7 +8,7 @@ public class OnStartGameSwitch : MonoBehaviour
     {
         if (Game.Instance.State is StateRollOrder chooseOrder)
         {
-            GetComponent<UiTempUtil>().SetActiveMenu(null); // todo
+            GetComponent<UiTempUtil>().SetActiveMenu(null); // hide it.
         }
     }
 }

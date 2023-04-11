@@ -45,12 +45,15 @@ public class ClientEventSwitchState : IClientEvent
     public string StateType;
     [NotNull]
     public byte[] ConstructorData;
+
+    public override string ToString() => $"SwitchState: {StateType}[{ConstructorData.Length} bytes]";
 }
 
 public class ClientEventString : IClientEvent
 {
     [NotNull]
     public string Key;
+    public override string ToString() => $"String: {Key}";
 }
 
 public class ClientEventStringData : IClientEvent
@@ -59,6 +62,8 @@ public class ClientEventStringData : IClientEvent
     public string Key;
     [NotNull]
     public byte[] Data;
+
+    public override string ToString() => $"StringData: {Key}[{Data.Length} bytes]";
 }
 
 public abstract class GameState : IStateRunner
@@ -297,18 +302,11 @@ public class StateStartup : GameStateLeaf
 public class StateRollOrder : GameStateLeaf
 {
     public readonly int[] RollNumByIdx;
-    public readonly int[][] RolledDice;
     private LinkedList<RPCEventRollDice> activeRolls = new();
 
     public StateRollOrder([NotNull] IStateRunner runner) : base(runner)
     {
         RollNumByIdx = new int[Game.Instance.IdxToPlayer.Length];
-
-        RolledDice = new int[Game.Instance.IdxToPlayer.Length][];
-        for (int i = 0; i < RolledDice.Length; i++)
-        {
-            RolledDice[i] = new[] { i, 0 };
-        }
     }
 
     public override EventResult ProcessEvent(RPCEvent e)
@@ -350,7 +348,7 @@ public class StateRollOrder : GameStateLeaf
             }
         }
         // If all rolls are done, compute orders and go to next stage
-        if (RolledDice.All(d => d[1] != 0))
+        if (RollNumByIdx.All(d => d != 0))
         {
             var enumRoll = RollNumByIdx
                 .Select((d, idx) => Tuple.Create(d, -idx))

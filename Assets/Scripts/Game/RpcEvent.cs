@@ -66,7 +66,7 @@ public class RPCEventRollDice : RPCEvent
 
     public void Success(int number)
     {
-        Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
     }
 }
 

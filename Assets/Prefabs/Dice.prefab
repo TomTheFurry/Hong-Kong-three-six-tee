@@ -206,6 +206,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: dice-6
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5f86c67b5d538f24cad2c1946b974780, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f86c67b5d538f24cad2c1946b974780, type: 3}
 --- !u!1 &2840182155051018151 stripped
