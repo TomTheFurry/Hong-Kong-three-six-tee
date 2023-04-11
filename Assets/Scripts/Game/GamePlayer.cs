@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
+using UnityEngine.Assertions;
+
 
 public class GamePlayer
 {
@@ -15,9 +18,17 @@ public class GamePlayer
     public PlayerObjBase PlayerObj = null;
     public Piece Piece = null;
     public GameTile Tile = null;
+    public PlayerCan Can = null;
     public int Idx = -1;
     public ControlType Control = ControlType.Unknown;
     public HashSet<GameObject> Holding = new();
+
+    // Game States
+    public LinkedList<ItemBase> Items = new();
+    public double Funds = 1000;
+
+
+    
 
     public GamePlayer(Player punConnection)
     {
@@ -40,6 +51,17 @@ public class GamePlayer
     }
 
     public override string ToString() => (PunConnection.IsLocal ? "[Local]" : "") + (PunConnection.IsMasterClient ? "[Master]" : "") + $"[{Idx}] {PunConnection.NickName} ({Control} controlling {Piece})";
+
+    public void GameSetup(Board board)
+    {
+        Assert.IsNotNull(PlayerObj);
+        Assert.IsNotNull(Piece);
+        Tile = board.StartingTile;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PlayerCan.Instantiate(this);
+        }
+    }
 
     public Task MoveToTile(GameTile nextTile)
     {

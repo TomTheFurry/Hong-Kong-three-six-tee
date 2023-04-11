@@ -43,6 +43,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     
     public void Start()
     {
+        CurrentTile = Game.Instance.Board.StartingTile;
         rb = GetComponent<Rigidbody>();
         sj = GetComponent<SpringJoint>();
         sj.autoConfigureConnectedAnchor = false;
@@ -161,7 +162,10 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 
     private void UpdatePin()
     {
-        sj.connectedAnchor = CurrentTile.transform.position;
+        if (CurrentTile != null)
+        {
+            sj.connectedAnchor = CurrentTile.transform.position;
+        }
     }
 
     public Task MoveToTile(GameTile tile)

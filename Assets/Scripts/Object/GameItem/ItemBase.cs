@@ -4,12 +4,14 @@ using Assets.Scripts;
 
 using Photon.Pun;
 
+using UnityEditor;
+
 using UnityEngine;
 using UnityEngine.Assertions;
 
 public abstract class UseItemStateBase : NestedGameState
 {
-    public readonly StateTurn.StatePlayerAction Parent;
+    public new readonly StateTurn.StatePlayerAction Parent;
     public readonly ItemBase Item;
     public readonly GamePlayer Player;
     public readonly RoundData Round;
@@ -63,13 +65,54 @@ public class ItemTemplateDefiner : MonoBehaviourPun
     }
 }
 
-public abstract class ItemBase : MonoBehaviourPun
+public abstract class ItemBase : PcGrabInteractable
 {
+    private GamePlayer CurrentOwnerImpl = null;
+
+    public GamePlayer CurrentOwner
+    {
+        get => CurrentOwnerImpl;
+        set
+        {
+            if (CurrentOwnerImpl == value)
+            {
+                return;
+            }
+
+            if (CurrentOwnerImpl != null)
+            {
+                CurrentOwnerImpl.Items.Remove(this);
+            }
+            if (value != null)
+            {
+                value.Items.AddFirst(this);
+            }
+            CurrentOwnerImpl = value;
+        }
+    }
+
+
+
     public int Id { get; set; }
     public int InstanceId => photonView.InstantiationId;
     public abstract bool IsUsable { get; }
     public abstract UseItemStateBase GetUseItemState(StateTurn.StatePlayerAction parent);
 
+    protected ItemBase()
+    {
+        GrabCondition = (player) => CurrentOwner == player;
+        OnReleased.AddListener((player) =>
+            {
+                bool releaseControl = OnReleasedItem(player);
+                if (releaseControl)
+                {
+                    CurrentOwner = null;
+                }
+            }
+        );
+    }
+
+    protected abstract bool OnReleasedItem(GamePlayer player);
 
 }
 

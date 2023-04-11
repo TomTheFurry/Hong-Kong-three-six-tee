@@ -2,13 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(PhotonView))]
 public class PcGrabInteractable : MonoBehaviourPun
 {
     public int ownerID = -1;
@@ -28,9 +30,12 @@ public class PcGrabInteractable : MonoBehaviourPun
 
     public bool noGravityAfterGrab = true;
 
-    public UnityEvent<GamePlayer> OnGrabbed;
-    public UnityEvent<GamePlayer> OnReleased;
+    [NotNull]
+    public UnityEvent<GamePlayer> OnGrabbed = new();
+    [NotNull]
+    public UnityEvent<GamePlayer> OnReleased = new();
 
+    [NotNull]
     public Func<GamePlayer, bool> GrabCondition = _ => true;
 
     public void TryGrabObject(Transform grabber, Action onSuccess)
@@ -64,7 +69,7 @@ public class PcGrabInteractable : MonoBehaviourPun
     }
 
     [PunRPC]
-    public void NotifyChangeOwner(Player player, bool isReleasing)
+    public void NotifyChangeOwner([NotNull] Player player, bool isReleasing)
     {
         if (isReleasing)
         {

@@ -318,7 +318,7 @@ public class StateRollOrder : GameStateLeaf
             if (RollNumByIdx[eRollDice.GamePlayer.Idx] != 0) return EventResult.Invalid;
             Dice6 dice = eRollDice.Dice;
             GamePlayer player = eRollDice.GamePlayer;
-            eRollDice.RollTask = dice.StartRoll(player);
+            eRollDice.RollTask = dice.WatchForRollDone(player);
             activeRolls.AddLast(eRollDice);
             return EventResult.Consumed;
         }
@@ -538,7 +538,7 @@ public class StateTurn : NestedGameState
                 {
                     if (eRoll.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null) return EventResult.Invalid;
                     Dice6 dice = eRoll.Dice;
-                    eRoll.RollTask = dice.StartRoll(eRoll.GamePlayer);
+                    eRoll.RollTask = dice.WatchForRollDone(eRoll.GamePlayer);
                 }
                 else if (e is RPCEventUseItem eUse)
                 {
@@ -776,7 +776,7 @@ public class StateTurn : NestedGameState
         }
 
 
-        public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Deferred;
+        public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Invalid;
         protected override GameState OnClientEvent(IClientEvent e) => null;
         protected override GameState OnStateReturnControl(GameStateReturn @return) => null;
         protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;

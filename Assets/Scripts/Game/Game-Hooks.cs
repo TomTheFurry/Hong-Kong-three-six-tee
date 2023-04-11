@@ -18,6 +18,7 @@ public partial class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallb
         bool v = JoinedPlayers.Add(p);
         JoinedPlayersLock.ExitWriteLock();
         Debug.Assert(v, "Dup player detected!");
+        OnPlayerJoinedCheckHash(newPlayer);
         if (photonView.IsMine)
         {
             lock (EventsToProcess)
@@ -75,8 +76,10 @@ public partial class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallb
         }
         LocalState |= state;
 
+        int playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
+        Transform spawnpoint = SpawnpointsArr[(playerCount-1) % SpawnpointsArr.Length];
         //TODO: If vr, spawn vr control
-        PhotonNetwork.Instantiate("PlayerPc", Vector3.zero, Quaternion.identity);
+        PhotonNetwork.Instantiate("PlayerPc", spawnpoint.position, spawnpoint.rotation);
     }
     
     public void OnJoinRoomFailed(short returnCode, string message) { }

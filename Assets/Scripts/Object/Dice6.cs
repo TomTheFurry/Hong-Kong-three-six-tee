@@ -1,10 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+
+using JetBrains.Annotations;
 
 using Photon.Pun;
 using Photon.Realtime;
 
+using Unity.VisualScripting;
+
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Dice6 : MonoBehaviourPun
@@ -16,6 +23,8 @@ public class Dice6 : MonoBehaviourPun
     public int DiceValueFront = 4;
     public int DiceValueBack = 2;
 
+    public bool IsRolling = false;
+
     private Rigidbody rb;
 
     private void Awake() { rb = GetComponent<Rigidbody>(); }
@@ -25,16 +34,7 @@ public class Dice6 : MonoBehaviourPun
         if (TryGetComponent(out PcGrabInteractable grab))
         {
             grab.GrabCondition = PcGrabCondition;
-            grab.OnGrabbed.AddListener(OnGrab);
-            grab.OnReleased.AddListener(PcRollDiceOnGrabRelease);
-        }
-    }
-
-    public void OnGrab(GamePlayer grabber)
-    {
-        if (PhotonNetwork.LocalPlayer == grabber.PunConnection)
-        {
-            Game.Instance.photonView.RPC("ClientTryRollDice", RpcTarget.MasterClient, photonView.ViewID);
+            grab.OnReleased.AddListener(ClientRollDice);
         }
     }
 
@@ -78,8 +78,18 @@ public class Dice6 : MonoBehaviourPun
 
     private int idleCount = 0;
     private const int IDLE_COUNT_THRESHOLD = 30;
+    private const float MAX_BOUNDS = 1000;
+
+
+    [CanBeNull]
+    private GamePlayer PlayerRolling;
+
+    [CanBeNull]
+    private volatile TaskCompletionSource<(GamePlayer, int)> OnRollComplete;
 
     public bool IsStopped() { return idleCount > IDLE_COUNT_THRESHOLD || rb.IsSleeping(); }
+
+    public bool IsInvalid() { return rb.position.magnitude > MAX_BOUNDS; }
 
     public void Freeze()
     {
@@ -101,19 +111,13 @@ public class Dice6 : MonoBehaviourPun
             idleCount = 0;
         }
 
-        if (IsStopped() && IsRolling)
+        if (IsRolling && (IsStopped() || IsInvalid()))
         {
-            var face = GetCurrentDiceFace();
-            if (face != 0)
-            {
-                IsRolling = false;
-                Debug.Log($"Rolled a {face}!");
-                if (diceRollCallback != null)
-                {
-                    diceRollCallback(face);
-                    diceRollCallback = null;
-                }
-            }
+            var face = IsInvalid() ? -1 : GetCurrentDiceFace();
+            Debug.Log($"Rolled {face}!");
+            var obj = OnRollComplete;
+            OnRollComplete = null;
+            obj.SetResult((PlayerRolling, face));
         }
     }
 
@@ -157,100 +161,43 @@ public class Dice6 : MonoBehaviourPun
         Gizmos.DrawSphere(transform.position, 0.1f);
     }
 
-    public GamePlayer PlayerWaitingForRoll { get; private set; }
-    public bool IsAwaitingRoll => PlayerWaitingForRoll != null;
-    
-    public Action<int> diceRollCallback;
+    public bool PcGrabCondition(GamePlayer grabber) { return !IsRolling && PlayerRolling == null; }
 
-    public async Task<int> StartRoll(GamePlayer player)
+    public void ClientRollDice(GamePlayer player)
     {
-        var t = new TaskCompletionSource<int>();
-        StartRoll(player, v => t.SetResult(v));
-        int value = await t.Task;
+        if (PlayerRolling != null)
+        {
+            Debug.LogWarning($"A roll is already in process by {PlayerRolling}, so nope for {player}");
+            return;
+        }
+        OnRollComplete = new TaskCompletionSource<(GamePlayer, int)>();
+        PlayerRolling = player;
+        IsRolling = true;
+        if (PhotonNetwork.IsMasterClient)
+        {
+            lock (Game.Instance.EventsToProcess)
+            {
+                Debug.Log($"Player {player} started rolling dice.");
+                Game.Instance.EventsToProcess.AddLast(new RPCEventRollDice { Dice = this, GamePlayer = player });
+            }
+        }
+    }
+
+    public async Task<int> WatchForRollDone(GamePlayer expected)
+    {
+        if (OnRollComplete == null)
+        {
+            throw new InvalidOperationException("No roll is in progress.");
+        }
+        var (player, value) = await OnRollComplete.Task;
+        if (player != expected)
+        {
+            throw new InvalidOperationException("Roll was not for the expected player.");
+        }
         if (value == -1)
         {
             throw new OperationCanceledException("Roll was cancelled.");
         }
         return value;
-    }
-
-    /// <summary>
-    /// Start the roll for the given player. <br/>
-    /// ONLY CALL THIS ON THE MASTER CLIENT.
-    /// </summary>
-    public void StartRoll(GamePlayer player, Action<int> callback)
-    {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            throw new InvalidOperationException("Only the master client can start a roll.");
-        }
-        if (PlayerWaitingForRoll != null)
-        {
-            throw new InvalidOperationException("A roll is already in progress.");
-        }
-        if (IsRolling)
-        {
-            throw new InvalidOperationException("The dice is already rolling.");
-        }
-
-        Debug.Log($"Start roll for {player}");
-        diceRollCallback = callback;
-        photonView.RPC(nameof(RpcStartRoll), RpcTarget.All, player.PunConnection);
-    }
-
-    /// <summary>
-    /// Cancel the roll for the given player. <br/>
-    /// ONLY CALL THIS ON THE MASTER CLIENT.
-    /// </summary>
-    public void CancelRoll()
-    {
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            throw new InvalidOperationException("Only the master client can cancel a roll.");
-        }
-        if (!IsAwaitingRoll)
-        {
-            throw new InvalidOperationException("No roll is in progress.");
-        }
-        if (diceRollCallback == null)
-        {
-            throw new InvalidOperationException("No callback was registered for the roll.");
-        }
-
-        Debug.Log($"Cancel roll");
-        diceRollCallback = null;
-        photonView.RPC(nameof(RpcCancelRoll), RpcTarget.All);
-    }
-
-    [PunRPC]
-    private void RpcStartRoll(Player player)
-    {
-        PlayerWaitingForRoll = player;
-    }
-
-    [PunRPC]
-    private void RpcCancelRoll()
-    {
-        PlayerWaitingForRoll = null;
-    }
-    
-    public bool IsRolling = false;
-    
-    private void RollByPhysics()
-    {
-        IsRolling = true;
-    }
-    
-    public bool PcGrabCondition(GamePlayer grabber)
-    {
-        return !IsRolling && (PlayerWaitingForRoll == null || PlayerWaitingForRoll == grabber);
-    }
-
-    public void PcRollDiceOnGrabRelease(GamePlayer grabber)
-    {
-        if (PlayerWaitingForRoll == grabber || PlayerWaitingForRoll == null)
-        {
-            RollByPhysics();
-        }
     }
 }

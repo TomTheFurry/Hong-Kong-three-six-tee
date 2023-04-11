@@ -34,7 +34,7 @@ using Random = UnityEngine.Random;
 //     GameEnd
 // }
 
-
+[DefaultExecutionOrder(-100)]
 public partial class Game : IStateRunner
 {
     public static bool IsMaster => Instance.photonView.IsMine;
@@ -42,6 +42,9 @@ public partial class Game : IStateRunner
     public ReaderWriterLockSlim JoinedPlayersLock = new();
     public SortedSet<GamePlayer> JoinedPlayers = new(Comparer<GamePlayer>.Create((a, b) => a.PunConnection.ActorNumber.CompareTo(b.PunConnection.ActorNumber)));
     public GamePlayer[] IdxToPlayer = null;
+    public Transform Spawnpoints;
+    [NonSerialized]
+    public Transform[] SpawnpointsArr = null;
     public int PlayerCount => IdxToPlayer.Length;
 
     public class PlayerState
@@ -57,6 +60,7 @@ public partial class Game : IStateRunner
 
     public GameState State = null;
     public RoundData roundData;
+    public Board Board;
 
     public PlayerState[] Players = null;
 
@@ -144,6 +148,12 @@ public partial class Game : IStateRunner
         foreach (var prefab in Prefabs)
         {
             PunPrefabs[prefab.Name] = prefab.Prefab;
+        }
+
+        SpawnpointsArr = new Transform[Spawnpoints.childCount];
+        for (var i = 0; i < Spawnpoints.childCount; i++)
+        {
+            SpawnpointsArr[i] = Spawnpoints.GetChild(i);
         }
     }
     
@@ -265,11 +275,6 @@ public partial class Game : IStateRunner
         {
             IdxToPlayer[i].Idx = i;
         }
-    }
-    [PunRPC]
-    public void PlayerRolledDice(Player player, int dice)
-    {
-        Debug.Log($"Player {player.NickName} rolled {dice}");
     }
     [PunRPC]
     public void PlayerSelectedPiece(Player player, int pieceIdx)

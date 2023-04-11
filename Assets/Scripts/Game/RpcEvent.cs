@@ -56,11 +56,12 @@ public class RPCEventRollDice : RPCEvent
 {
     public GamePlayer GamePlayer;
     public Dice6 Dice;
-    public Task<int> RollTask;
+    public Task<int> RollTask = null;
     
     public override void Fail()
     {
-        // Drop the rpc
+        Debug.Log($"Dice roll for {GamePlayer} is ignored.");
+        // Drop it.
     }
 
     public void Success(int number)

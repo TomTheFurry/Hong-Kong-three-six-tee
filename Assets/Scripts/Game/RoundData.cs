@@ -10,9 +10,7 @@ public class RoundData
     public int ActiveOrderIdx;
     [NotNull]
     public StateTurn CurrentTurnState;
-
-
-    //
+    
     // public static StateRound StateRound {
     //     get {
     //         Debug.Log($"Round -- Player: {Game.ActionPlayer.PunConnection.NickName} action");
