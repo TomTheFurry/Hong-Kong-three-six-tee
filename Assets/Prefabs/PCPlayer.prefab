@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -184,12 +184,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grabSource: {fileID: 6612184325209159015}
   camera: {fileID: 8397439899935310308}
-  MoveAction: {fileID: -1680190386980627800, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  LookAction: {fileID: -5630151704836100654, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  GrabAction: {fileID: 1120369429361536294, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  HoldRotateAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  RaiseLowerGrabAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  FlipClubAction: {fileID: 1120369429361536294, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  MoveAction: {fileID: -1680190386980627800, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  LookAction: {fileID: -5630151704836100654, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  GrabAction: {fileID: 1120369429361536294, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  HoldRotateAction: {fileID: 7727032971491509709, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  RaiseLowerGrabAction: {fileID: 3001919216989983466, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  FlipClubAction: {fileID: 1120369429361536294, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   JumpAction: {fileID: 4135909508705303205, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   moveForce: 200
   moveTargetSpeed: 50
