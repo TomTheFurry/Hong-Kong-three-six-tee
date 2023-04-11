@@ -57,6 +57,7 @@ public class GamePlayer
         Assert.IsNotNull(PlayerObj);
         Assert.IsNotNull(Piece);
         Tile = board.StartingTile;
+        Piece.CurrentTile = Tile;
         if (PhotonNetwork.IsMasterClient)
         {
             PlayerCan.Instantiate(this);

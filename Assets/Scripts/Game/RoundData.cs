@@ -21,6 +21,10 @@ public class RoundData
     public RoundData()
     {
         ActiveOrderIdx = 0;
+        foreach (GamePlayer player in Game.Instance.JoinedPlayers)
+        {
+            player.GameSetup(Game.Board);
+        }
     }
 
     /// <summary>

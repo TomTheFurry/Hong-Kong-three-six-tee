@@ -235,7 +235,7 @@ public class StateStartup : GameStateLeaf
         Game.Instance.JoinedPlayersLock.EnterUpgradeableReadLock();
         try
         {
-            CanStart = Game.Instance.JoinedPlayers.Count(p => p.Piece != null && p.PlayerObj != null && p.Control != GamePlayer.ControlType.Unknown) >= 2;
+            CanStart = Game.Instance.JoinedPlayers.Count(p => p.Piece != null && p.PlayerObj != null && p.Control != GamePlayer.ControlType.Unknown) >= 1;//2;
             if (MasterSignalStartGame && CanStart)
             {
                 Debug.Log("Starting game...");
@@ -360,6 +360,7 @@ public class StateRollOrder : GameStateLeaf
             {
                 Game.Instance.playerOrder[i++] = idx;
             }
+            Debug.Log($"Player Order: {playerOrders}");
             SendClientStateEvent("PlayerOrder", SerializerUtil.SerializeArray(playerOrders));
 
             // setup game
@@ -377,6 +378,7 @@ public class StateRollOrder : GameStateLeaf
         if (e is ClientEventStringData d && d.Key == "PlayerOrder")
         {
             int[] playerOrders = SerializerUtil.DeserializeArray<int>(d.Data);
+            Debug.Log($"Player Order: {playerOrders}");
             int i = 0;
             foreach (int idx in playerOrders)
             {
@@ -404,7 +406,7 @@ public class StateTurn : NestedGameState
         Round = data;
         Round.CurrentTurnState = this;
         CurrentOrderIdx = Round.ActiveOrderIdx;
-
+        Debug.Log($"Round {Round.RoundIdx}, Turn {CurrentOrderIdx}, Player {CurrentPlayer}: Go!");
     }
 
     public override GameState OnSelfUpdate()
@@ -423,7 +425,7 @@ public class StateTurn : NestedGameState
         if (ChildState is StateEndTurn)
         {
             bool val = (@return as GameStateReturn<bool>)!.Data;
-            if (val)
+            if (!val)
             {
                 // Next turn
                 return new StateTurn(Parent, Round);
@@ -472,8 +474,6 @@ public class StateTurn : NestedGameState
                 var dice = SerializerUtil.Deserialize<int>(d.Data);
                 return new StateTurnEffects(Parent, dice);
             }
-            
-
             return null;
         }
 
@@ -534,14 +534,22 @@ public class StateTurn : NestedGameState
             {
                 if (e is RPCEventRollDice eRoll)
                 {
-                    if (eRoll.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null) return EventResult.Invalid;
+                    if (eRoll.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null)
+                    {
+                        return EventResult.Invalid;
+                    }
                     Dice6 dice = eRoll.Dice;
                     eRoll.RollTask = dice.WatchForRollDone(eRoll.GamePlayer);
+                    RollEvent = eRoll;
+                    Debug.Log($"Player {eRoll.GamePlayer} rolling dice now...");
+                    return EventResult.Consumed;
                 }
                 else if (e is RPCEventUseItem eUse)
                 {
                     if (eUse.GamePlayer != Parent.Parent.CurrentPlayer || RollEvent != null || UseItem != null || !eUse.Item.IsUsable) return EventResult.Invalid;
                     UseItem = eUse.Item;
+                    Debug.Log($"Player {eUse.GamePlayer} using item {UseItem}...");
+                    return EventResult.Consumed;
                 }
                 return EventResult.Invalid;
             }
@@ -554,14 +562,17 @@ public class StateTurn : NestedGameState
                 {
                     if (RollEvent.RollTask.IsCompleted)
                     {
+                        Debug.Log($"Roll dice future completed");
                         if (RollEvent.RollTask.IsCompletedSuccessfully && RollEvent.RollTask.Result > 0)
                         {
                             RollEvent.Success(RollEvent.RollTask.Result);
+                            Debug.Log($"Rolled dice {RollEvent.RollTask.Result}");
                             Parent.SendClientStateEvent("RollDice", SerializerUtil.Serialize(RollEvent.RollTask.Result));
                             return new GameStateReturn<int>(Parent, RollEvent.RollTask.Result);
                         }
                         else
                         {
+                            Debug.Log($"Dice roll is fail.. Please roll again");
                             RollEvent.Fail();
                             RollEvent = null;
                         }
@@ -580,10 +591,12 @@ public class StateTurn : NestedGameState
                 if (e is ClientEventStringData d && d.Key == "RollDice")
                 {
                     RolledDice = SerializerUtil.Deserialize<int>(d.Data);
+                    Debug.Log($"Rolled dice {RolledDice}");
                 }
                 else if (e is ClientEventStringData d2 && d2.Key == "UseItem")
                 {
                     UseItem = SerializerUtil.DeserializeItem(d2.Data);
+                    Debug.Log($"Used item {UseItem}");
                     return UseItem.GetUseItemState(Parent);
                 }
                 return null;
@@ -603,6 +616,7 @@ public class StateTurn : NestedGameState
         {
             Parent = parent;
             Steps = steps;
+            Debug.Log($"Turn Effects: Player {Parent.CurrentPlayer} rolled dice {steps}");
         }
         
 
@@ -624,14 +638,15 @@ public class StateTurn : NestedGameState
                 // Now, should be at a tile.
                 if (Steps > 0)
                 {
-                    SendClientSetState<StateEnterTile>();
-                    ChildState = new StateEnterTile(this);
+                    SendClientSetState<StateExitTile>();
+                    ChildState = new StateExitTile(this);
                     return null;
                 }
                 else
                 {
                     SendClientSetState<StateStepOnTile>();
-                    return new StateStepOnTile(this);
+                    ChildState = new StateStepOnTile(this);
+                    return null;
                 }
             }
             else if (ChildState is StateStepOnTile)
@@ -753,10 +768,12 @@ public class StateTurn : NestedGameState
 
         public override GameState OnSelfUpdate()
         {
+            Debug.Log($"Turn end for Player {Parent.CurrentPlayer}");
             if (!IsEndRound)
             {
                 return new GameStateReturn<bool>(Parent, false);
             }
+            Debug.Log($"Round {Parent.Round.RoundIdx} end");
             // check for bankrupt
             // check for end game
             bool isEndGame = false; //TODO

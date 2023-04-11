@@ -81,10 +81,10 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             Vector2 piecePos = new Vector2(transform.position.x, transform.position.z);
             if (moving)
             {
-                Debug.Log(Vector2.Distance(tilePos, piecePos));
+                //Debug.Log(Vector2.Distance(tilePos, piecePos));
                 GetComponent<Rigidbody>().WakeUp();
             }
-            if (moving && Vector2.Distance(tilePos, piecePos) < 0.1f)
+            if (moving && Vector2.Distance(tilePos, piecePos) < 0.2f)
             {
                 movingCallBack?.Invoke();
                 movingCallBack = null;
@@ -123,6 +123,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         }
         Debug.Log($"Update control state to owner: {owner}, with controlOverride: {controlOverride}");
         Owner = owner;
+        Owner.Piece = this;
         ControlOverrideByServer = controlOverride;
         if (photonView.IsMine && !IsOwnershipStateValid)
         {

@@ -45,14 +45,20 @@ public class DebugKeybind : MonoBehaviour
 
         if (debugText != null)
         {
-            debugText.text = "";
             if (activeOptions != null)
             {
-                debugText.text += "Active Options: \n";
+                string text = "";
+
+                text += "Active Options: \n";
                 foreach (var option in activeOptions)
                 {
-                    debugText.text += option.Item1 + ": " + option.Item2;
+                    text += option.Item1 + ": " + option.Item2;
                 }
+                debugText.text = text;
+            }
+            else
+            {
+                debugText.text = "";
             }
         }
     }
@@ -62,6 +68,7 @@ public class DebugKeybind : MonoBehaviour
     {
         Assert.IsNull(activeOptions);
         Assert.IsNull(task);
+        Debug.Log("ChooseActionTemp");
 
         activeOptions = options;
         task = new TaskCompletionSource<KeyCode>();

@@ -45,8 +45,9 @@ public class PcGrabInteractable : MonoBehaviourPun
             Debug.LogError("Already grabbed by me");
             return;
         }
-        
+
         GamePlayer grabPlayer = PhotonNetwork.LocalPlayer;
+        Debug.Log($"Player {grabPlayer} try grab {gameObject}...");
         if (PhotonNetwork.InLobby || !PhotonNetwork.IsConnected)
         {
             // Skip sync stuff
@@ -64,7 +65,7 @@ public class PcGrabInteractable : MonoBehaviourPun
         {
             AsyncCallback = onSuccess;
             TriedGrabber = grabber;
-            photonView.RPC("RequestGrabObject", photonView.Owner);
+            photonView.RPC("RequestGrabObject", photonView.Controller);
         }
     }
 
@@ -115,6 +116,7 @@ public class PcGrabInteractable : MonoBehaviourPun
     [PunRPC]
     public void RequestGrabObject(PhotonMessageInfo info)
     {
+        Debug.Log("Grab request received by " + info.Sender.ActorNumber);
         if (IsGrabbed)
         {
             Debug.Log("Object is already grabbed");
@@ -127,8 +129,6 @@ public class PcGrabInteractable : MonoBehaviourPun
             photonView.RPC("NotifyFailedGrab", info.Sender, "Grab condition failed");
             return;
         }
-
-        Debug.Log("Grab request received by " + info.Sender.ActorNumber);
         photonView.TransferOwnership(info.Sender);
         photonView.RPC("NotifyChangeOwner", RpcTarget.AllBuffered, info.Sender, false);
     }

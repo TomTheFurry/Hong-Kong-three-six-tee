@@ -46,7 +46,6 @@ public class RPCEventSelectPiece : RPCEvent
             {
                 GamePlayer.Piece.Set(null, false); // remove the old piece from the player's control
             }
-            GamePlayer.Piece = PieceTemplate;
             PieceTemplate.Set(GamePlayer, true); // set the new piece to the player's control
         }
     }

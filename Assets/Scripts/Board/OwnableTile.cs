@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -140,11 +141,12 @@ public class OwnableTile : GameTile
 
     public override Task ActionsOnStop(GamePlayer player)
     {
-        return new Task(async () => await OnStep(player));
+        return OnStep(player);
     }
 
     private async Task OnStep(GamePlayer player)
     {
+        Debug.Log("OnStep!");
         OnStepState = (player, new TaskCompletionSource<int>());
 
         // sub funds
@@ -180,9 +182,10 @@ public class OwnableTile : GameTile
                 case KeyCode.L:
                     photonView.RPC(nameof(GamePlayerLevelUp), RpcTarget.All);
                     break;
-                case KeyCode.R:
+                case KeyCode.Return:
                     photonView.RPC(nameof(GamePlayerComplete), RpcTarget.All);
                     break;
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
