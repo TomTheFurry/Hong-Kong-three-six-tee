@@ -99,7 +99,7 @@ public class OwnableTile : GameTile
         }
         player.Funds -= Price;
         OwnershipItem.CurrentOwner = player;
-        OwnershipItem.transform.position = player.PlayerObj.transform.position + Vector3.up * 10f;
+        OwnershipItem.transform.position = transform.position + Vector3.up * 2f;
         OwnershipItem.gameObject.SetActive(true);
         Level = 1;
         OnStepState.Value.future.SetResult(0);

@@ -1,23 +1,13 @@
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-
-using ExitGames.Client.Photon;
-
-using JetBrains.Annotations;
-
 using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-
-using Random = UnityEngine.Random;
 
 // public enum GameState
 // {
@@ -44,8 +34,13 @@ public partial class Game : IStateRunner
     public SortedSet<GamePlayer> JoinedPlayers = new(Comparer<GamePlayer>.Create((a, b) => a.PunConnection.ActorNumber.CompareTo(b.PunConnection.ActorNumber)));
     public GamePlayer[] IdxToPlayer = null;
     public Transform Spawnpoints;
+    public Transform ChanceCardSpawnpoint;
+
     [NonSerialized]
     public Transform[] SpawnpointsArr = null;
+
+    public Transform GetSpawnpoint(int id) => SpawnpointsArr[id % SpawnpointsArr.Length];
+
     public int PlayerCount => IdxToPlayer.Length;
 
     public class PlayerState
@@ -328,4 +323,6 @@ public partial class Game : IStateRunner
             EventsToProcess.AddLast(new RPCEventSelectPiece { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
         }
     }
+
+
 }

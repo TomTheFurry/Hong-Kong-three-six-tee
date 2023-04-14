@@ -1,13 +1,10 @@
-using System.Collections.Generic;
+using System;
 
-using Assets.Scripts;
-
-using Photon.Pun;
+using Photon.Realtime;
 
 using UnityEditor;
 
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public abstract class UseItemStateBase : NestedGameState
 {
@@ -25,49 +22,11 @@ public abstract class UseItemStateBase : NestedGameState
     }
 }
 
-public class ItemTemplateDefiner : MonoBehaviourPun
-{
-    public static ItemTemplateDefiner Instance;
-
-    public List<ItemBase> ItemTemplate = new();
-
-    public void Start()
-    {
-        Instance = this;
-        int id = 0;
-        foreach (ItemBase child in transform.GetComponentsInChildren<ItemBase>())
-        {
-            child.Id = id++;
-            ItemTemplate.Add(child);
-            child.gameObject.SetActive(false); // make sure they are not active, for network instantiation
-        }
-    }
-
-    private void OnInstantiateItem(int typeId, int instanceId, int[] views, PhotonMessageInfo info)
-    {
-        GameObject obj = Instantiate(ItemTemplate[typeId].gameObject);
-        Assert.IsFalse(obj.activeSelf);
-        ItemBase item = obj.GetComponent<ItemBase>();
-        PunNetInstantiateHack.RecieveLinkObj(info.Sender, obj, views);
-    }
-
-    public ItemBase ServerInstantiateItem(int typeId)
-    {
-        GameObject obj = Instantiate(ItemTemplate[typeId].gameObject);
-        Assert.IsFalse(obj.activeSelf);
-        ItemBase item = obj.GetComponent<ItemBase>();
-        int instanceId = UnityEngine.Random.Range(0, int.MaxValue);
-        PunNetInstantiateHack.SetupForLinkObj(obj, true, (viewIds) =>
-        {
-            photonView.RPC(nameof(OnInstantiateItem), RpcTarget.OthersBuffered, typeId, instanceId, viewIds);
-        });
-        return item;
-    }
-}
-
 public abstract class ItemBase : PcGrabInteractable
 {
     private GamePlayer CurrentOwnerImpl = null;
+    [NonSerialized]
+    public Rigidbody rb;
 
     public GamePlayer CurrentOwner
     {
@@ -112,7 +71,30 @@ public abstract class ItemBase : PcGrabInteractable
         );
     }
 
-    protected abstract bool OnReleasedItem(GamePlayer player);
+    protected virtual bool OnReleasedItem(GamePlayer player)
+    {
+        PlayerCan can = player.Can;
+        if (can != null && can.Collider.bounds.Contains(transform.position))
+        {
+            can.SlotInItem(this);
+        }
+        return false;
+    }
+
+    public void Start() {
+        rb = GetComponent<Rigidbody>();
+    }
+
+    public new void FixedUpdate()
+    {
+        if (RoomBound.IsOutside(transform))
+        {
+            transform.position = Vector3.zero + Vector3.up * 2f;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        base.FixedUpdate();
+    }
 
 }
 

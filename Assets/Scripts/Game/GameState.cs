@@ -286,6 +286,11 @@ public class StateStartup : GameStateLeaf
                 // Send idx to all players
                 Game.Instance.photonView.RPC(nameof(Game.SetIdxToPlayer), RpcTarget.AllBufferedViaServer, Game.Instance.IdxToPlayer.Select(p => p.PunConnection).ToArray() as object);
                 // Go to next stage
+                for (int i = 0; i < Game.Instance.IdxToPlayer.Length; i++)
+                {
+                    ItemTemplateDefiner.Instance.ServerInstantiateItem(0); // dice
+                }
+
                 SendClientSetReturnState<StateRollOrder>();
                 return new StateRollOrder(Parent);
             }

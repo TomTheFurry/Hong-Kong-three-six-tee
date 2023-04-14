@@ -13,24 +13,29 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Rigidbody))]
-public class Dice6 : MonoBehaviourPun
+public class Dice6 : ItemBase
 {
     public int DiceValueUp = 1;
     public int DiceValueDown = 6;
     public int DiceValueLeft = 3;
     public int DiceValueRight = 5;
-    public int DiceValueFront = 4;
-    public int DiceValueBack = 2;
+    public int DiceValueFront = 2;
+    public int DiceValueBack = 4;
 
     public bool IsRolling = false;
-
+    
+    [NonSerialized]
     private Rigidbody rb;
 
     private void Awake() { rb = GetComponent<Rigidbody>(); }
 
-    private void Start()
+    public override bool IsUsable => false;
+    public override UseItemStateBase GetUseItemState(StateTurn.StatePlayerAction parent) => null;
+    protected override bool OnReleasedItem(GamePlayer player) => true;
+
+    private new void Start()
     {
+        base.Start();
         if (TryGetComponent(out PcGrabInteractable grab))
         {
             grab.GrabCondition = PcGrabCondition;
@@ -82,6 +87,7 @@ public class Dice6 : MonoBehaviourPun
 
 
     [CanBeNull]
+    [NonSerialized]
     public GamePlayer PlayerRolling;
 
     [CanBeNull]
@@ -100,27 +106,46 @@ public class Dice6 : MonoBehaviourPun
 
     public void Unfreeze() { rb.isKinematic = false; }
 
-    private void FixedUpdate()
+    private new void FixedUpdate()
     {
-        if (rb.velocity.magnitude < 10f && rb.angularVelocity.magnitude < 10f)
+        (this as PcGrabInteractable).FixedUpdate();
+        if (RoomBound.IsOutside(transform))
         {
-            idleCount++;
+            transform.position = Vector3.zero + Vector3.up * 2f;
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            if (IsRolling)
+            {
+                Debug.Log($"Roll cancelled! Dice fall off the world.");
+                var obj = OnRollComplete;
+                OnRollComplete = null;
+                obj.SetResult((PlayerRolling, -1));
+                PlayerRolling = null;
+                IsRolling = false;
+            }
         }
         else
         {
-            idleCount = 0;
-        }
+            if (rb.velocity.magnitude < 10f && rb.angularVelocity.magnitude < 10f)
+            {
+                idleCount++;
+            }
+            else
+            {
+                idleCount = 0;
+            }
 
-        if (IsRolling && (IsStopped() || IsInvalid()))
-        {
-            var face = IsInvalid() ? -1 : GetCurrentDiceFace();
-            if (face == 0) face = -1;
-            Debug.Log($"Rolled {face}!");
-            var obj = OnRollComplete;
-            OnRollComplete = null;
-            obj.SetResult((PlayerRolling, face));
-            PlayerRolling = null;
-            IsRolling = false;
+            if (IsRolling && (IsStopped() || IsInvalid()))
+            {
+                var face = IsInvalid() ? -1 : GetCurrentDiceFace();
+                if (face == 0) face = -1;
+                Debug.Log($"Rolled {face}!");
+                var obj = OnRollComplete;
+                OnRollComplete = null;
+                obj.SetResult((PlayerRolling, face));
+                PlayerRolling = null;
+                IsRolling = false;
+            }
         }
     }
 
@@ -166,6 +191,13 @@ public class Dice6 : MonoBehaviourPun
 
     public bool PcGrabCondition(GamePlayer grabber) { return !IsRolling && PlayerRolling == null; }
 
+    private void ApplyRandomTorque()
+    {
+        var spherical = UnityEngine.Random.onUnitSphere;
+        var torque = new Vector3(spherical.x, spherical.y, spherical.z) * 100;
+        rb.AddTorque(torque, ForceMode.VelocityChange);
+    }
+
     public void ClientRollDice(GamePlayer player)
     {
         if (PlayerRolling != null)
@@ -176,6 +208,8 @@ public class Dice6 : MonoBehaviourPun
         OnRollComplete = new TaskCompletionSource<(GamePlayer, int)>();
         PlayerRolling = player;
         IsRolling = true;
+        ApplyRandomTorque();
+
         if (PhotonNetwork.IsMasterClient)
         {
             lock (Game.Instance.EventsToProcess)

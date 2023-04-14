@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8381291102056395695}
   - component: {fileID: 760759826340200364}
   - component: {fileID: 9141581438015112285}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Description
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 8010368159266041165}
   - component: {fileID: 6096470515360361659}
   - component: {fileID: 2375830293638441159}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,8 +199,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3786640294735461803}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 0.01, z: 3}
+  m_LocalPosition: {x: 0, y: -0.07, z: 0}
+  m_LocalScale: {x: 2, y: 0.1, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 625799705541159344}
@@ -280,7 +280,7 @@ GameObject:
   - component: {fileID: 2865495556332535417}
   - component: {fileID: 3508051086491798231}
   - component: {fileID: 8452607378420532102}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -454,7 +454,7 @@ GameObject:
   - component: {fileID: 8934360628455880948}
   - component: {fileID: 4019398023860670208}
   - component: {fileID: 1504481906679535376}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LandOwnershipPaper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -545,6 +545,7 @@ MonoBehaviour:
   OnReleased:
     m_PersistentCalls:
       m_Calls: []
+  rb: {fileID: 0}
   Tile: {fileID: 0}
 --- !u!114 &1504481906679535376
 MonoBehaviour:

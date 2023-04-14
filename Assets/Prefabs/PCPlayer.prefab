@@ -40,7 +40,6 @@ Transform:
   - {fileID: 7419927482490722871}
   - {fileID: 2131763325361908090}
   - {fileID: 6611098210691562859}
-  - {fileID: 6612184325209159015}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -182,20 +181,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22dfe52747be458479c50d78e87f755f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grabOrigin: {fileID: 7419927482490722871}
   grabSource: {fileID: 6612184325209159015}
   camera: {fileID: 8397439899935310308}
   MoveAction: {fileID: -1680190386980627800, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   LookAction: {fileID: -5630151704836100654, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   GrabAction: {fileID: 1120369429361536294, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
-  HoldRotateAction: {fileID: 7727032971491509709, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
-  RaiseLowerGrabAction: {fileID: 3001919216989983466, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
-  FlipClubAction: {fileID: 1120369429361536294, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  HoldRotateAction: {fileID: -2877391466932849589, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  HoldRotateResetAction: {fileID: 6447146539412273384, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+  HoldZoomAction: {fileID: -5507513616693628719, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   JumpAction: {fileID: 4135909508705303205, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
   moveForce: 200
   moveTargetSpeed: 50
   jumpForce: 50
   grabRange: 100
-  grabSphere: 1
+  grabSphere: 0.1
+  grabSphereMul: 1.7
+  grabSphereTime: 10
   ProcessMouseAction: 0
   ProcessKeyboardAction: 0
 --- !u!114 &5105010159836782664
@@ -234,13 +236,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2069073072195907289}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.673, z: 0.968}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3176897167474608337}
-  m_RootOrder: 3
+  m_Father: {fileID: 7419927482490722871}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9149819175718255801
 GameObject:
@@ -370,7 +372,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.504, z: 0.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6612184325209159015}
   m_Father: {fileID: 3176897167474608337}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

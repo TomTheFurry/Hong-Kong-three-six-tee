@@ -11,6 +11,7 @@ public class PcControl : MonoBehaviour
 {
     private Rigidbody rb;
     private PlayerPc pc;
+    public Transform grabOrigin;
     public Transform grabSource;
     public PcGrabInteractable grabbedObject => pc.gamePlayer.Holding.FirstOrDefault()?.GetComponent<PcGrabInteractable>();
     public new Camera camera;
@@ -19,8 +20,8 @@ public class PcControl : MonoBehaviour
     public InputActionReference LookAction;
     public InputActionReference GrabAction;
     public InputActionReference HoldRotateAction;
-    public InputActionReference RaiseLowerGrabAction;
-    public InputActionReference FlipClubAction;
+    public InputActionReference HoldRotateResetAction;
+    public InputActionReference HoldZoomAction;
     public InputActionReference JumpAction;
 
     public float moveForce = 200;
@@ -28,7 +29,10 @@ public class PcControl : MonoBehaviour
     public float jumpForce = 50;
 
     public float grabRange = 100;
-    public float grabSphere = 1f;
+    public float grabSphere = 0.1f;
+    public float grabSphereMul = 1.7f;
+    public int grabSphereTime = 10;
+    private Quaternion grabHoldRotationQ = Quaternion.identity;
     private Vector2 grabHoldRotation;
     private bool ClubFlipped = false;
 
@@ -59,34 +63,41 @@ public class PcControl : MonoBehaviour
             rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
 
-        if (ProcessKeyboardAction && grabbedObject != null && RaiseLowerGrabAction.action.ReadValue<float>() != 0f)
+        if (ProcessKeyboardAction && grabbedObject != null && HoldZoomAction.action.ReadValue<Vector2>().y != 0f)
         {
+            float val = HoldZoomAction.action.ReadValue<Vector2>().y;
+            Debug.Log($"Y: {val}");
             var loc = grabSource.localPosition;
-            loc.y -= RaiseLowerGrabAction.action.ReadValue<float>() / 5000f;
-            loc.y = Math.Clamp(loc.y, -0.5f, 2f);
+            loc.z -= HoldZoomAction.action.ReadValue<Vector2>().y / 2000f;
+            loc.z = Math.Clamp(loc.z, 0.5f, 2f);
             grabSource.localPosition = loc;
+        }
+
+        if (ProcessKeyboardAction && grabbedObject != null && HoldRotateResetAction.action.triggered)
+        {
+            grabHoldRotationQ = Quaternion.identity;
+            grabOrigin.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, 0, 0);
+            grabSource.localRotation *= grabHoldRotationQ;
         }
 
         if (ProcessKeyboardAction && grabbedObject != null && HoldRotateAction.action.ReadValue<float>() != 0f)
         {
-            grabHoldRotation += look * new Vector2(1, 0.2f);
-            grabHoldRotation.x = Math.Clamp(grabHoldRotation.x, -60, 60);
-            grabHoldRotation.y = Math.Clamp(grabHoldRotation.y, -15, 15);
+            //grabHoldRotation.x = Math.Clamp(grabHoldRotation.x, -60, 60);
+            //grabHoldRotation.y = Math.Clamp(grabHoldRotation.y, -15, 15);
             //Debug.Log(grabHoldRotation);
-            Quaternion newQ = Quaternion.Euler(-grabHoldRotation.y, grabHoldRotation.x, 0);
-
-            grabSource.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, 0, 0);
-            grabSource.localRotation *= newQ;
+            Quaternion newQ = Quaternion.Euler(look.y, -look.x, 0);
+            grabHoldRotationQ = newQ * grabHoldRotationQ;
+            grabSource.localRotation = grabHoldRotationQ;
         }
         else
         {
-            grabHoldRotation = Vector2.zero;
+            //grabHoldRotation = Vector2.zero;
             rb.transform.rotation *= Quaternion.Euler(0, look.x, 0);
             float pitch = camera.transform.localEulerAngles.x;
             pitch = (pitch + 180) % 360 - 180;
             pitch = Mathf.Clamp(pitch - look.y, -90, 90);
             camera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
-            grabSource.localEulerAngles = new Vector3(pitch, 0, 0);
+            grabSource.localRotation = grabHoldRotationQ;
         }
 
         if (ProcessMouseAction && GrabAction.action.triggered)
@@ -99,23 +110,22 @@ public class PcControl : MonoBehaviour
             else
             {
                 // Do raycast
-                var ray = new Ray(camera.transform.position, camera.transform.forward);
-                if (Physics.SphereCast(ray, grabSphere, out var hit, grabRange, LayerMask.GetMask("Item")))
+                for (int i = 1; i <= grabSphereTime; i++)
                 {
-                    if (hit.rigidbody != null && hit.rigidbody.TryGetComponent<PcGrabInteractable>(out var grab))
+                    float sphereRadius = grabSphere * MathF.Pow(grabSphereMul, i);
+                    var ray = new Ray(camera.transform.position, camera.transform.forward);
+                    if (Physics.SphereCast(ray, sphereRadius, out var hit, grabRange, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore))
                     {
-                        grab.TryGrabObject(grabSource, () => {
-                            Debug.Log("Grabbed");
-                        });
+                        if (hit.rigidbody != null && hit.rigidbody.TryGetComponent<PcGrabInteractable>(out var grab))
+                        {
+                            grab.TryGrabObject(grabSource, () => {
+                                Debug.Log("Grabbed");
+                            });
+                            break;
+                        }
                     }
                 }
             }
-        }
-        if (ProcessKeyboardAction && FlipClubAction.action.triggered) ClubFlipped = !ClubFlipped;
-
-        if (ClubFlipped)
-        {
-            grabSource.Rotate(Vector3.forward, 180, Space.Self);
         }
     }
 
