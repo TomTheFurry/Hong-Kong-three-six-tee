@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Photon.Pun;
 using Photon.Realtime;
 
+using UnityEditor;
+
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -28,8 +30,7 @@ public class GamePlayer
     public double Funds = 1000;
 
     public string Name => PunConnection.NickName;
-
-    
+    public int HaltTurns = 0;
 
     public GamePlayer(Player punConnection)
     {
@@ -69,5 +70,18 @@ public class GamePlayer
     {
         Tile = nextTile;
         return Piece.MoveToTile(nextTile);
+    }
+
+    public void RemoveIllegalItems()
+    {
+        foreach (var i in Items)
+        {
+            if (i.IsIllegal)
+            {
+                Items.Remove(i);
+                i.photonView.ViewID = 0;
+                Object.Destroy(i.gameObject);
+            }
+        }
     }
 }

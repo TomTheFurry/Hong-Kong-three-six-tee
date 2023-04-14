@@ -234,7 +234,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 84e2344f7c0c5264fa674f6b42cb18cf, type: 2}
+  - {fileID: 2100000, guid: cf126124c8f17d04cae956265545d7ef, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -369,7 +369,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sample text
+  m_text: Chance Card
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -396,7 +396,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.75
+  m_fontSize: 30.25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -432,7 +432,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: -4.473663}
+  m_margin: {x: 0, y: 0, z: 0, w: 0.6311846}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -452,10 +452,9 @@ GameObject:
   - component: {fileID: 625799705541159344}
   - component: {fileID: 3370750602818336367}
   - component: {fileID: 8934360628455880948}
-  - component: {fileID: 4019398023860670208}
-  - component: {fileID: 1504481906679535376}
+  - component: {fileID: 2006331630022508015}
   m_Layer: 3
-  m_Name: LandOwnershipPaper
+  m_Name: ChanceCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -517,7 +516,7 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &4019398023860670208
+--- !u!114 &2006331630022508015
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -526,7 +525,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4337251424658602444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d79b6a785b5e8814a9f0e9feba9f43c3, type: 3}
+  m_Script: {fileID: 11500000, guid: e50f3a93ddc7af745b0169b222985fb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ownerID: -1
@@ -545,18 +544,3 @@ MonoBehaviour:
   OnReleased:
     m_PersistentCalls:
       m_Calls: []
-  Tile: {fileID: 0}
---- !u!114 &1504481906679535376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4337251424658602444}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3248ceec69770b4299167d975a92801, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Title: {fileID: 8452607378420532102}
-  Description: {fileID: 9141581438015112285}

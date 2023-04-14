@@ -98,6 +98,7 @@ public class Board : MonoBehaviour
 #if UNITY_EDITOR
     public bool ClickThisToEvalTiles = false;
     public bool ClickThisToReverseTiles = false;
+    public bool ClickThisToRenameTiles = false;
     public void OnValidate()
     {
         if (ClickThisToEvalTiles)
@@ -109,6 +110,11 @@ public class Board : MonoBehaviour
         {
             ClickThisToReverseTiles = false;
             ReverseTiles();
+        }
+        if (ClickThisToRenameTiles)
+        {
+            ClickThisToRenameTiles = false;
+            RenameTiles();
         }
     }
     
@@ -129,6 +135,20 @@ public class Board : MonoBehaviour
             (tile.NextTile, tile.PrevTile) = (tile.PrevTile, tile.NextTile);
         }
         SetupBoard();
+    }
+
+    private void RenameTiles()
+    {
+        SetupBoard();
+        int i = 1;
+        GameTile[] tiles = Tiles.ToArray();
+        foreach (GameTile tile in Tiles)
+        {
+            tile.gameObject.name = $"Tile_{i++:##}_{tile.Name}";
+            var obj = tile.transform.parent;
+            tile.transform.parent = null;
+            tile.gameObject.transform.parent = obj; // reorder
+        }
     }
 #endif
 

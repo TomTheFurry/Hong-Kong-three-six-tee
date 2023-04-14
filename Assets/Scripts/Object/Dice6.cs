@@ -81,8 +81,8 @@ public class Dice6 : ItemBase
         return 0;
     }
 
-    private int idleCount = 0;
-    private const int IDLE_COUNT_THRESHOLD = 30;
+    public int idleCount = 0;
+    private const int IDLE_COUNT_THRESHOLD = 300;
     private const float MAX_BOUNDS = 1000;
 
 

@@ -16,6 +16,7 @@ public abstract class GameTile : MonoBehaviourPun
     public string Name;
 
     public int TileId = -1;
+    public TileType Type;
 
     // Config this
     [SerializeReference]
@@ -39,6 +40,23 @@ public abstract class GameTile : MonoBehaviourPun
 
     #region UNITY_EDITOR
 #if UNITY_EDITOR
+
+    private void UpdateTileType()
+    {
+        if (Type == null)
+        {
+            foreach (var renderer in GetComponentsInChildren<Renderer>())
+            {
+                // set default color (use unity default color)
+                renderer.sharedMaterial = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Diffuse.mat");
+            }
+            return;
+        }
+        foreach (var renderer in GetComponentsInChildren<Renderer>())
+        {
+            renderer.sharedMaterial = Type.Color;
+        }
+    }
 
     public void RecheckLinks(bool overrideOthers = false)
     {
@@ -127,6 +145,7 @@ public abstract class GameTile : MonoBehaviourPun
         {
             tile.RecheckLinks();
         }
+        UpdateTileType();
     }
 
     private static void GizmoDraw(GameTile from, GameTile to)
