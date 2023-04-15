@@ -21,6 +21,9 @@ public class OwnableTile : GameTile
     public LandOwnershipItem OwnershipItem;
 
     [SerializeReference]
+    public MeshRenderer Grid;
+
+    [SerializeReference]
     public TileAssetDefiner AssetDefiner;
 
     public double Price;
@@ -103,6 +106,7 @@ public class OwnableTile : GameTile
             return;
         }
         player.Funds -= Price;
+        this.Grid.material = player.Piece.Material;
         OwnershipItem.CurrentOwner = player;
         OwnershipItem.transform.position = transform.position + Vector3.up * 2f;
         OwnershipItem.gameObject.SetActive(true);
