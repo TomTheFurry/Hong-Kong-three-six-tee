@@ -338,6 +338,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentTile: {fileID: 0}
   Nametag: {fileID: 970114415891833431}
+  Mesh: {fileID: 374085110885539995}
+  material: {fileID: 0}
 --- !u!145 &3275597954983595801
 SpringJoint:
   m_ObjectHideFlags: 0

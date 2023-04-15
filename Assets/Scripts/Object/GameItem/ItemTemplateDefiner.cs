@@ -49,7 +49,7 @@ public class ItemTemplateDefiner : MonoBehaviourPun
         item.CurrentOwner = owner;
         PunNetInstantiateHack.SetupForLinkObj(obj, true, (viewIds) =>
         {
-            photonView.RPC(nameof(OnInstantiateItem), RpcTarget.OthersBuffered, typeId,  viewIds, owner.PunConnection);
+            photonView.RPC(nameof(OnInstantiateItem), RpcTarget.OthersBuffered, typeId,  viewIds, owner?.PunConnection);
         });
         return item;
     }

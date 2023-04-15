@@ -30,6 +30,11 @@ public class TipManager : MonoBehaviour
         }
     }
 
+    private string ColorText<T>(T text, string color = "#fff")
+    {
+        return $"<color=#{color}>{text}</color>";
+    }
+
     public void Update()
     {
         Game g = Game.Instance;
@@ -54,7 +59,7 @@ public class TipManager : MonoBehaviour
                 {
                     if (rollNum != 0)
                     {
-                        tip += $"You rolled {rollNum}\n";
+                        tip += $"You rolled {ColorText(rollNum, "0ff")}\n";
                     }
                 }
                 else
@@ -65,7 +70,7 @@ public class TipManager : MonoBehaviour
                     }
                     else
                     {
-                        tip += $"{player.Name} rolled {rollNum}\n";
+                        tip += $"{player.Name} rolled {ColorText(rollNum, "0ff")}\n";
                     }
                 }
             }
@@ -83,7 +88,7 @@ public class TipManager : MonoBehaviour
         {
             GamePlayer player = turn.CurrentPlayer;
             bool turnIsYours = player == self;
-            tip = "It's currently " + (turnIsYours ? "your" : player.Name + "'s") + " turn.\n";
+            tip = "It's currently " + (turnIsYours ? ColorText("your", "0ff") : player.Name + "'s") + " turn.\n";
 
             if (turn.ChildState is StateTurn.StatePlayerAction action)
             {
@@ -102,12 +107,12 @@ public class TipManager : MonoBehaviour
             {
                 int step = effect.TotalSteps;
                 
-                tip += (turnIsYours ? "You" : player.Name) + " now advance for " + step + " step" + (step == 1 ? "" : "s") + "!\n";
+                tip += (turnIsYours ? "You" : player.Name) + " now advance for " + ColorText(step, "0ff") + " step" + (step == 1 ? "" : "s") + "!\n";
 
                 if (effect.ChildState is StateTurn.StateTurnEffects.StateStepOnTile onTile)
                 {
                     GameTile tile = turn.CurrentPlayer.Tile;
-                    tip += (turnIsYours ? "You" : player.Name) + " are now on " + tile.Name + ".\n";
+                    tip += (turnIsYours ? "You" : player.Name) + " are now on " + ColorText(tile.Name, "0ff") + ".\n";
                 }
             }
             else if (g.State is StateTurn.StateEndTurn endTurn)

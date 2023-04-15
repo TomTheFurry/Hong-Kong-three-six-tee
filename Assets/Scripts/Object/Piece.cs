@@ -16,6 +16,7 @@ using TMPro;
 
 using Random = UnityEngine.Random;
 using System.Threading.Tasks;
+using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(SpringJoint))]
@@ -31,6 +32,8 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 
     public GameTile CurrentTile = null;
     public TMP_Text Nametag = null;
+    public MeshRenderer Mesh = null;
+    public Material material = null;
 
     private Rigidbody rb;
     private SpringJoint sj;
@@ -193,4 +196,17 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     }
     
     public void OnOwnerChange(Player newOwner, Player previousOwner) { }
+
+
+    #region UNITY_EDITOR
+#if UNITY_EDITOR
+    public void OnValidate()
+    {
+        if (material != null)
+        {
+            Mesh.material = material;
+        }
+    }
+#endif
+    #endregion
 }
