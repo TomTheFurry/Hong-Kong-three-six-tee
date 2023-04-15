@@ -9,6 +9,8 @@ using Photon.Realtime;
 
 using UnityEditor;
 
+using UnityEditorInternal;
+
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
@@ -21,7 +23,9 @@ public class Board : MonoBehaviour
     public GameTile StartingTile = null;
     public Collider UseItemCollider;
     public int TileHash { get; private set; }
-    
+    public GameTile JailTile;
+    public GameTile ICACTile;
+
     public Dictionary<OwnableTile, LandOwnershipItem> OwnershipItems = new Dictionary<OwnableTile, LandOwnershipItem>();
     public List<GameTile> Tiles = new List<GameTile>();
 
@@ -99,25 +103,105 @@ public class Board : MonoBehaviour
     public bool ClickThisToEvalTiles = false;
     public bool ClickThisToReverseTiles = false;
     public bool ClickThisToRenameTiles = false;
+    public bool ClickThisToMoveAllForwardOne = false;
+    public bool ClickThisToMoveBackwardOne = false;
+    public bool ClickThisToSetupByListOrder = false;
+    public float GridSpaceToAlign = 2.54f;
+    public bool ClickThisToAlignTiles = false;
     public void OnValidate()
     {
+        foreach (GameTile t in GetComponentsInChildren<GameTile>())
+        {
+            t.OnValidate();
+        }
         if (ClickThisToEvalTiles)
         {
+            Undo.RegisterFullObjectHierarchyUndo(this, "Eval Tiles");
             ClickThisToEvalTiles = false;
             SetupBoard();
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
         }
         if (ClickThisToReverseTiles)
         {
+            Undo.RegisterFullObjectHierarchyUndo(this, "Reverse Tiles");
             ClickThisToReverseTiles = false;
             ReverseTiles();
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
         }
         if (ClickThisToRenameTiles)
         {
+            Undo.RegisterFullObjectHierarchyUndo(this, "Rename Tiles");
             ClickThisToRenameTiles = false;
             RenameTiles();
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
+        }
+        if (ClickThisToMoveAllForwardOne)
+        {
+            Undo.RegisterFullObjectHierarchyUndo(this, "Move Tiles forward");
+            ClickThisToMoveAllForwardOne = false;
+            MoveAllForwardOne();
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
+        }
+        if (ClickThisToMoveBackwardOne)
+        {
+            Undo.RegisterFullObjectHierarchyUndo(this, "Move Tiles backward");
+            ClickThisToMoveBackwardOne = false;
+            MoveAllBackwardOne();
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
+        }
+        if (ClickThisToSetupByListOrder)
+        {
+            Undo.RegisterFullObjectHierarchyUndo(this, "list setup");
+            ClickThisToSetupByListOrder = false;
+            for (int i = 0; i < Tiles.Count; i++)
+            {
+                var tile = Tiles[i];
+                tile.NextTile = Tiles[(i + 1) % Tiles.Count];
+            }
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
+        }
+        if (ClickThisToAlignTiles)
+        {
+            Undo.RegisterFullObjectHierarchyUndo(this, "Align Tiles");
+            ClickThisToAlignTiles = false;
+            AlignTiles();
+            EditorUtility.SetDirty(this);
+            foreach (GameTile t in GetComponentsInChildren<GameTile>())
+            {
+                EditorUtility.SetDirty(t.gameObject);
+            }
+        }
+
+        foreach (GameTile t in GetComponentsInChildren<GameTile>())
+        {
+            t.OnValidate();
         }
     }
-    
+
     public void OnDrawGizmos()
     {
         if (StartingTile != null)
@@ -149,6 +233,44 @@ public class Board : MonoBehaviour
             tile.transform.parent = null;
             tile.gameObject.transform.parent = obj; // reorder
         }
+    }
+
+    private void MoveAllForwardOne()
+    {
+        SetupBoard();
+        Transform first = Tiles[0].transform;
+        for (int i = 0; i < Tiles.Count-1; i++)
+        {
+            Tiles[i].transform.position = Tiles[i+1].transform.position;
+        }
+        Tiles[^1].transform.position = first.position;
+        SetupBoard();
+    }
+
+    private void MoveAllBackwardOne()
+    {
+        SetupBoard();
+        Transform last = Tiles[^1].transform;
+        for (int i = Tiles.Count-1; i > 0; i--)
+        {
+            Tiles[i].transform.position = Tiles[i-1].transform.position;
+        }
+        Tiles[0].transform.position = last.position;
+        SetupBoard();
+    }
+
+    private void AlignTiles()
+    {
+        Vector3 gridCenter = StartingTile.transform.position;
+
+        foreach (GameTile tile in Tiles)
+        {
+            Vector3 pos = tile.transform.position;
+            pos.x = Mathf.Round((float)(pos.x - gridCenter.x) / GridSpaceToAlign) * GridSpaceToAlign + gridCenter.x;
+            pos.z = Mathf.Round((float)(pos.z - gridCenter.z) / GridSpaceToAlign) * GridSpaceToAlign + gridCenter.z;
+            tile.transform.position = pos;
+        }
+
     }
 #endif
 

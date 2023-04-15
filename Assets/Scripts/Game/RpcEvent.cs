@@ -69,6 +69,26 @@ public class RPCEventRollDice : RPCEvent
     }
 }
 
+public class RPCEventSelectPlayer : RPCEvent
+{
+    public GamePlayer GamePlayer;
+    public GamePlayer TargetPlayer;
+    public override void Fail()
+    {
+        Debug.Log($"Player select player event for {GamePlayer} is ignored.");
+    }
+}
+
+public class RPCEventSelectTile : RPCEvent
+{
+    public GamePlayer GamePlayer;
+    public GameTile Tile;
+    public override void Fail()
+    {
+        Debug.Log($"Player select tile event for {GamePlayer} is ignored.");
+    }
+}
+
 public class RPCEventUseItem : RPCEvent
 {
     public GamePlayer GamePlayer;
@@ -81,20 +101,6 @@ public class RPCEventUseItem : RPCEvent
 
     public void Success(int number)
     {
-        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
-    }
-}
-
-public class RPCEventPieceMove : RPCEvent {
-    public GamePlayer GamePlayer;
-    public Piece Piece;
-    public int MoveStep;
-
-    public override void Fail() {
-        // Drop the rpc
-    }
-
-    public void Success(int number) {
         //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
     }
 }

@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+
+using JetBrains.Annotations;
 
 using Photon.Pun;
 using Photon.Realtime;
@@ -23,7 +26,7 @@ public abstract class GameTile : MonoBehaviourPun
     public GameTile NextTile = null;
 
     // Auto config
-    //[HideInInspector]
+    [HideInInspector]
     [SerializeReference]
     public GameTile PrevTile = null;
 
@@ -36,7 +39,7 @@ public abstract class GameTile : MonoBehaviourPun
 
     public abstract bool NeedActionOnEnterTile(GamePlayer player);
     public abstract bool NeedActionOnExitTile(GamePlayer player);
-    public abstract Task ActionsOnStop(GamePlayer player);
+    public abstract bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, [NotNullWhen(true)] [CanBeNull] out Task t, [NotNullWhen(false)] [CanBeNull] out Task<GameState> state);
 
     #region UNITY_EDITOR
 #if UNITY_EDITOR
@@ -58,93 +61,14 @@ public abstract class GameTile : MonoBehaviourPun
         }
     }
 
-    public void RecheckLinks(bool overrideOthers = false)
-    {
-        if (NextTile != null && NextTile.PrevTile != this)
-        {
-            var old = NextTile.PrevTile;
-            if (old != null && old.NextTile == NextTile) // Both 'old' and me try to have the same NextTile
-            {
-                if (overrideOthers)
-                {
-                    old.NextTile = null;
-                    NextTile.PrevTile = this;
-                }
-                else
-                {
-                    NextTile = null;
-                }
-            }
-            else
-            {
-                NextTile.PrevTile = this;
-            }
-            
-        }
-    }
-    
-    public void SetNextTile(GameTile nextTile)
-    {
-        if (NextTile != null && NextTile.PrevTile == this)
-        {
-            NextTile.PrevTile = null;
-        }
-        NextTile = nextTile;
-        RecheckLinks(true);
-    }
-
-    private bool CheckDupAction()
-    {
-        if (!maybeDup) return false;
-        maybeDup = false;
-
-        // Check for dup at in between: Insert after
-        if (NextTile != null && PrevTile != null)
-        {
-            var sideGuy = PrevTile.NextTile;
-            if (sideGuy == this) return false;
-            if (sideGuy != NextTile.PrevTile) return true;
-            if (sideGuy.NextTile != NextTile || sideGuy.PrevTile != PrevTile) return true;
-            sideGuy.NextTile = this;
-            PrevTile = sideGuy;
-            NextTile.PrevTile = this;
-        } // Check for dup at end: Append after
-        else if (NextTile == null && PrevTile != null)
-        {
-            var sideGuy = PrevTile.NextTile;
-            if (sideGuy == this) return false;
-            if (sideGuy == null)  return true;
-            if (sideGuy.NextTile != null || sideGuy.PrevTile != PrevTile)  return true;
-            sideGuy.NextTile = this;
-            PrevTile = sideGuy;
-        } // Check for dup at begin: Append before
-        else if (NextTile != null && PrevTile == null)
-        {
-            var sideGuy = NextTile.PrevTile;
-            if (sideGuy == this) return false;
-            if (sideGuy == null)  return true;
-            if (sideGuy.NextTile != NextTile || sideGuy.PrevTile != null)  return true;
-            sideGuy.PrevTile = this;
-            NextTile = sideGuy;
-        }
-        return false;
-    }
-
     public void OnValidate()
     {
+        if (NextTile != null)
+        {
+            NextTile.PrevTile = this;
+            EditorUtility.SetDirty(this);
+        }
         // Check if is dup
-        if (CheckDupAction())
-        {
-            PrevTile = null;
-            NextTile = null;
-        }
-        else
-            RecheckLinks(true);
-
-        foreach (var tile in FindObjectsOfType<GameTile>())
-        {
-            tile.RecheckLinks();
-        }
         UpdateTileType();
     }
 

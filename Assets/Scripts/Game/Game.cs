@@ -242,7 +242,6 @@ public partial class Game : IStateRunner
         }
     }
 
-
     bool IStateRunner.IsMaster => IsMaster;
 
     public void SendClientStateEvent(IEnumerable<string> tree, IClientEvent e)
@@ -304,6 +303,32 @@ public partial class Game : IStateRunner
         }
         Instance.playerOrder = new int[IdxToPlayer.Length];
     }
+
+    [PunRPC]
+    public void ClientTrySelectPlayer(Player player, PhotonMessageInfo info)
+    {
+        GamePlayer p = player;
+        Debug.Log($"Client {info.Sender} try select player {p}");
+        Debug.Assert(photonView.IsMine);
+        lock (EventsToProcess)
+        {
+            EventsToProcess.AddLast(new RPCEventSelectPlayer { GamePlayer = info.Sender, TargetPlayer = p });
+        }
+    }
+
+    [PunRPC]
+    public void ClientTrySelectTile(int tileId, PhotonMessageInfo info)
+    {
+        GameTile tile = Game.Instance.Board.Tiles[tileId];
+        Assert.IsNotNull(tile);
+        Debug.Log($"Client {info.Sender} try select tile {tile}");
+        Debug.Assert(photonView.IsMine);
+        lock (EventsToProcess)
+        {
+            EventsToProcess.AddLast(new RPCEventSelectTile { GamePlayer = info.Sender, Tile = tile});
+        }
+    }
+
     [PunRPC]
     public void PlayerSelectedPiece(Player player, int pieceIdx)
     {

@@ -56,6 +56,7 @@ public abstract class ItemBase : PcGrabInteractable
     public int InstanceId => photonView.InstantiationId;
     public abstract bool IsUsable { get; }
     public bool IsIllegal = false;
+    public bool IsHidden;
 
     public abstract UseItemStateBase GetUseItemState(StateTurn.StatePlayerAction parent);
 

@@ -7,9 +7,12 @@ using JetBrains.Annotations;
 using Photon.Pun;
 
 using UnityEditor;
+using UnityEditor.VersionControl;
 
 using UnityEngine;
 using UnityEngine.Assertions;
+
+using Task = System.Threading.Tasks.Task;
 
 public class OwnableTile : GameTile
 {
@@ -21,6 +24,8 @@ public class OwnableTile : GameTile
     public TileAssetDefiner AssetDefiner;
 
     public double Price;
+
+    public double TilePriceChangeBias = 1;
 
     // level 0: not owned. level 1 to 5: owned
     private int LevelImpl = 0;
@@ -138,10 +143,11 @@ public class OwnableTile : GameTile
 
     public override bool NeedActionOnEnterTile(GamePlayer player) => false;
     public override bool NeedActionOnExitTile(GamePlayer player) => false;
-
-    public override Task ActionsOnStop(GamePlayer player)
+    public override bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, out Task t, out Task<GameState> state)
     {
-        return OnStep(player);
+        t = OnStep(player);
+        state = null;
+        return false;
     }
 
     private async Task OnStep(GamePlayer player)
@@ -218,5 +224,13 @@ public class OwnableTile : GameTile
     {
         Assert.IsNotNull(OwnershipItem);
         Assert.IsTrue(OwnershipItem.Tile == this);
+    }
+
+    public void RemoveOwnership()
+    {
+        Assert.IsNotNull(OwnershipItem);
+        OwnershipItem.CurrentOwner = null;
+        OwnershipItem.gameObject.SetActive(false);
+
     }
 }

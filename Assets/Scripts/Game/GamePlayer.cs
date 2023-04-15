@@ -31,6 +31,8 @@ public class GamePlayer
 
     public string Name => PunConnection.NickName;
     public int HaltTurns = 0;
+    public bool HalfNextTurn = false;
+    public float Luck;
 
     public GamePlayer(Player punConnection)
     {
@@ -72,16 +74,19 @@ public class GamePlayer
         return Piece.MoveToTile(nextTile);
     }
 
-    public void RemoveIllegalItems()
+    public bool RemoveIllegalItems()
     {
+        bool removed = false;
         foreach (var i in Items)
         {
             if (i.IsIllegal)
             {
+                removed = true;
                 Items.Remove(i);
                 i.photonView.ViewID = 0;
                 Object.Destroy(i.gameObject);
             }
         }
+        return removed;
     }
 }

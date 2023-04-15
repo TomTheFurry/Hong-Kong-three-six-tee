@@ -757,26 +757,57 @@ public class StateTurn : NestedGameState
             protected override GameState OnClientUpdate(IClientEvent e) => null;
         }
 
-        public class StateStepOnTile : GameStateLeaf
+        public class StateStepOnTile : GameState
         {
             [NotNull]
             public new StateTurnEffects Parent;
             public Task Animation;
+            public Task<GameState> SubStateFuture;
+            private GameState Child;
 
             public StateStepOnTile([NotNull] StateTurnEffects parent) : base(parent)
             {
                 Parent = parent;
                 GameTile tile = Parent.Parent.Round.ActivePlayerTile;
-                Animation = tile.ActionsOnStop(Parent.Parent.CurrentPlayer);
+                tile.ActionsOnStop(Parent.Parent.CurrentPlayer, this, out Animation, out SubStateFuture);
             }
-            public override EventResult ProcessEvent(RPCEvent e) => EventResult.Deferred;
+            public override EventResult ProcessEvent(RPCEvent e) => Child?.ProcessEvent(e) ?? EventResult.Deferred;
 
             public override GameState Update()
             {
-                if (!Animation.IsCompleted) return null; // wait for animation
-                return new GameStateReturn(Parent);
+                if (Animation != null) return Animation.IsCompleted ? new GameStateReturn(Parent) : null;
+                if (SubStateFuture != null)
+                {
+                    if (!SubStateFuture.IsCompleted) return null;
+                    Child = SubStateFuture.Result;
+                    SendClientStateEvent("UpdateFuture");
+                }
+                Assert.IsNotNull(Child);
+                GameState child = Child.Update();
+                if (child == null) return null;
+                if (child is GameStateReturn) return new GameStateReturn(Parent);
+                throw new Exception("Invalid state");
             }
-            protected override GameState OnClientUpdate(IClientEvent e) => null;
+
+            public override GameState ClientUpdate(Span<string> tree, IClientEvent e)
+            {
+                if (Child != null)
+                {
+                    if (tree.Length == 0) throw new Exception("Invalid tree");
+                    if (tree[0] != nameof(StateStepOnTile)) throw new Exception("Invalid state");
+                    GameState child = Child.ClientUpdate(tree.Slice(1), e);
+                    if (child == null) return null;
+                    if (child is GameStateReturn) return new GameStateReturn(Parent);
+                    throw new Exception("Invalid state");
+                }
+                else if (tree.IsEmpty && e is ClientEventString es && es.Key == "UpdateFuture")
+                {
+                    Child = SubStateFuture.Result;
+                    Assert.IsNotNull(Child);
+                    return null;
+                }
+                return null;
+            }
         }
     }
 
