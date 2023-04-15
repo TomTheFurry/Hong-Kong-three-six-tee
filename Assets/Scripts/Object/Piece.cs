@@ -33,7 +33,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     public GameTile CurrentTile = null;
     public TMP_Text Nametag = null;
     public MeshRenderer Mesh = null;
-    public Material material = null;
+    public Material Material = null;
 
     private Rigidbody rb;
     private SpringJoint sj;
@@ -127,6 +127,8 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
         Debug.Log($"Update control state to owner: {owner}, with controlOverride: {controlOverride}");
         Owner = owner;
         Owner.Piece = this;
+        if (Material != null)
+            Owner.PlayerObj.SetMaterial(Material);
         ControlOverrideByServer = controlOverride;
         if (photonView.IsMine && !IsOwnershipStateValid)
         {
@@ -202,9 +204,9 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 #if UNITY_EDITOR
     public void OnValidate()
     {
-        if (material != null)
+        if (Material != null)
         {
-            Mesh.material = material;
+            Mesh.material = Material;
         }
     }
 #endif

@@ -33,5 +33,10 @@ public abstract class PlayerObjBase : MonoBehaviourPun, IPunInstantiateMagicCall
         }
     }
 
-
+    public virtual void SetMaterial(Material material) {
+        foreach (MeshRenderer mesh in GetComponentsInChildren<MeshRenderer>())
+        {
+            mesh.material = material;
+        }
+    }
 }
