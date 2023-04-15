@@ -82,6 +82,8 @@ public class ChanceSpawner : MonoBehaviourPun
             card.gameObject.SetActive(false);
         }
         card.Ev = Events[cardId];
+        card.Description.text = Events[cardId].Description;
+        card.Title.text = Events[cardId].Name;
         PunNetInstantiateHack.RecieveLinkObj(PhotonNetwork.LocalPlayer, card.gameObject, views);
         card.gameObject.SetActive(true);
         SpawnCardTcs.SetResult(card);
@@ -103,6 +105,7 @@ public class ChanceSpawner : MonoBehaviourPun
     [PunRPC]
     public void ServerDrawCard(PhotonMessageInfo info)
     {
+        Debug.Log("Drawing cards...");
         if (info.Sender != AwaitingPlayer.PunConnection)
         {
             Debug.Log("Ignored draw card attempt");
@@ -116,7 +119,10 @@ public class ChanceSpawner : MonoBehaviourPun
             card.gameObject.SetActive(false);
         }
         var e = DrawEventWeighted(DrawGroup, AwaitingPlayer.Luck);
+        Debug.Log($"Drawn event: {e.Name}");
         card.Ev = e;
+        card.Description.text = e.Description;
+        card.Title.text = e.Name;
         PunNetInstantiateHack.SetupForLinkObj(card.gameObject, true, (viewIds) =>
         {
             photonView.RPC(nameof(SpawnCard), RpcTarget.OthersBuffered, e.Id, viewIds);

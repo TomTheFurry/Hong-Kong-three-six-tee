@@ -32,7 +32,7 @@ public class GamePlayer
     public string Name => PunConnection.NickName;
     public int HaltTurns = 0;
     public bool HalfNextTurn = false;
-    public float Luck;
+    public float Luck = 0.7f;
 
     public GamePlayer(Player punConnection)
     {

@@ -46,6 +46,8 @@ public class Dice6 : ItemBase
     // Return current dice face value (the one facing up), or 0 if it's not on a face
     public int GetCurrentDiceFace()
     {
+        if (Game.Instance.DEBUG_OverrideDiceRoll != -1) return Game.Instance.DEBUG_OverrideDiceRoll;
+
         var up = transform.up;
         var right = transform.right;
         var forward = transform.forward;

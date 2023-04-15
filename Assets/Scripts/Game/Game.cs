@@ -30,11 +30,12 @@ public partial class Game : IStateRunner
 {
     public static bool IsMaster => Instance.photonView.IsMine;
 
+    public int DEBUG_OverrideDiceRoll = -1;
+
     public ReaderWriterLockSlim JoinedPlayersLock = new();
     public SortedSet<GamePlayer> JoinedPlayers = new(Comparer<GamePlayer>.Create((a, b) => a.PunConnection.ActorNumber.CompareTo(b.PunConnection.ActorNumber)));
     public GamePlayer[] IdxToPlayer = null;
     public Transform Spawnpoints;
-    public Transform ChanceCardSpawnpoint;
 
     [NonSerialized]
     public Transform[] SpawnpointsArr = null;
@@ -247,7 +248,7 @@ public partial class Game : IStateRunner
     public void SendClientStateEvent(IEnumerable<string> tree, IClientEvent e)
     {
         string[] treeArr = tree.ToArray();
-        Debug.Log($"ClientStateEvent sent at [{treeArr}]: {e}");
+        Debug.Log($"ClientStateEvent sent at [{treeArr.ToStringFull()}]: {e}");
         int typeId = e switch
         {
             ClientEventSwitchState _ => 0,
@@ -284,7 +285,7 @@ public partial class Game : IStateRunner
             _ => throw new ArgumentOutOfRangeException(nameof(typeId), typeId, null)
         };
 
-        Debug.Log($"ClientStateEvent received at [{tree}]: {e}");
+        Debug.Log($"ClientStateEvent received at [{tree.ToStringFull()}]: {e}");
         lock (ClientEventsToProcess)
         {
             ClientEventsToProcess.AddLast((tree, e));

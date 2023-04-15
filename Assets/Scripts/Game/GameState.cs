@@ -780,11 +780,14 @@ public class StateTurn : NestedGameState
                 {
                     if (!SubStateFuture.IsCompleted) return null;
                     Child = SubStateFuture.Result;
+                    Debug.Log($"Switching to state {Child.GetType()}");
                     SendClientStateEvent("UpdateFuture");
+                    SubStateFuture = null;
                 }
                 Assert.IsNotNull(Child);
                 GameState child = Child.Update();
                 if (child == null) return null;
+                Debug.Log("Chance Step Exit?");
                 if (child is GameStateReturn) return new GameStateReturn(Parent);
                 throw new Exception("Invalid state");
             }
@@ -803,7 +806,9 @@ public class StateTurn : NestedGameState
                 else if (tree.IsEmpty && e is ClientEventString es && es.Key == "UpdateFuture")
                 {
                     Child = SubStateFuture.Result;
+                    SubStateFuture = null;
                     Assert.IsNotNull(Child);
+                    Debug.Log($"Switching to state {Child.GetType()}");
                     return null;
                 }
                 return null;

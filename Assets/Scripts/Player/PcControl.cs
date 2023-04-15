@@ -66,7 +66,7 @@ public class PcControl : MonoBehaviour
         if (ProcessKeyboardAction && grabbedObject != null && HoldZoomAction.action.ReadValue<Vector2>().y != 0f)
         {
             float val = HoldZoomAction.action.ReadValue<Vector2>().y;
-            Debug.Log($"Y: {val}");
+            //Debug.Log($"Y: {val}");
             var loc = grabSource.localPosition;
             loc.z -= HoldZoomAction.action.ReadValue<Vector2>().y / 2000f;
             loc.z = Math.Clamp(loc.z, 0.5f, 2f);

@@ -76,6 +76,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DEBUG",
+                    "type": "Button",
+                    "id": "1f353e7d-a6ad-433f-af6b-7091e427ee8c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -307,6 +316,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "HoldRotateReset",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "abaf7b71-8035-4556-b361-913af8828e8a",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "DEBUG",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

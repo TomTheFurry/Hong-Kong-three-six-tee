@@ -27,9 +27,9 @@ public class ChanceTile : GameTile
     {
         Task<ChanceCard> card = ChanceSpawner.Instance.AwaitForDrawCard(ChanceGroup, player);
         state = card.ContinueWith(
-            t => new ChanceEventState(self, t.Result) as GameState
+            t => new ChanceEventState(self, t.Result) as GameState, TaskContinuationOptions.ExecuteSynchronously
         );
-        t = card;
+        t = null;
         return true;
     }
 }

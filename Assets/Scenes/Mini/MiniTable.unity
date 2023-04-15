@@ -6820,8 +6820,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a64e5a0b2f9ad344f8f4342900461fb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DEBUG_OverrideDiceRoll: 4
   Spawnpoints: {fileID: 1768459528}
-  ChanceCardSpawnpoint: {fileID: 0}
   Board: {fileID: 1622108042}
   playerOrder: 
   PiecesTemplate:
@@ -10943,6 +10943,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChanceCard
       objectReference: {fileID: 0}
+    - target: {fileID: 4337251424658602444, guid: 060e7ae9e9878e44aa7c4721ed733f18, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8934360628455880948, guid: 060e7ae9e9878e44aa7c4721ed733f18, type: 3}
       propertyPath: sceneViewId
       value: 7
@@ -12705,6 +12709,7 @@ GameObject:
   - component: {fileID: 1948396864}
   - component: {fileID: 1948396863}
   - component: {fileID: 1948396866}
+  - component: {fileID: 1948396867}
   m_Layer: 0
   m_Name: ChanceSpawner
   m_TagString: Untagged
@@ -12802,12 +12807,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a0c425eb4b0fb41acc7c48658eb84b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Events0: []
-  Events1: []
+  Events0:
+  - {fileID: 11400000, guid: c2b36005b9195d94dbfafb1b069ff297, type: 2}
+  - {fileID: 11400000, guid: d36ccc4f65f643e47ae64b9ae2a965f6, type: 2}
+  - {fileID: 11400000, guid: 7cc8f002609b15e468ad508d5ceec7dd, type: 2}
+  - {fileID: 11400000, guid: 9794cca4b56535c41931df8e6c5e5203, type: 2}
+  Events1:
+  - {fileID: 11400000, guid: f49d6f78944403146aa888cc23aaefb0, type: 2}
+  - {fileID: 11400000, guid: 88d441ea7059d174f8fcbbebe3050e62, type: 2}
+  - {fileID: 11400000, guid: 668f901639c7d5345b8f9bf0929d27d3, type: 2}
+  - {fileID: 11400000, guid: 4b7f8304d91025043adc776ecf670037, type: 2}
   Events2: []
   Events3: []
   Template: {fileID: 1630097153}
-  DrawCardAction: {fileID: 0}
+  DrawCardAction: {fileID: -7352847489949035683, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
+--- !u!114 &1948396867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948396861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 17
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!114 &1983497342 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
