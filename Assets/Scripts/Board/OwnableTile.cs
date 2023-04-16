@@ -73,7 +73,7 @@ public class OwnableTile : GameTile
     [CanBeNull]
     public GamePlayer Owner => OwnershipItem.CurrentOwner;
     
-    public List<(int,float) PassbyFeeMultipliers = new List<(int, float)>();
+    public List<(int,float)> PassbyFeeMultipliers = new List<(int, float)>();
 
     public bool GamePlayerCanBuy(GamePlayer player)
     {
@@ -90,7 +90,7 @@ public class OwnableTile : GameTile
         return true;
     }
 
-    private (GamePlayer currentPlayer, TaskCompletionSource<int> future)? OnStepState = null;
+    protected (GamePlayer currentPlayer, TaskCompletionSource<int> future)? OnStepState = null;
 
     [PunRPC]
     public void GamePlayerBuy(PhotonMessageInfo info)
@@ -148,26 +148,22 @@ public class OwnableTile : GameTile
 
     public override bool NeedActionOnEnterTile(GamePlayer player) => false;
     public override bool NeedActionOnExitTile(GamePlayer player) => false;
-    public override bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, out Task t, out Task<GameState> state)
+    public sealed override bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, out Task t, out Task<GameState> state)
     {
         t = OnStep(player);
         state = null;
         return false;
     }
 
-    private async Task OnStep(GamePlayer player)
+    protected async Task OnStepPayFees(GamePlayer player)
     {
-        Debug.Log("OnStep!");
-        OnStepState = (player, new TaskCompletionSource<int>());
+        player.Funds -= StepOnPrice;
+        Owner.Funds += StepOnPrice;
+        // TODO: Animation effects
+    }
 
-        // sub funds
-        if (Owner != null && Owner != player)
-        {
-            player.Funds -= StepOnPrice;
-            Owner.Funds += StepOnPrice;
-            // TODO: Animation effects
-        }
-
+    protected async Task OnStepCanBuyOrUpgrade(GamePlayer player)
+    {
         // State machine here.
         if (PhotonNetwork.LocalPlayer == player.PunConnection)
         {
@@ -199,7 +195,21 @@ public class OwnableTile : GameTile
                 default: throw new ArgumentOutOfRangeException();
             }
         }
+    }
 
+    protected virtual async Task OnStep(GamePlayer player)
+    {
+        Debug.Log("OnStep!");
+        OnStepState = (player, new TaskCompletionSource<int>());
+        // sub funds
+        if (Owner != null && Owner != player)
+        {
+            await OnStepPayFees(player);
+        }
+        else
+        {
+            await OnStepCanBuyOrUpgrade(player);
+        }
         await OnStepState.Value.future.Task;
         OnStepState = null;
     }

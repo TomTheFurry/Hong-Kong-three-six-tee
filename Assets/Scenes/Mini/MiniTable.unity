@@ -222,6 +222,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 386070230}
   PrevTile: {fileID: 549100238}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
   ChanceGroup: 3
 --- !u!114 &63038322
 MonoBehaviour:
@@ -7066,6 +7068,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 363778862}
   PrevTile: {fileID: 2021640166}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
 --- !u!1 &822911429
 GameObject:
   m_ObjectHideFlags: 0
@@ -7553,6 +7557,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 206697939}
   PrevTile: {fileID: 1616034025}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
   ChanceGroup: 1
 --- !u!1 &856646696
 GameObject:
@@ -8540,6 +8546,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 2118935138}
   PrevTile: {fileID: 1469122937}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
 --- !u!1 &989424771
 GameObject:
   m_ObjectHideFlags: 0
@@ -11515,6 +11523,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 850604172}
   PrevTile: {fileID: 338991771}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
   ChanceGroup: 0
 --- !u!1 &1622108040
 GameObject:
@@ -13945,6 +13955,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 810539274}
   PrevTile: {fileID: 581031334}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
   ChanceGroup: 2
 --- !u!1001 &2023606984
 PrefabInstance:

@@ -55,6 +55,8 @@ MonoBehaviour:
   VideoUrl: 
   NextTile: {fileID: 0}
   PrevTile: {fileID: 0}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
   OwnershipItem: {fileID: 5772684644126788673}
   Grid: {fileID: 2599922244665655076}
   AssetDefiner: {fileID: 0}
