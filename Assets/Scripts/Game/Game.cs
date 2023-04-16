@@ -35,6 +35,7 @@ public partial class Game : IStateRunner
     public ReaderWriterLockSlim JoinedPlayersLock = new();
     public SortedSet<GamePlayer> JoinedPlayers = new(Comparer<GamePlayer>.Create((a, b) => a.PunConnection.ActorNumber.CompareTo(b.PunConnection.ActorNumber)));
     public GamePlayer[] IdxToPlayer = null;
+    public Transform DiceSpawnpoint;
     public Transform Spawnpoints;
 
     [NonSerialized]

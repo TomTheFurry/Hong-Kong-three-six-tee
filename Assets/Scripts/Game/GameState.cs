@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 
 using Photon.Pun;
 
+using UnityEngine;
 using UnityEngine.Assertions;
 
 using Debug = UnityEngine.Debug;
@@ -277,7 +278,7 @@ public class StateStartup : GameStateLeaf
                 // Go to next stage
                 for (int i = 0; i < Game.Instance.IdxToPlayer.Length; i++)
                 {
-                    ItemTemplateDefiner.Instance.ServerInstantiateItem(0); // dice
+                    PhotonNetwork.InstantiateRoomObject("Dice", Game.Instance.DiceSpawnpoint.position, Game.Instance.DiceSpawnpoint.rotation);
                 }
 
                 SendClientSetReturnState<StateRollOrder>();

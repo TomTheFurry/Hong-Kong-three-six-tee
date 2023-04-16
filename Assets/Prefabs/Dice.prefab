@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8222201707864526829}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 21.27, y: 0.94, z: -18.3}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3179974767231401245}
@@ -119,6 +119,7 @@ MonoBehaviour:
   OnReleased:
     m_PersistentCalls:
       m_Calls: []
+  IsHidden: 0
   DiceValueUp: 1
   DiceValueDown: 6
   DiceValueLeft: 3
@@ -126,6 +127,7 @@ MonoBehaviour:
   DiceValueFront: 2
   DiceValueBack: 4
   IsRolling: 0
+  idleCount: 0
 --- !u!1001 &3146665177520610038
 PrefabInstance:
   m_ObjectHideFlags: 0
