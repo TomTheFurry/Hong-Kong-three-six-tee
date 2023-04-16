@@ -1,7 +1,5 @@
 using JetBrains.Annotations;
 
-using UnityEngine;
-
 public class RoundData
 {
     public static Game Game => Game.Instance;

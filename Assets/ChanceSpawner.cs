@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using Assets.Scripts;
 
 using Photon.Pun;
-using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.Assertions;

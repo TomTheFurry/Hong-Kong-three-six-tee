@@ -1,12 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-using Assets.Scripts;
-
-using Photon.Pun;
-
-using UnityEngine;
-using UnityEngine.Assertions;
+﻿using UnityEngine;
 
 public class LandOwnershipItem : ItemBase
 {
@@ -16,4 +8,14 @@ public class LandOwnershipItem : ItemBase
     [SerializeReference]
     [HideInInspector]
     public OwnableTile Tile; // Auto-set by OwneableTile OnValidate()
+    private bool updated = false;
+
+    void Update()
+    {
+        if (!updated && Tile != null && TryGetComponent<TileDataSetter>(out var setter))
+        {
+            updated = true;
+            setter.Set(Tile);
+        }
+    }
 }

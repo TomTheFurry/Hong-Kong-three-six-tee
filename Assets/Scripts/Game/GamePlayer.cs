@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Photon.Pun;
 using Photon.Realtime;
 
-using UnityEditor;
-
 using UnityEngine;
 using UnityEngine.Assertions;
 

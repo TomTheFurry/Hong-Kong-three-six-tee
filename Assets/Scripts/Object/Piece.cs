@@ -1,22 +1,17 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
 
 using JetBrains.Annotations;
 
 using Photon.Pun;
 using Photon.Realtime;
 
-using Unity.VisualScripting;
-
 using UnityEngine;
 using TMPro;
 
 using Random = UnityEngine.Random;
 using System.Threading.Tasks;
-using UnityEditor;
+
+using UnityEngine.Assertions;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(SpringJoint))]
@@ -46,11 +41,9 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     
     public void Start()
     {
-        CurrentTile = Game.Instance.Board.StartingTile;
+        CurrentTile = null;
         rb = GetComponent<Rigidbody>();
         sj = GetComponent<SpringJoint>();
-        sj.autoConfigureConnectedAnchor = false;
-        Teleport();
         UpdatePin();
     }
 
@@ -80,18 +73,21 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             Nametag.transform.LookAt(Camera.main.transform); // LookAt() doesn't correct for roll
             Nametag.transform.Rotate(0, 180, 0, Space.Self);
 
-            Vector2 tilePos = new Vector2(CurrentTile.transform.position.x, CurrentTile.transform.position.z);
-            Vector2 piecePos = new Vector2(transform.position.x, transform.position.z);
-            if (moving)
+            if (CurrentTile != null)
             {
-                //Debug.Log(Vector2.Distance(tilePos, piecePos));
-                GetComponent<Rigidbody>().WakeUp();
-            }
-            if (moving && Vector2.Distance(tilePos, piecePos) < 0.2f)
-            {
-                movingCallBack?.Invoke();
-                movingCallBack = null;
-                moving = false;
+                Vector2 tilePos = new Vector2(CurrentTile.transform.position.x, CurrentTile.transform.position.z);
+                Vector2 piecePos = new Vector2(transform.position.x, transform.position.z);
+                if (moving)
+                {
+                    //Debug.Log(Vector2.Distance(tilePos, piecePos));
+                    GetComponent<Rigidbody>().WakeUp();
+                }
+                if (moving && Vector2.Distance(tilePos, piecePos) < 0.2f)
+                {
+                    movingCallBack?.Invoke();
+                    movingCallBack = null;
+                    moving = false;
+                }
             }
         }
     }
@@ -125,10 +121,18 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             return;
         }
         Debug.Log($"Update control state to owner: {owner}, with controlOverride: {controlOverride}");
-        Owner = owner;
-        Owner.Piece = this;
-        if (Material != null)
+        if (owner == null)
+        {
+            Owner.Piece = null;
+            Owner = null;
+        }
+        else
+        {
+            if (Owner != null) Owner.Piece = null;
+            Owner = owner;
+            Owner.Piece = this;
             Owner.PlayerObj.SetMaterial(Material);
+        }
         ControlOverrideByServer = controlOverride;
         if (photonView.IsMine && !IsOwnershipStateValid)
         {
@@ -170,7 +174,13 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     {
         if (CurrentTile != null)
         {
+            sj.autoConfigureConnectedAnchor = false;
             sj.connectedAnchor = CurrentTile.transform.position + Vector3.up *1f;
+        }
+        else
+        {
+            sj.autoConfigureConnectedAnchor = true;
+            sj.connectedAnchor = Vector3.zero;
         }
     }
 
@@ -189,6 +199,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     [PunRPC]
     public void MoveForward(int number)
     {
+        Assert.IsNotNull(CurrentTile);
         while (number-- != 0)
         {
             CurrentTile = CurrentTile.NextTile;

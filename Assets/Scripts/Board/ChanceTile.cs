@@ -1,16 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
-using JetBrains.Annotations;
-
-using Photon.Pun;
-
-using UnityEditor;
-
-using UnityEngine;
-using UnityEngine.Assertions;
 
 public class ChanceTile : GameTile
 {

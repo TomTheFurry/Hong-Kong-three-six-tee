@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Security.Cryptography;
 
 using Photon.Pun;
 using Photon.Realtime;

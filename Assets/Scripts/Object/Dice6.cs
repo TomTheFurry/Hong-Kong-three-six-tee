@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using JetBrains.Annotations;
 
 using Photon.Pun;
-using Photon.Realtime;
-
-using Unity.VisualScripting;
 
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.Events;
 
 public class Dice6 : ItemBase
 {

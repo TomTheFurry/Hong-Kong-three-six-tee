@@ -1,25 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
-
-using ExitGames.Client.Photon;
 
 using JetBrains.Annotations;
 
-using Newtonsoft.Json.Serialization;
-
 using Photon.Pun;
-using Photon.Realtime;
 
-using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Pool;
 
 using Debug = UnityEngine.Debug;
-using Random = UnityEngine.Random;
 
 public interface IStateRunner
 {
@@ -279,7 +269,6 @@ public class StateStartup : GameStateLeaf
                     else
                     {
                         piece.photonView.RPC(nameof(Piece.UpdataOwnerMaterial), RpcTarget.AllBufferedViaServer);
-                        piece.photonView.RPC(nameof(Piece.InitCurrentTile), RpcTarget.AllBufferedViaServer);
                     }
                 }
 
@@ -382,7 +371,10 @@ public class StateRollOrder : GameStateLeaf
             }
             Debug.Log($"Player Order: {playerOrders}");
             SendClientStateEvent("PlayerOrder", SerializerUtil.SerializeArray(playerOrders));
-
+            foreach (var player in Game.Instance.IdxToPlayer)
+            {
+                player.Piece.photonView.RPC(nameof(Piece.InitCurrentTile), RpcTarget.AllBufferedViaServer);
+            }
             // setup game
             Game.Instance.roundData = new RoundData();
             SendClientStateEvent("InitRoundData");

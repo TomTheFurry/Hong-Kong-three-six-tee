@@ -196,6 +196,7 @@ MonoBehaviour:
   moveForce: 200
   moveTargetSpeed: 50
   jumpForce: 50
+  mouseMoveSpeed: 0.2
   grabRange: 100
   grabSphere: 0.1
   grabSphereMul: 1.7

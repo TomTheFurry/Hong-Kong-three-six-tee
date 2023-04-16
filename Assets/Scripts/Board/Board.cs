@@ -1,20 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-
-using Assets.Scripts;
 
 using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEditor;
 
-using UnityEditorInternal;
-
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.Tilemaps;
-
 
 public class Board : MonoBehaviour
 {

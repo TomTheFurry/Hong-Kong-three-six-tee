@@ -1,9 +1,5 @@
 using System;
 
-using Photon.Realtime;
-
-using UnityEditor;
-
 using UnityEngine;
 
 public abstract class UseItemStateBase : NestedGameState

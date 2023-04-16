@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-
-using Assets.Scripts;
 
 using JetBrains.Annotations;
 

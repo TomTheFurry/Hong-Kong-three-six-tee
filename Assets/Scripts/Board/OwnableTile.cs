@@ -7,7 +7,6 @@ using JetBrains.Annotations;
 using Photon.Pun;
 
 using UnityEditor;
-using UnityEditor.VersionControl;
 
 using UnityEngine;
 using UnityEngine.Assertions;

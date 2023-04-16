@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -27,6 +25,7 @@ public class PcControl : MonoBehaviour
     public float moveForce = 200;
     public float moveTargetSpeed = 50;
     public float jumpForce = 50;
+    public float mouseMoveSpeed = 1f;
 
     public float grabRange = 100;
     public float grabSphere = 0.1f;
@@ -49,6 +48,7 @@ public class PcControl : MonoBehaviour
     {
         var move = !ProcessKeyboardAction ? default : MoveAction.action.ReadValue<Vector2>();
         var look = !ProcessMouseAction ? default : LookAction.action.ReadValue<Vector2>();
+        look *= mouseMoveSpeed;
 
         var relVel = transform.InverseTransformDirection(rb.velocity);
         relVel.y = 0;
@@ -99,16 +99,39 @@ public class PcControl : MonoBehaviour
             camera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
             grabSource.localRotation = grabHoldRotationQ;
         }
+        
+        GameTile hovered = null;
+        {
+            float sphere = grabSphere * 2f;
+            var ray = new Ray(camera.transform.position, camera.transform.forward);
+            if (Physics.SphereCast(
+                    ray, sphere, out var hit, grabRange, LayerMask.GetMask("Tile"),
+                    QueryTriggerInteraction.Ignore
+                ))
+            {
+                var tile = hit.collider.transform.GetComponentInParent<GameTile>();
+                if (tile != null)
+                {
+                    hovered = tile;
+                    TileInteractor.Instance.OnHover(hovered, camera.transform);
+                }
+            }
+        }
 
         if (ProcessMouseAction && GrabAction.action.triggered)
         {
-
             if (grabbedObject != null)
             {
                 grabbedObject.ReleaseObject();
             }
+            else if (hovered != null)
+            {
+                TileInteractor.Instance.OnClick(hovered);
+            }
             else
             {
+
+
                 // Do raycast
                 for (int i = 1; i <= grabSphereTime; i++)
                 {

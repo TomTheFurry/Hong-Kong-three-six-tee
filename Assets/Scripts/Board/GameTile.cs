@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -7,12 +5,10 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 using Photon.Pun;
-using Photon.Realtime;
 
 using UnityEditor;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public abstract class GameTile : MonoBehaviourPun
 {
@@ -20,6 +16,10 @@ public abstract class GameTile : MonoBehaviourPun
 
     public int TileId = -1;
     public TileType Type;
+
+    public string Description;
+    public Texture2D Image;
+    public string VideoUrl;
 
     // Config this
     [SerializeReference]

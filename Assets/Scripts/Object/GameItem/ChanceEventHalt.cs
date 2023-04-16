@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 
-using JetBrains.Annotations;
-
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ChanceEventHalt", menuName = "ChanceEvent/Halt")]

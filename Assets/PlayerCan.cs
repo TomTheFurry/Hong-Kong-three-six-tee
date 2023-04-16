@@ -1,14 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-
-using JetBrains.Annotations;
-
 using Photon.Pun;
 using Photon.Realtime;
 
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Events;
 
 [RequireComponent(typeof(BoxCollider))]
 public class PlayerCan : PcGrabInteractable, IPunInstantiateMagicCallback
