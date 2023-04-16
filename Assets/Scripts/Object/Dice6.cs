@@ -24,7 +24,6 @@ public class Dice6 : ItemBase
     private void Awake() { rb = GetComponent<Rigidbody>(); }
 
     public override bool IsUsable => false;
-    public override UseItemStateBase GetUseItemState(StateTurn.StatePlayerAction parent) => null;
     protected override bool OnReleasedItem(GamePlayer player) => true;
 
     private new void Start()

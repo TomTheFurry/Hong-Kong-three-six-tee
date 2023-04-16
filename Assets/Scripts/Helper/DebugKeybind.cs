@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 
 using JetBrains.Annotations;
 
+using Photon.Pun;
+
 using TMPro;
 
 using UnityEngine;
@@ -51,7 +53,7 @@ public class DebugKeybind : MonoBehaviour
                 text += "Active Options: \n";
                 foreach (var option in activeOptions)
                 {
-                    text += option.Item1 + ": " + option.Item2;
+                    text += option.Item1 + ": " + option.Item2 + '\n';
                 }
                 debugText.text = text;
             }
@@ -72,5 +74,26 @@ public class DebugKeybind : MonoBehaviour
         activeOptions = options;
         task = new TaskCompletionSource<KeyCode>();
         return task.Task;
+    }
+
+    public Task<GamePlayer> ChoosePlayer(bool allowSelf)
+    {
+        // client. Do select player
+        List<(KeyCode, string)> choices = new List<(KeyCode, string)>();
+        int[] map = new int[Game.Instance.PlayerCount - 1];
+        const KeyCode START = KeyCode.Alpha1;
+        int i = 0;
+        foreach (var player in Game.Instance.JoinedPlayers)
+        {
+            if ((allowSelf || player.PunConnection != PhotonNetwork.LocalPlayer)
+                && Game.Instance.PlayerCount != 1) // temp DEBUG
+            {
+                choices.Add((START+i, player.Name));
+                map[i++] = player.Idx;
+            }
+        }
+        return ChooseActionTemp(choices)
+            .ContinueWith(t => Game.Instance.IdxToPlayer[map[t.Result - START]],
+            TaskContinuationOptions.ExecuteSynchronously);
     }
 }

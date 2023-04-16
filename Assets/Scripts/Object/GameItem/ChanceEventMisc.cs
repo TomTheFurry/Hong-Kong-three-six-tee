@@ -27,7 +27,7 @@ public class ChanceEventMisc : ChanceEvent
                 }
                 break;
             case ActionType.HalfNextMovement:
-                r.Player.HalfNextTurn = true;
+                r.Player.NextTurnRollPercent /= 2;
                 break;
             case ActionType.LoseRandomTile:
                 if (r.IsMaster)

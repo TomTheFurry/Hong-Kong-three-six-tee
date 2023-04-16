@@ -503,7 +503,7 @@ public class StateTurn : NestedGameState
                 // Rolled dice.
                 return new StateTurnEffects(Parent, rInt.Data);
             }
-            if (ChildState is UseItemStateBase)
+            if (ChildState is IUseItemState)
             {
                 if (r is GameStateReturn<bool> shouldSkipTurn)
                 {
@@ -600,7 +600,7 @@ public class StateTurn : NestedGameState
                 else if (UseItem != null)
                 {
                     SendClientStateEvent("UseItem", SerializerUtil.SerializeItem(UseItem));
-                    return UseItem.GetUseItemState(Parent);
+                    return UseItem.GetUseItemState(Parent) as GameState;
                 }
                 return null;
             }
@@ -616,7 +616,7 @@ public class StateTurn : NestedGameState
                 {
                     UseItem = SerializerUtil.DeserializeItem(d2.Data);
                     Debug.Log($"Used item {UseItem}");
-                    return UseItem.GetUseItemState(Parent);
+                    return UseItem.GetUseItemState(Parent) as GameState;
                 }
                 return null;
             }

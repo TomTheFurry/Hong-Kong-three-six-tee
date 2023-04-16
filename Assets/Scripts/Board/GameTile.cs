@@ -29,13 +29,16 @@ public abstract class GameTile : MonoBehaviourPun
     [HideInInspector]
     [SerializeReference]
     public GameTile PrevTile = null;
-
+    
     public virtual IEnumerator<GameTile> GetNextTiles()
     {
         yield return NextTile;
     }
 
     private bool maybeDup = true;
+    
+    public bool HaltTurnOnPass;
+    public bool AddTrapItemOnStep;
 
     public abstract bool NeedActionOnEnterTile(GamePlayer player);
     public abstract bool NeedActionOnExitTile(GamePlayer player);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Photon.Pun;
@@ -21,15 +22,16 @@ public class GamePlayer
     public PlayerCan Can = null;
     public int Idx = -1;
     public ControlType Control = ControlType.Unknown;
-    public HashSet<GameObject> Holding = new();
-
-    // Game States
-    public LinkedList<ItemBase> Items = new();
-    public double Funds = 1000;
 
     public string Name => PunConnection.NickName;
+    
+    public HashSet<GameObject> Holding = new();
+    // Game States
+    public LinkedList<ItemBase> Items = new();
+
+    public double Funds = 1000;
     public int HaltTurns = 0;
-    public bool HalfNextTurn = false;
+    public float NextTurnRollPercent = 1;
     public float Luck = 0.7f;
 
     public GamePlayer(Player punConnection)
@@ -86,5 +88,10 @@ public class GamePlayer
             }
         }
         return removed;
+    }
+
+    public bool HasHeldItemType(HeldItem.Type type)
+    {
+        return Items.Any(i => i is HeldItem hi && hi.HeldType == type);
     }
 }

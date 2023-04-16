@@ -72,6 +72,8 @@ public class OwnableTile : GameTile
 
     [CanBeNull]
     public GamePlayer Owner => OwnershipItem.CurrentOwner;
+    
+    public List<(int,float) PassbyFeeMultipliers = new List<(int, float)>();
 
     public bool GamePlayerCanBuy(GamePlayer player)
     {

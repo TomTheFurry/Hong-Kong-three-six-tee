@@ -3,7 +3,6 @@
 public class LandOwnershipItem : ItemBase
 {
     public override bool IsUsable => false;
-    public override UseItemStateBase GetUseItemState(StateTurn.StatePlayerAction parent) => null;
 
     [SerializeReference]
     [HideInInspector]

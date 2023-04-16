@@ -24,24 +24,11 @@ public class ChanceEventSelectPlayer : ChanceEvent
         if (r.Player.PunConnection.IsLocal)
         {
             // client. Do select player
-            List<(KeyCode, string)> choices = new List<(KeyCode, string)>();
-            int[] map = new int[Game.Instance.PlayerCount - 1];
-            const KeyCode START = KeyCode.Alpha1;
-            int i = 0;
-            foreach (var player in Game.Instance.JoinedPlayers)
-            {
-                if (player != r.Player && Game.Instance.PlayerCount != 1) // temp DEBUG
-                {
-                    choices.Add((START+i, player.Name));
-                    map[i++] = player.Idx;
-                }
-            }
-            DebugKeybind.Instance.ChooseActionTemp(choices).ContinueWith(
+            DebugKeybind.Instance.ChoosePlayer(false).ContinueWith(
                 t =>
                 {
-                    var selectedPlayer = Game.Instance.IdxToPlayer[map[t.Result - START]];
-                    Assert.IsNotNull(selectedPlayer);
-                    Game.Instance.photonView.RPC(nameof(Game.ClientTrySelectPlayer), RpcTarget.MasterClient, selectedPlayer);
+                    Assert.IsNotNull(t.Result);
+                    Game.Instance.photonView.RPC(nameof(Game.ClientTrySelectPlayer), RpcTarget.MasterClient, t.Result);
                 }
             );
         }
