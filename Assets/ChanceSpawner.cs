@@ -22,6 +22,7 @@ public class ChanceSpawner : MonoBehaviourPun
     public List<ChanceEvent> Events2;
     public List<ChanceEvent> Events3;
     public ChanceCard Template;
+    public List<GameItem> ItemLinks;
 
     [NonSerialized]
     public List<ChanceEvent>[] EventsGroups = new List<ChanceEvent>[4];

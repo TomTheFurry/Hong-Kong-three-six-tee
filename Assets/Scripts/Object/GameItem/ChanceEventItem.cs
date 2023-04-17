@@ -5,25 +5,22 @@ using JetBrains.Annotations;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ChanceEventItem", menuName = "ChanceEvent/Item")]
-public class ChanceEventItem : ChanceEvent
-{
-    [CanBeNull]
-    [SerializeReference]
-    public ItemBase ItemToGain;
+public class ChanceEventItem : ChanceEvent {
+    public int ItemToGainIdx;
 
     public override void OnCreate(ChanceEventState r)
     {
         if (!r.IsMaster) return;
 
-        if (ItemToGain != null)
+        if (ItemToGainIdx != -1)
         {
-            ItemTemplateDefiner.Instance.ServerInstantiateItem(ItemToGain.Id, r.Player);
+            ItemTemplateDefiner.Instance.ServerInstantiateItem(ChanceSpawner.Instance.ItemLinks[ItemToGainIdx].Id, r.Player);
         }
     }
 
     public override bool ServerUpdate(ChanceEventState r)
     {
-        if (ItemToGain == null)
+        if (ItemToGainIdx == -1)
         {
             int count = r.Player.Items.Count;
             if (count > 0)
@@ -41,7 +38,7 @@ public class ChanceEventItem : ChanceEvent
 
     public override bool OnClientEvent(ChanceEventState r, IClientEvent e)
     {
-        if (ItemToGain == null)
+        if (ItemToGainIdx == -1)
         {
             if (e is ClientEventStringData ed && ed.Key == "RemoveItem")
             {
