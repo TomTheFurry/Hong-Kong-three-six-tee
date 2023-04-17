@@ -51,7 +51,7 @@ public class ChanceEventState : GameStateLeaf
     public GamePlayer Player => (Parent as StateTurn.StateTurnEffects.StateStepOnTile).Parent.Parent.CurrentPlayer;
     public RoundData Data => (Parent as StateTurn.StateTurnEffects.StateStepOnTile).Parent.Parent.Round;
     private readonly ChanceEvent Ev;
-    private readonly ChanceCard Card;
+    public readonly ChanceCard Card;
     public ChanceEventState([NotNull] StateTurn.StateTurnEffects.StateStepOnTile parent, ChanceCard card) : base(parent)
     {
         Card = card;

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b15a7356808a34e8d73640813e0c27, type: 3}
+  m_Name: "\u51CD\u7D50\u8CC7\u7522"
+  m_EditorClassIdentifier: 
+  Name: "\u51CD\u7D50\u8CC7\u7522 "
+  Description: "\u96A8\u6A5F\u5931\u53BB\u4E00\u500B\u5730\u7522, \u4E26\u5931\u53BB\u8A72\u5730\u7522\u7684\u6240\u6709\u5EFA\u7BC9\u7B49\u7D1A "
+  ChanceMuliplier: 0
+  Action: 2

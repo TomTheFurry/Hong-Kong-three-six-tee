@@ -164,6 +164,7 @@ public class OwnableTile : GameTile
 
     protected async Task OnStepCanBuyOrUpgrade(GamePlayer player)
     {
+        OnStepState = (player, new TaskCompletionSource<int>());
         // State machine here.
         if (PhotonNetwork.LocalPlayer == player.PunConnection)
         {
@@ -195,12 +196,13 @@ public class OwnableTile : GameTile
                 default: throw new ArgumentOutOfRangeException();
             }
         }
+        await OnStepState.Value.future.Task;
+        OnStepState = null;
     }
 
     protected virtual async Task OnStep(GamePlayer player)
     {
         Debug.Log("OnStep!");
-        OnStepState = (player, new TaskCompletionSource<int>());
         // sub funds
         if (Owner != null && Owner != player)
         {
@@ -210,8 +212,6 @@ public class OwnableTile : GameTile
         {
             await OnStepCanBuyOrUpgrade(player);
         }
-        await OnStepState.Value.future.Task;
-        OnStepState = null;
     }
     
     #region UNITY_EDITOR

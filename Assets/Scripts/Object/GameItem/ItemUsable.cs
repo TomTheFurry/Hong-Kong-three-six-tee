@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 using Photon.Pun;
-
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -241,12 +241,23 @@ public abstract class GameItem : ItemBase
     public string Name;
     public string Description;
     public bool Illegal;
+    public bool CanBuyInShop;
+
+    public TextMeshPro Nametag;
 
     public override bool IsIllegal => Illegal;
+
+    public void Update() {
+        if (Nametag != null) {
+            Nametag.text = Name;
+            // make nametag face camera
+            Nametag.transform.LookAt(Camera.main.transform); // LookAt() doesn't correct for roll
+            Nametag.transform.Rotate(0, 180, 0, Space.Self);
+        }
+    }
 }
 
-public class ItemUsable : ItemBase
-{
+public class ItemUsable : GameItem {
     public override bool IsUsable => true;
 
     public enum Event

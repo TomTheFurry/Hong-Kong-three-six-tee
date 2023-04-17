@@ -756,7 +756,7 @@ public class StateTurn : NestedGameState
             public new StateTurnEffects Parent;
             public Task Animation;
             public Task<GameState> SubStateFuture;
-            private GameState Child;
+            public GameState Child;
 
             public StateStepOnTile([NotNull] StateTurnEffects parent) : base(parent)
             {
