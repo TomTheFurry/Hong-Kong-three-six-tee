@@ -112,6 +112,48 @@ public class TipManager : MonoBehaviour
                 {
                     GameTile tile = turn.CurrentPlayer.Tile;
                     tip += (turnIsYours ? "You" : player.Name) + " are now on " + ColorText(tile.Name, "0ff") + ".\n";
+
+                    if (tile is OwnableTile ot) 
+                    {
+                        if (turnIsYours) {
+                            if (ot.Owner == null) {
+                                tip += "You can buy this tile for " + ColorText(ot.Price, "0ff") + " dollars.\n";
+                            }
+                            else if (ot.Owner == player && ot.Level < 5) {
+                                tip += "You can level up this tile to level " + (ot.Level + 1) + " for " + ColorText(ot.LevelUpPrice, "0ff") + " dollars.\n";
+                            }
+                            else if (ot.Owner != player && ot.Owner != null) {
+                                tip += "'You paid " + (ot.StepOnPrice) + " dollars to " + ot.Owner.Name + " for rent.\n";
+                            }
+
+                            if (ot is ShopTile st) {
+                                tip += "You can buy items from the shop.\n";
+                            }
+                            tip += "Press 'Enter' to continue...\n";
+                        }
+                        else {
+                            if (ot.Owner != player && ot.Owner != null) {
+                                bool isOwnedBySelf = ot.Owner == self;
+                                tip += player.Name + " paid " + (ot.StepOnPrice) + " dollars to " +(isOwnedBySelf ? "you" : ot.Owner.Name) + " for rent.\n";
+                            }
+                            tip += "Waiting for " + player.Name + "'s actions...\n";
+                        }
+                    }
+                    else if (tile is ChanceTile ct) {
+                        if (turnIsYours) {
+                            if (onTile.Child is ChanceEventState ce)
+                            {
+                                tip += "You drawed the card: " + ce.Card.Ev.Name + "\n";
+                            }
+                            else {
+                                tip += "You can pick up a chance card.\n";
+                                tip += "Press 'P' to draw cards. (TEMP)\n";
+                            }
+                        }
+                        else {
+                            tip += "Waiting for " + player.Name + "'s actions...\n";
+                        }
+                    }
                 }
             }
             else if (g.State is StateTurn.StateEndTurn endTurn)

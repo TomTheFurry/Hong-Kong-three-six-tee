@@ -241,6 +241,7 @@ public abstract class GameItem : ItemBase
     public string Name;
     public string Description;
     public bool Illegal;
+    public bool CanBuyInShop;
 
     public TextMeshPro Nametag;
 
