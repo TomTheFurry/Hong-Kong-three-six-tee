@@ -13,11 +13,17 @@ public class TileInteractor : MonoBehaviour
 
     public TileDataSetter InfoUI;
 
+    public TileInteractorDetail DetailedUi;
+
+
     public float ScalerByDist = 0.5f;
 
     private Board Board;
     private List<GameTile> Tiles => Board.Tiles;
+    private Func<GameTile, bool> Predicate;
     private TaskCompletionSource<GameTile> SelectTileTcs; // todo
+
+    private bool IsHovered = false;
 
     void Start()
     {
@@ -28,20 +34,30 @@ public class TileInteractor : MonoBehaviour
 
     public void Update()
     {
-        InfoUI.gameObject.SetActive(false);
+        IsHovered = false;
+    }
+
+    public void LateUpdate()
+    {
+        InfoUI.gameObject.SetActive(IsHovered);
     }
 
     public void OnClick(GameTile tile)
     {
-        if (SelectTileTcs != null)
+        if (SelectTileTcs != null && (Predicate == null || Predicate(tile)))
         {
             SelectTileTcs.SetResult(tile);
             SelectTileTcs = null;
+            Predicate = null;
         }
+        //DetailedUi.SetOnClick(() => {
+            
+        //});
     }
 
     public Task<GameTile> RequestSelectTile(Func<GameTile, bool> predicate)
     {
+        Predicate = predicate;
         Assert.IsNull(SelectTileTcs);
         SelectTileTcs = new TaskCompletionSource<GameTile>();
         return SelectTileTcs.Task;
@@ -49,7 +65,7 @@ public class TileInteractor : MonoBehaviour
 
     public void OnHover(GameTile tile, Transform camera)
     {
-        InfoUI.gameObject.SetActive(true);
+        IsHovered = true;
         InfoUI.Set(tile);
         InfoUI.transform.position = tile.transform.position + Vector3.up * 2f;
         
