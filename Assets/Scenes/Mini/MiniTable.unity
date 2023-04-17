@@ -163,6 +163,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 97dadbed34c072a4f874947e21ce2677, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 3000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 7
       objectReference: {fileID: 0}
@@ -339,6 +343,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 5ed84aa533e191a4b8611216bd401eb9, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 3500
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 1
@@ -752,17 +760,18 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 20
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
 --- !u!114 &69591752 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5772684644126788673, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_PrefabInstance: {fileID: 69591751}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcf47799e38630146b58ca13e68c6e5c, type: 3}
+  m_Script: {fileID: 11500000, guid: d79b6a785b5e8814a9f0e9feba9f43c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &69591753 stripped
@@ -770,6 +779,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3016901998372078271, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_PrefabInstance: {fileID: 69591751}
   m_PrefabAsset: {fileID: 0}
+--- !u!23 &69591754 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2599922244665655076, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 69591751}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &69591755 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3016901998372078270, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 69591751}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &69591756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69591755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31db708ae5b0f2f41989e2af5d4f980e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: "\u82B1\u5712\u8857"
+  TileId: 24
+  Type: {fileID: 11400000, guid: 0c0e1c3b927bd86439044cf00cf71eb5, type: 2}
+  Description: "\u82B1\u5712\u8857\u4F4D\u65BC\u4E5D\u9F8D\u65FA\u89D2\uFF0C\u662F\u4E00\u689D\u4EE5\u82B1\u5E97\u548C\u690D\u7269\u70BA\u4E3B\u984C\u7684\u8857\u9053\u3002\u9019\u88E1\u6709\u5404\u7A2E\u985E\u578B\u7684\u82B1\u5349\u548C\u76C6\u683D\uFF0C\u9084\u6709\u8A31\u591A\u82B1\u5E97\u548C\u5712\u85DD\u7528\u54C1\u5E97\u3002\u82B1\u5712\u8857\u662F\u9999\u6E2F\u7684\u8457\u540D\u65C5\u904A\u666F\u9EDE\u4E4B\u4E00\uFF0C\u5438\u5F15\u4E86\u8A31\u591A\u904A\u5BA2\u524D\u4F86\u8CFC\u7269\u548C\u89C0\u5149\u3002"
+  Image: {fileID: 0}
+  VideoUrl: 
+  NextTile: {fileID: 837858182}
+  PrevTile: {fileID: 1724124898}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
+  OwnershipItem: {fileID: 69591752}
+  Grid: {fileID: 69591754}
+  AssetDefiner: {fileID: 0}
+  Price: 2400
+  TilePriceChangeBias: 1
 --- !u!114 &87937763
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1825,6 +1871,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 70a77b577d6f548499b334e0b374ed87, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2500
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 27
@@ -2960,13 +3010,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: b2e1e091d0423ec48942d9ddc1fd7ceb, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: NextTile
       value: 
-      objectReference: {fileID: 661121115}
+      objectReference: {fileID: 661121120}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: PrevTile
       value: 
@@ -3288,6 +3342,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: d7cebf22a67c7214ea478354c9ffb7da, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 5800
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 29
       objectReference: {fileID: 0}
@@ -3465,6 +3523,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: d7cebf22a67c7214ea478354c9ffb7da, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 4500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 10
       objectReference: {fileID: 0}
@@ -3641,6 +3703,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 5ed84aa533e191a4b8611216bd401eb9, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 3500
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 2
@@ -4164,6 +4230,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: d7cebf22a67c7214ea478354c9ffb7da, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 4900
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 19
       objectReference: {fileID: 0}
@@ -4593,6 +4663,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 70a77b577d6f548499b334e0b374ed87, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 1700
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 14
@@ -5119,6 +5193,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: c82fa9413d837be4480abdbafd6311af, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 1700
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 13
       objectReference: {fileID: 0}
@@ -5323,6 +5401,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3016901998372078270, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3016901998372078271, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: m_RootOrder
       value: 16
@@ -5415,24 +5497,62 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
---- !u!114 &661121115 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
-  m_PrefabInstance: {fileID: 661121114}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcf47799e38630146b58ca13e68c6e5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &661121116 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3016901998372078271, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_PrefabInstance: {fileID: 661121114}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &661121117 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5772684644126788673, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 661121114}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d79b6a785b5e8814a9f0e9feba9f43c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!23 &661121118 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2599922244665655076, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 661121114}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &661121119 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3016901998372078270, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 661121114}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &661121120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661121119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31db708ae5b0f2f41989e2af5d4f980e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: "\u5927\u57D4\u589F"
+  TileId: 16
+  Type: {fileID: 11400000, guid: 0c0e1c3b927bd86439044cf00cf71eb5, type: 2}
+  Description: "\u5927\u57D4\u589F\u662F\u4E00\u500B\u6B77\u53F2\u60A0\u4E45\u7684\u5E02\u96C6\uFF0C\u6709\u8457\u8C50\u5BCC\u7684\u6587\u5316\u548C\u50B3\u7D71\u7F8E\u98DF\u3002\u9019\u88E1\u6709\u5404\u7A2E\u5C0F\u5403\u3001\u624B\u5DE5\u85DD\u54C1\u548C\u53E4\u8463\uFF0C\u9084\u6709\u53E4\u8001\u7684\u8857\u9053\u548C\u5EFA\u7BC9\u3002\u5927\u57D4\u589F\u4E5F\u662F\u9999\u6E2F\u8457\u540D\u7684\u65C5\u904A\u666F\u9EDE\u4E4B\u4E00\u3002"
+  Image: {fileID: 0}
+  VideoUrl: 
+  NextTile: {fileID: 1868009096}
+  PrevTile: {fileID: 345080191}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
+  OwnershipItem: {fileID: 661121117}
+  Grid: {fileID: 661121118}
+  AssetDefiner: {fileID: 225249658}
+  Price: 2100
+  TilePriceChangeBias: 1
 --- !u!1 &669492049
 GameObject:
   m_ObjectHideFlags: 0
@@ -6128,6 +6248,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 70a77b577d6f548499b334e0b374ed87, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2700
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 37
       objectReference: {fileID: 0}
@@ -6580,6 +6704,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 2a38ca7fe03f012499a47a1b147212df, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 25
       objectReference: {fileID: 0}
@@ -6590,7 +6718,7 @@ PrefabInstance:
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: PrevTile
       value: 
-      objectReference: {fileID: 69591752}
+      objectReference: {fileID: 69591756}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Description
       value: "\u9999\u6E2F\u9AD4\u80B2\u9928\u4F4D\u65BC\u4E5D\u9F8D\u57CE\uFF0C\u662F\u9999\u6E2F\u6700\u5927\u7684\u5BA4\u5167\u9AD4\u80B2\u5834\u9928\u4E4B\u4E00\u3002\u5B83\u53EF\u4EE5\u5BB9\u7D0D12,500\u4EBA\uFF0C\u662F\u8209\u8FA6\u5927\u578B\u9AD4\u80B2\u6BD4\u8CFD\u548C\u6F14\u5531\u6703\u7684\u7406\u60F3\u5834\u5730\u3002\u9AD4\u80B2\u9928\u5167\u8A2D\u65BD\u9F4A\u5168\uFF0C\u5305\u62EC\u7C43\u7403\u5834\u3001\u7FBD\u6BDB\u7403\u5834\u3001\u6E38\u6CF3\u6C60\u7B49\uFF0C\u662F\u9999\u6E2F\u9AD4\u80B2\u754C\u7684\u91CD\u8981\u5834\u6240\u3002"
@@ -6756,6 +6884,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 84d3eda221be6fe4eb6dd25ccef15fd7, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 45600
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 32
@@ -7450,6 +7582,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 84d3eda221be6fe4eb6dd25ccef15fd7, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 4500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 8
       objectReference: {fileID: 0}
@@ -7727,6 +7863,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 97dadbed34c072a4f874947e21ce2677, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2500
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 11
@@ -8054,13 +8194,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 84d3eda221be6fe4eb6dd25ccef15fd7, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 4500
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: NextTile
       value: 
-      objectReference: {fileID: 1764465000}
+      objectReference: {fileID: 1764465004}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: PrevTile
       value: 
@@ -8230,6 +8374,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 8fe799c2835c869428965e5c7b655efa, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 18
@@ -9675,6 +9823,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: c82fa9413d837be4480abdbafd6311af, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2600
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 26
       objectReference: {fileID: 0}
@@ -10261,6 +10413,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: b2e1e091d0423ec48942d9ddc1fd7ceb, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 9
       objectReference: {fileID: 0}
@@ -10437,6 +10593,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: d7cebf22a67c7214ea478354c9ffb7da, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 6500
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 30
@@ -10691,6 +10851,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 6f569889fbcb28f43aeb1cd9ad43b421, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 3
       objectReference: {fileID: 0}
@@ -10900,15 +11064,15 @@ MonoBehaviour:
   - {fileID: 653116076}
   - {fileID: 616446727}
   - {fileID: 345080191}
-  - {fileID: 661121115}
+  - {fileID: 661121120}
   - {fileID: 1868009096}
   - {fileID: 988085857}
   - {fileID: 577114676}
   - {fileID: 979045150}
-  - {fileID: 1764465000}
+  - {fileID: 1764465004}
   - {fileID: 1948351965}
   - {fileID: 1724124898}
-  - {fileID: 69591752}
+  - {fileID: 69591756}
   - {fileID: 837858182}
   - {fileID: 1312880635}
   - {fileID: 146103254}
@@ -10986,6 +11150,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: c82fa9413d837be4480abdbafd6311af, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 3000
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 35
@@ -11347,6 +11515,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 699657c2fbe62e249b3be5180f5aab03, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2700
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 39
@@ -11898,13 +12070,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: b2e1e091d0423ec48942d9ddc1fd7ceb, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: NextTile
       value: 
-      objectReference: {fileID: 69591752}
+      objectReference: {fileID: 69591756}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: PrevTile
       value: 
@@ -12343,6 +12519,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 2a38ca7fe03f012499a47a1b147212df, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2700
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 36
       objectReference: {fileID: 0}
@@ -12774,24 +12954,62 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 39
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
---- !u!114 &1764465000 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+--- !u!23 &1764465000 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2599922244665655076, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_PrefabInstance: {fileID: 1764464999}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcf47799e38630146b58ca13e68c6e5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1764465001 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3016901998372078271, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
   m_PrefabInstance: {fileID: 1764464999}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1764465002 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5772684644126788673, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 1764464999}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d79b6a785b5e8814a9f0e9feba9f43c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1764465003 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3016901998372078270, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+  m_PrefabInstance: {fileID: 1764464999}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1764465004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764465003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31db708ae5b0f2f41989e2af5d4f980e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: "\u9D28\u5BEE\u8857"
+  TileId: 21
+  Type: {fileID: 11400000, guid: 0c0e1c3b927bd86439044cf00cf71eb5, type: 2}
+  Description: "\u9D28\u5BEE\u8857\u4F4D\u65BC\u4E5D\u9F8D\u6DF1\u6C34\u57D7\u5340\uFF0C\u662F\u9999\u6E2F\u6700\u8457\u540D\u7684\u8CFC\u7269\u8857\u4E4B\u4E00\u3002\u9019\u689D\u8857\u9053\u4EE5\u552E\u8CE3\u6642\u88DD\u3001\u978B\u5B50\u3001\u624B\u888B\u548C\u914D\u98FE\u800C\u805E\u540D\uFF0C\u5438\u5F15\u4E86\u5927\u91CF\u904A\u5BA2\u548C\u672C\u5730\u5C45\u6C11\u524D\u4F86\u8CFC\u7269\u3002"
+  Image: {fileID: 0}
+  VideoUrl: 
+  NextTile: {fileID: 1948351965}
+  PrevTile: {fileID: 979045150}
+  HaltTurnOnPass: 0
+  AddTrapItemOnStep: 0
+  OwnershipItem: {fileID: 1764465002}
+  Grid: {fileID: 1764465000}
+  AssetDefiner: {fileID: 225249658}
+  Price: 2500
+  TilePriceChangeBias: 1
 --- !u!1 &1768459527
 GameObject:
   m_ObjectHideFlags: 0
@@ -13061,6 +13279,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 78fe3cfe2553f3142b298e91ed6e4213, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 17
       objectReference: {fileID: 0}
@@ -13071,7 +13293,7 @@ PrefabInstance:
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: PrevTile
       value: 
-      objectReference: {fileID: 661121115}
+      objectReference: {fileID: 661121120}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Description
       value: "\u6C99\u7530\u99AC\u5834\u662F\u4E00\u500B\u4E16\u754C\u77E5\u540D\u7684\u8CFD\u99AC\u5834\uFF0C\u6BCF\u9031\u8209\u884C\u591A\u5834\u8CFD\u99AC\u6D3B\u52D5\u3002\u9019\u88E1\u6709\u73FE\u4EE3\u5316\u7684\u8A2D\u65BD\u548C\u8C6A\u83EF\u7684\u89C0\u773E\u5E2D\uFF0C\u5438\u5F15\u4E86\u4F86\u81EA\u4E16\u754C\u5404\u5730\u7684\u8CFD\u99AC\u611B\u597D\u8005\u3002\u6C99\u7530\u99AC\u5834\u4E5F\u662F\u9999\u6E2F\u6700\u53D7\u6B61\u8FCE\u7684\u65C5\u904A\u666F\u9EDE\u4E4B\u4E00\u3002"
@@ -13449,6 +13671,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 004102a1226dba342839baa81bc64483, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 0
       objectReference: {fileID: 0}
@@ -13625,6 +13851,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 699657c2fbe62e249b3be5180f5aab03, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 3500
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 6
@@ -13803,6 +14033,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 5ed84aa533e191a4b8611216bd401eb9, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2400
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 22
       objectReference: {fileID: 0}
@@ -13813,7 +14047,7 @@ PrefabInstance:
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: PrevTile
       value: 
-      objectReference: {fileID: 1764465000}
+      objectReference: {fileID: 1764465004}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Description
       value: "\u74B0\u7403\u8CBF\u6613\u5EE3\u5834\u662F\u4E00\u5EA7\u4F4D\u65BC\u4E5D\u9F8D\u7063\u7684\u5927\u578B\u5546\u5834\uFF0C\u64C1\u6709\u8D85\u904E450\u5BB6\u5546\u5E97\u548C\u9910\u5EF3\uFF0C\u5305\u62EC\u9AD8\u7D1A\u6642\u88DD\u54C1\u724C\u3001\u96FB\u5B50\u7522\u54C1\u3001\u7F8E\u98DF\u548C\u5A1B\u6A02\u8A2D\u65BD\u7B49\u3002\u5B83\u662F\u9999\u6E2F\u6700\u53D7\u6B61\u8FCE\u7684\u8CFC\u7269\u548C\u5A1B\u6A02\u5834\u6240\u4E4B\u4E00\u3002"
@@ -14611,6 +14845,10 @@ PrefabInstance:
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 2a38ca7fe03f012499a47a1b147212df, type: 2}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Price
+      value: 2400
+      objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
       value: 31

@@ -22,7 +22,7 @@ public class OwnableTile : GameTile
     [SerializeReference]
     public MeshRenderer Grid;
 
-    [SerializeReference]
+    [HideInInspector]
     public TileAssetDefiner AssetDefiner;
 
     public double Price;
@@ -239,6 +239,7 @@ public class OwnableTile : GameTile
     {
         Assert.IsNotNull(OwnershipItem);
         Assert.IsTrue(OwnershipItem.Tile == this);
+        AssetDefiner = FindObjectOfType<TileAssetDefiner>();
     }
 
     public void RemoveOwnership()
