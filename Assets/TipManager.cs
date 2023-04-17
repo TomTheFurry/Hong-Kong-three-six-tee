@@ -154,6 +154,20 @@ public class TipManager : MonoBehaviour
                             tip += "Waiting for " + player.Name + "'s actions...\n";
                         }
                     }
+                    else if (tile is SpecialTile st) {
+                        if (st.TileType is SpecialTile.Type.RollStaw) {
+                            if (st.DrawStawTask == null) {
+                                tip += "Drawing a staw....\n";
+                            }
+                            else {
+                                bool lucky = st.DrawStawTask.Task.Result;
+                                tip += "You drawed a " + (lucky ? ColorText("lucky", "0ff") : ColorText("unlucky", "f00")) + " staw!\n";
+                            }
+                        }
+                        else {
+                            tip += "TODO\n";
+                        }
+                    }
                 }
             }
             else if (g.State is StateTurn.StateEndTurn endTurn)
