@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Assets.Scripts;
-
+using cakeslice;
 using Photon.Pun;
 
 using UnityEngine;
@@ -146,6 +146,7 @@ public class ChanceSpawner : MonoBehaviourPun
 
     public void Update()
     {
+        GetComponent<Outline>().eraseRenderer = SpawnCardTcs == null;
         if (DrawCardAction.action.triggered)
         {
             ClientWantDrawCard();
