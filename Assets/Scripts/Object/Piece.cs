@@ -162,6 +162,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     [PunRPC]
     public void Teleport()
     {
+        UpdatePin();
         if (CurrentTile == null) return;
         rb.position = CurrentTile.transform.position + Vector3.up * 1f;
         rb.angularVelocity = Vector3.zero;

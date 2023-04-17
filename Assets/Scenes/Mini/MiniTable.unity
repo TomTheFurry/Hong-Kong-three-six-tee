@@ -520,8 +520,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
+  m_sharedMaterial: {fileID: -1626287226669248322, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4123,6 +4123,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 7ec1d86854e3356418982fb45b2fc216, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Name
+      value: gugy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Type
       value: 
       objectReference: {fileID: 11400000, guid: 5ed84aa533e191a4b8611216bd401eb9, type: 2}
@@ -4144,7 +4148,7 @@ PrefabInstance:
       objectReference: {fileID: 225249658}
     - target: {fileID: 3016901998372078270, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: m_Name
-      value: Tile_2_Temp
+      value: Tile_2_gugy
       objectReference: {fileID: 0}
     - target: {fileID: 3016901998372078270, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: m_Layer
@@ -7186,8 +7190,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
+  m_sharedMaterial: {fileID: -1626287226669248322, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -12631,8 +12635,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: ...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
+  m_sharedMaterial: {fileID: -1626287226669248322, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
