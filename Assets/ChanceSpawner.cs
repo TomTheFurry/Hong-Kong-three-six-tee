@@ -130,13 +130,15 @@ public class ChanceSpawner : MonoBehaviourPun
         SpawnCardTcs.SetResult(card);
     }
 
-    public Task<ChanceCard> AwaitForDrawCard(int chanceGroup, GamePlayer player)
+    public async Task<ChanceCard> AwaitForDrawCard(int chanceGroup, GamePlayer player)
     {
         Assert.IsNull(SpawnCardTcs);
         SpawnCardTcs = new TaskCompletionSource<ChanceCard>();
         DrawGroup = chanceGroup;
         AwaitingPlayer = player;
-        return SpawnCardTcs.Task;
+        var result = await SpawnCardTcs.Task;
+        await Task.Delay(5000);
+        return result;
     }
 
 

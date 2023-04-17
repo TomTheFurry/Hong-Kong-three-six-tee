@@ -14,7 +14,8 @@ public class ChanceTile : GameTile
     public override bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, out Task t, out Task<GameState> state)
     {
         Task<ChanceCard> card = ChanceSpawner.Instance.AwaitForDrawCard(ChanceGroup, player);
-        state = card.ContinueWith(
+        state = card
+            .ContinueWith(
             t => new ChanceEventState(self, t.Result) as GameState, TaskContinuationOptions.ExecuteSynchronously
         );
         t = null;

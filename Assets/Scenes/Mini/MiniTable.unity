@@ -6514,8 +6514,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
+  m_sharedMaterial: {fileID: -1626287226669248322, guid: de0e0b1caf402b84ca418a4d0d9e8a63, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11138,6 +11138,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 625799705541159344, guid: 060e7ae9e9878e44aa7c4721ed733f18, type: 3}
   m_PrefabInstance: {fileID: 1630097151}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1630097153 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2006331630022508015, guid: 060e7ae9e9878e44aa7c4721ed733f18, type: 3}
+  m_PrefabInstance: {fileID: 1630097151}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e50f3a93ddc7af745b0169b222985fb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1636543642
 GameObject:
   m_ObjectHideFlags: 0
@@ -13695,6 +13706,7 @@ GameObject:
   - component: {fileID: 1948396863}
   - component: {fileID: 1948396866}
   - component: {fileID: 1948396867}
+  - component: {fileID: 1948396868}
   m_Layer: 0
   m_Name: ChanceSpawner
   m_TagString: Untagged
@@ -13836,7 +13848,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8e025c8d71369104ea6940d798b86c13, type: 2}
   - {fileID: 11400000, guid: ce2ba11247ed96048b4f9db84c061f06, type: 2}
   - {fileID: 11400000, guid: 874f2154eed5e754e9e507b66b276e76, type: 2}
-  Template: {fileID: 1725252210659123981, guid: e066883ac7c9aed48892df7e2dd1bd4a, type: 3}
+  Template: {fileID: 1630097153}
   ItemLinks: []
   DrawCardAction: {fileID: -7352847489949035683, guid: 469e12dc80fdd6b469d4dabf0895b9fb, type: 3}
 --- !u!114 &1948396867
@@ -13861,6 +13873,20 @@ MonoBehaviour:
   sceneViewId: 17
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &1948396868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948396861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 1
 --- !u!1001 &1953410810
 PrefabInstance:
   m_ObjectHideFlags: 0
