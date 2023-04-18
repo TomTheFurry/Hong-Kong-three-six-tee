@@ -339,8 +339,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentTile: {fileID: 0}
   Nametag: {fileID: 970114415891833431}
-  Mesh: {fileID: 374085110885539995}
-  Material: {fileID: 0}
+  Meshes:
+  - {fileID: 6927407140101566888}
+  Material: {fileID: 2100000, guid: b979c9e1243766a4bbaad5520021c9bc, type: 2}
 --- !u!145 &3275597954983595801
 SpringJoint:
   m_ObjectHideFlags: 0
@@ -459,6 +460,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: microphone
       objectReference: {fileID: 0}
+    - target: {fileID: 4431670454091400558, guid: c7d50f1a96d392649ac33d48618495f9, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b979c9e1243766a4bbaad5520021c9bc, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7d50f1a96d392649ac33d48618495f9, type: 3}
 --- !u!1 &5864255209155938711 stripped
@@ -483,5 +488,10 @@ MeshCollider:
 --- !u!4 &6496958848535434029 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c7d50f1a96d392649ac33d48618495f9, type: 3}
+  m_PrefabInstance: {fileID: 6747356354617570502}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &6927407140101566888 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4431670454091400558, guid: c7d50f1a96d392649ac33d48618495f9, type: 3}
   m_PrefabInstance: {fileID: 6747356354617570502}
   m_PrefabAsset: {fileID: 0}

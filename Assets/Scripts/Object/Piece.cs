@@ -27,7 +27,7 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 
     public GameTile CurrentTile = null;
     public TMP_Text Nametag = null;
-    public MeshRenderer Mesh = null;
+    public MeshRenderer[] Meshes;
     public Material Material = null;
 
     private Rigidbody rb;
@@ -216,10 +216,11 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
 #if UNITY_EDITOR
     public void OnValidate()
     {
-        if (Material != null)
+        foreach (MeshRenderer mesh in Meshes)
         {
-            Mesh.material = Material;
+            mesh.material = Material;
         }
+        Nametag.color = Material.color;
     }
 #endif
     #endregion

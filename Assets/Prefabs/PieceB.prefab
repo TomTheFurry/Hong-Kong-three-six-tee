@@ -339,8 +339,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CurrentTile: {fileID: 0}
   Nametag: {fileID: 970114415891833431}
-  Mesh: {fileID: 374085110885539995}
-  Material: {fileID: 0}
+  Meshes:
+  - {fileID: 4915846858543568242}
+  Material: {fileID: 2100000, guid: 651f090d61470ec4da663726016518db, type: 2}
 --- !u!145 &3275597954983595801
 SpringJoint:
   m_ObjectHideFlags: 0
@@ -455,6 +456,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7359335589324756512, guid: 85c19bfa2acaee1408a38beb19ab4931, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 651f090d61470ec4da663726016518db, type: 2}
     - target: {fileID: 919132149155446097, guid: 85c19bfa2acaee1408a38beb19ab4931, type: 3}
       propertyPath: m_Name
       value: handleshing
@@ -499,6 +504,11 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!23 &4915846858543568242 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7359335589324756512, guid: 85c19bfa2acaee1408a38beb19ab4931, type: 3}
+  m_PrefabInstance: {fileID: 6766372472391335058}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6515655966675999609 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 85c19bfa2acaee1408a38beb19ab4931, type: 3}
