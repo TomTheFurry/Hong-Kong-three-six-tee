@@ -732,6 +732,10 @@ PrefabInstance:
       propertyPath: PrevTile
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5772684644126788673, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Tile
+      value: 
+      objectReference: {fileID: 69591756}
     - target: {fileID: 5873593781592378637, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -5394,6 +5398,10 @@ PrefabInstance:
       propertyPath: PrevTile
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5772684644126788673, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Tile
+      value: 
+      objectReference: {fileID: 661121120}
     - target: {fileID: 5873593781592378637, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -12704,6 +12712,10 @@ PrefabInstance:
       propertyPath: PrevTile
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5772684644126788673, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
+      propertyPath: Tile
+      value: 
+      objectReference: {fileID: 1764465004}
     - target: {fileID: 5873593781592378637, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: m_Layer
       value: 7
