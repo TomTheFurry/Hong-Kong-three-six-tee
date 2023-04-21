@@ -6,9 +6,12 @@ public class RoundData
 
     public int RoundIdx = 0;
     public int ActiveOrderIdx;
+
     [NotNull]
     public StateTurn CurrentTurnState;
-    
+
+    public GamePlayer CurrentPlayer => Game.IdxToPlayer[Game.playerOrder[ActiveOrderIdx]];
+
     // public static StateRound StateRound {
     //     get {
     //         Debug.Log($"Round -- Player: {Game.ActionPlayer.PunConnection.NickName} action");
@@ -25,21 +28,18 @@ public class RoundData
         }
     }
 
-    /// <summary>
-    /// Change the action player index to next player.
-    /// </summary>
-    /// <returns>
-    /// True when have next action player<br/>
-    /// False when no next action player
-    /// </returns>
-    public bool NextPlayer()
+    public void NextPlayer()
     {
-        if (ActiveOrderIdx+1 >= Game.IdxToPlayer.Length) return false;
-        ActiveOrderIdx++;
-        return true;
+        ActiveOrderIdx = (ActiveOrderIdx + 1) % Game.IdxToPlayer.Length;
     }
 
-    public GamePlayer PeekNextPlayer()
+    public bool IsLastPlayer()
+    {
+        return ActiveOrderIdx + 1 >= Game.IdxToPlayer.Length;
+    }
+
+
+public GamePlayer PeekNextPlayer()
     {
         int nextIdx = ActiveOrderIdx + 1 % Game.IdxToPlayer.Length;
         return Game.IdxToPlayer[Game.playerOrder[nextIdx]];

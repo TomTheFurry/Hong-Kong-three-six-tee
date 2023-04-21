@@ -88,6 +88,7 @@ public class TipManager : MonoBehaviour
             GamePlayer player = turn.CurrentPlayer;
             bool turnIsYours = player == self;
             tip = "It's currently " + (turnIsYours ? ColorText("your", "0ff") : player.Name + "'s") + " turn.\n";
+            tip += (turnIsYours ? ColorText("your", "0ff") : player.Name) + " have " + ColorText(player.Funds, "0ff") + " dollars.\n";
 
             if (turn.ChildState is StateTurn.StatePlayerAction action)
             {

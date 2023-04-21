@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 2.115}
+  m_AnchoredPosition: {x: 0, y: 3.4}
   m_SizeDelta: {x: 20.54, y: 4.29}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!23 &2905093913536859692
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4278255360
   m_fontColor: {r: 0, g: 1, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -422,7 +422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 85c19bfa2acaee1408a38beb19ab4931, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.2850001
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 85c19bfa2acaee1408a38beb19ab4931, type: 3}
       propertyPath: m_LocalPosition.z

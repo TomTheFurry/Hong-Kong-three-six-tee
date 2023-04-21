@@ -62,6 +62,7 @@ public class GamePlayer
         Assert.IsNotNull(Piece);
         Tile = board.StartingTile;
         Piece.CurrentTile = Tile;
+        Funds = 10000;
         if (PhotonNetwork.IsMasterClient)
         {
             PlayerCan.Instantiate(this);
@@ -93,5 +94,22 @@ public class GamePlayer
     public bool HasHeldItemType(HeldItem.Type type)
     {
         return Items.Any(i => i is HeldItem hi && hi.HeldType == type);
+    }
+
+    public void Liquidate()
+    {
+        Board b = Game.Instance.Board;
+        Debug.Log($"Liquidating {this} with current balance of {Funds}...");
+        foreach (var t in b.OwnershipItems)
+        {
+            OwnableTile tile = t.Key;
+            if (tile.Owner != this) continue;
+
+            double funds = tile.LiquidatePriceNoHaircut;
+            Debug.Log($"Liquidating {tile} for {funds}...");
+            Funds += funds;
+            tile.RemoveOwnership();
+        }
+        Debug.Log($"Liquidated {this} with new balance of {Funds}.");
     }
 }

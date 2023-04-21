@@ -61,6 +61,7 @@ public class ShopTile : OwnableTile
                 KeyCode option = await DebugKeybind.Instance.ChooseActionTemp(opts);
                 if (option is KeyCode.Return) break;
 
+                itemRemaining--;
                 int choice = (int) option - (int) KeyCode.Alpha1;
                 Assert.IsFalse(choice < 0 || choice > 2);
                 Assert.IsTrue(itemsList[choice] != -1);
@@ -85,20 +86,22 @@ public class ShopTile : OwnableTile
             itemsList = ItemTemplateDefiner.Instance.ServerDrawShopItems();
             photonView.RPC(nameof(ServerDrawedShopItem), RpcTarget.Others, itemsList);
         }
-
+        
+        Debug.Log("Drawn shop item " + itemsList.IntToString());
         // sub funds
         if (Owner != null && Owner != player)
         {
+            Debug.Log("Pay fees");
             await OnStepPayFees(player);
         }
         else
         {
+            Debug.Log("Await for player tile action...");
             await OnStepCanBuyOrUpgrade(player);
         }
-
+        
+        Debug.Log("Await for player shop action...");
         await OnStepBuyItems(player);
         itemsList = null;
     }
-
-
 }

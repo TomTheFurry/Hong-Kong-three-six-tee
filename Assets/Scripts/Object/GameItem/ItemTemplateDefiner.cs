@@ -13,6 +13,8 @@ using UnityEngine.Assertions;
 public class ItemTemplateDefiner : MonoBehaviourPun
 {
     public static ItemTemplateDefiner Instance;
+
+    public Transform ItemSpawnpoint;
     
     public List<GameItem> ItemTemplate = new();
     public List<GameItem> ShopItems = new();
@@ -33,10 +35,12 @@ public class ItemTemplateDefiner : MonoBehaviourPun
     }
 
     [PunRPC]
-    private void OnInstantiateItem(int typeId, int[] views, [CanBeNull] Player player, PhotonMessageInfo info)
+    public void OnInstantiateItem(int typeId, int[] views, [CanBeNull] Player player, PhotonMessageInfo info)
     {
         Debug.Log($"Client-spawning item {typeId}");
         GameItem item = Instantiate(ItemTemplate[typeId].gameObject).GetComponent<GameItem>();
+        item.transform.position = ItemSpawnpoint.position;
+        item.transform.rotation = ItemSpawnpoint.rotation;
         item.CurrentOwner = player;
         PunNetInstantiateHack.RecieveLinkObj(info.Sender, item.gameObject, views);
     }
@@ -45,6 +49,8 @@ public class ItemTemplateDefiner : MonoBehaviourPun
     {
         Debug.Log($"Spawning item {typeId}");
         GameItem item = Instantiate(ItemTemplate[typeId].gameObject).GetComponent<GameItem>();
+        item.transform.position = ItemSpawnpoint.position;
+        item.transform.rotation = ItemSpawnpoint.rotation;
         item.CurrentOwner = owner;
         PunNetInstantiateHack.SetupForLinkObj(item.gameObject, true, (viewIds) =>
         {

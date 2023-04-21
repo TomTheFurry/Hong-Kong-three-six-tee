@@ -30,6 +30,7 @@ public class PcGrabInteractable : MonoBehaviourPun
 
     [NotNull]
     public UnityEvent<GamePlayer> OnGrabbed = new();
+
     [NotNull]
     public UnityEvent<GamePlayer> OnReleased = new();
 
@@ -102,14 +103,12 @@ public class PcGrabInteractable : MonoBehaviourPun
                 }
             }
         }
-        else CurrentLocalGrabber = null;
+        else
+            CurrentLocalGrabber = null;
     }
 
     [PunRPC]
-    public void NotifyFailedGrab(string message)
-    {
-        Debug.Log("Grab failed: " + message);
-    }
+    public void NotifyFailedGrab(string message) { Debug.Log("Grab failed: " + message); }
 
     [PunRPC]
     public void RequestGrabObject(PhotonMessageInfo info)
@@ -187,4 +186,18 @@ public class PcGrabInteractable : MonoBehaviourPun
             if (noGravityAfterGrab) target.useGravity = true;
         }
     }
+    
+    private void OnDestroy()
+    {
+        if (IsGrabbed)
+        {
+            GamePlayer player = PhotonNetwork.CurrentRoom.GetPlayer(ownerID, true);
+            if (player != null)
+            {
+                player.Holding.Remove(gameObject);
+                OnReleased.Invoke(player);
+            }
+        }
+    }
+
 }

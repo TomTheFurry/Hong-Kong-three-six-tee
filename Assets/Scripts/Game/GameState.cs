@@ -172,6 +172,7 @@ public abstract class NestedGameState : GameState
 
         GameState nextState = ChildState.Update();
         if (nextState == null) return null;
+        Debug.Log($"Switching {this}'s child state from {ChildState} to {nextState}");
         if (nextState is GameStateReturn exit) return OnStateReturnControl(exit);
         ChildState = nextState;
         return null;
@@ -194,6 +195,7 @@ public abstract class NestedGameState : GameState
             return OnClientEvent(e);
         }
         if (nextState == null) return null;
+        Debug.Log($"CLIENT: Switching {this}'s child state from {ChildState} to {nextState}");
         if (nextState is GameStateReturn exit) return OnClientStateReturnControl(exit);
         ChildState = nextState;
         return null;
@@ -459,15 +461,32 @@ public class StateTurn : NestedGameState
         return null;
     }
 
-    protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
+    protected override GameState OnClientStateReturnControl(GameStateReturn @return)
+    {
+        if (ChildState is StateEndTurn)
+        {
+            bool val = (@return as GameStateReturn<bool>)!.Data;
+            if (!val)
+            {
+                // Next turn
+                return new StateTurn(Parent, Round);
+            }
+            else
+            {
+                // End game
+                return new GameStateReturn(Parent);
+            }
+        }
+        return null;
+    }
     
     protected override GameState ClientCreateState(ClientEventSwitchState s)
     {
         switch (s.StateType)
         {
-            case "StatePlayerAction": return new StatePlayerAction(this);
-            default:
-                return null;
+            case nameof(StatePlayerAction): return new StatePlayerAction(this);
+            case nameof(StateEndTurn): return new StateEndTurn(this);
+            default: throw new ArgumentOutOfRangeException(s.ToString());
         }
     }
 
@@ -529,10 +548,9 @@ public class StateTurn : NestedGameState
         {
             switch (s.StateType)
             {
-                case "WaitForAction":
+                case nameof(StateWaitForAction):
                     return new StateWaitForAction(this);
-                default:
-                    return null;
+                default: throw new ArgumentOutOfRangeException();
             }
         }
         
@@ -650,7 +668,6 @@ public class StateTurn : NestedGameState
         }
     
         public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Deferred;
-        protected override GameState OnClientEvent(IClientEvent e) => null;
 
         protected override GameState OnStateReturnControl(GameStateReturn @return)
         {
@@ -680,15 +697,17 @@ public class StateTurn : NestedGameState
 
 
         protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
+        protected override GameState OnClientEvent(IClientEvent e) => null;
 
         protected override GameState ClientCreateState(ClientEventSwitchState s)
         {
             switch (s.StateType)
             {
-                case "StateExitTile": return new StateExitTile(this);
-                case "GameStateReturn": return new GameStateReturn(this);
-                default:
-                    return null;
+                case nameof(StateExitTile): return new StateExitTile(this);
+                case nameof(StateEnterTile): return new StateEnterTile(this);
+                case nameof(StateStepOnTile): return new StateStepOnTile(this);
+                case nameof(GameStateReturn): return new GameStateReturn(this);
+                default: throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -726,7 +745,9 @@ public class StateTurn : NestedGameState
             {
                 Parent = parent;
                 Parent.Steps--;
-                Animation = Parent.Parent.CurrentPlayer.MoveToTile(Parent.Parent.Round.ActivePlayerTile.NextTile);
+                var tile = Parent.Parent.Round.ActivePlayerTile.NextTile;
+                Debug.Log($"Player {Parent.Parent.CurrentPlayer} enter tile {tile}");
+                Animation = Parent.Parent.CurrentPlayer.MoveToTile(tile);
             }
 
             public override EventResult ProcessEvent(RPCEvent e) => EventResult.Deferred;
@@ -762,13 +783,21 @@ public class StateTurn : NestedGameState
             {
                 Parent = parent;
                 GameTile tile = Parent.Parent.Round.ActivePlayerTile;
+                Debug.Log($"Player {Parent.Parent.CurrentPlayer} step on tile {tile}");
                 tile.ActionsOnStop(Parent.Parent.CurrentPlayer, this, out Animation, out SubStateFuture);
             }
             public override EventResult ProcessEvent(RPCEvent e) => Child?.ProcessEvent(e) ?? EventResult.Deferred;
 
             public override GameState Update()
             {
-                if (Animation != null) return Animation.IsCompleted ? new GameStateReturn(Parent) : null;
+                Debug.Log("Step On Tile Update");
+                if (Animation != null)
+                {
+                    Debug.Log("Chance Step Animation: Is completed = " + Animation.IsCompleted);
+                    if (Animation.IsFaulted) throw Animation.Exception;
+
+                    return Animation.IsCompleted ? new GameStateReturn(Parent) : null;
+                }
                 if (SubStateFuture != null)
                 {
                     if (!SubStateFuture.IsCompleted) return null;
@@ -821,39 +850,104 @@ public class StateTurn : NestedGameState
         {
             Parent = parent;
             var turn = Parent.Round;
-            IsEndRound = turn.NextPlayer();
+            IsEndRound = turn.IsLastPlayer();
             delay = Task.Delay(1000);
+            Debug.Log($"Turn end for Player {Parent.CurrentPlayer}");
         }
 
         public override GameState OnSelfUpdate()
         {
             if (!delay.IsCompleted) return null;
 
-            Debug.Log($"Turn end for Player {Parent.CurrentPlayer}");
             if (!IsEndRound)
             {
+                Parent.Round.NextPlayer();
+                SendClientStateEvent("SetOrderIdx", SerializerUtil.Serialize(Parent.Round.ActiveOrderIdx));
+                SendClientStateEvent("NextTurn");
                 return new GameStateReturn<bool>(Parent, false);
             }
             Debug.Log($"Round {Parent.Round.RoundIdx} end");
+            Parent.Round.NextRound();
+            SendClientStateEvent("SetRoundIdx", SerializerUtil.Serialize(Parent.Round.RoundIdx));
+            SendClientStateEvent("SetOrderIdx", SerializerUtil.Serialize(Parent.Round.ActiveOrderIdx));
             // check for bankrupt
+            foreach (var player in Game.Instance.IdxToPlayer)
+            {
+                if (player.Funds < 0)
+                {
+                    Debug.Log($"Player {player} is bankrupt. Liquidating its stuff...");
+                    SendClientStateEvent("LiquidatePlayer", SerializerUtil.Serialize(player.Idx));
+                    player.Liquidate();
+                }
+            }
+
             // check for end game
-            bool isEndGame = false; //TODO
+            bool isEndGame = false;
+            foreach (var player in Game.Instance.IdxToPlayer)
+            {
+                if (player.Funds < 0)
+                {
+                    Debug.Log($"Player {player} is still bankrupt. Ending game.");
+                    isEndGame = true;
+                    break;
+                }
+            }
+            if (Parent.Round.RoundIdx >= 20)
+            {
+                Debug.Log($"Ending game after 20 rounds...");
+                isEndGame = true;
+            }
 
             if (isEndGame)
             {
                 // todo end game screen
+                SendClientStateEvent("EndGame");
                 return new GameStateReturn<bool>(Parent, true);
             }
             else
             {
-                Parent.Round.NextRound();
+                SendClientStateEvent("NextTurn");
                 return new GameStateReturn<bool>(Parent, false);
             }
         }
 
 
         public override EventResult OnSelfProcessEvent(RPCEvent e) => EventResult.Invalid;
-        protected override GameState OnClientEvent(IClientEvent e) => null;
+
+        protected override GameState OnClientEvent(IClientEvent e)
+        {
+            if (e is ClientEventStringData es)
+            {
+                switch (es.Key)
+                {
+                    case "SetOrderIdx":
+                        Parent.Round.ActiveOrderIdx = SerializerUtil.Deserialize<int>(es.Data);
+                        Debug.Log($"Switched current player to {Parent.Round.CurrentPlayer}");
+                        break;
+                    case "SetRoundIdx":
+                        Parent.Round.RoundIdx = SerializerUtil.Deserialize<int>(es.Data);
+                        Debug.Log($"Switched round to {Parent.Round.RoundIdx}");
+                        break;
+                    case "LiquidatePlayer":
+                        Game.Instance.IdxToPlayer[SerializerUtil.Deserialize<int>(es.Data)].Liquidate();
+                        break;
+                }
+            }
+            else if (e is ClientEventString es2)
+            {
+                switch (es2.Key)
+                {
+                    case "NextTurn":
+                        Debug.Log($"Next turn");
+                        return new GameStateReturn<bool>(Parent, false);
+                    case "EndGame":
+                        Debug.Log($"End game");
+                        return new GameStateReturn<bool>(Parent, true);
+                }
+            }
+            return null;
+        }
+
         protected override GameState OnStateReturnControl(GameStateReturn @return) => null;
         protected override GameState OnClientStateReturnControl(GameStateReturn @return) => null;
         protected override GameState ClientCreateState(ClientEventSwitchState s) => null;

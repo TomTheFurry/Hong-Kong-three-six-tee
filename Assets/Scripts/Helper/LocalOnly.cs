@@ -4,7 +4,7 @@ public class LocalOnly : MonoBehaviour
 {
     public bool EnableOnLocal = true;
 
-    void Start()
+    void Awake()
     {
         var lot = GetComponent<LocalOnlyToggler>();
         lot ??= GetComponentInParent<LocalOnlyToggler>();

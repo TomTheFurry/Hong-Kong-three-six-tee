@@ -210,7 +210,11 @@ public partial class Game : IStateRunner
                 }
             }
             var nextState = State.Update();
-            if (nextState != null) State = nextState;
+            if (nextState != null)
+            {
+                Debug.Log($"Switching MAIN state from {State} to {nextState}...");
+                State = nextState;
+            }
         }
         else
         {
@@ -221,6 +225,7 @@ public partial class Game : IStateRunner
                 {
                     var next = node.Next;
                     var (tree, e) = node.Value;
+                    Debug.Log($"Processing CLIENT event {e} for {tree.ToStringFull()}");
 
                     GameState nextState = null;
                     if (tree.Length != 0)
@@ -236,7 +241,11 @@ public partial class Game : IStateRunner
                     {
                          OnClientEvent(e);
                     }
-                    if (nextState != null) State = nextState;
+                    if (nextState != null)
+                    {
+                        Debug.Log($"CLIENT: Switching MAIN state from {State} to {nextState}...");
+                        State = nextState;
+                    }
                     ClientEventsToProcess.Remove(node);
                     node = next;
                 }

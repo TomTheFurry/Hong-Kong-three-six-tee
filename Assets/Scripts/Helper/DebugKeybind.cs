@@ -36,9 +36,10 @@ public class DebugKeybind : MonoBehaviour
             {
                 if (Input.GetKeyDown(option.Item1))
                 {
-                    task.SetResult(option.Item1);
+                    var t = task;
                     activeOptions = null;
                     task = null;
+                    t.SetResult(option.Item1);
                     break;
                 }
             }

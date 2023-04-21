@@ -160,13 +160,14 @@ public class OwnableTile : GameTile
         player.Funds -= StepOnPrice;
         Owner.Funds += StepOnPrice;
         // TODO: Animation effects
+        await Task.Delay(1000);
     }
 
     protected async Task OnStepCanBuyOrUpgrade(GamePlayer player)
     {
         OnStepState = (player, new TaskCompletionSource<int>());
         // State machine here.
-        if (PhotonNetwork.LocalPlayer == player.PunConnection)
+        if (player.PunConnection.IsLocal)
         {
             // I am the active player
             // TODO: Show UI
@@ -247,6 +248,5 @@ public class OwnableTile : GameTile
         Assert.IsNotNull(OwnershipItem);
         OwnershipItem.CurrentOwner = null;
         OwnershipItem.gameObject.SetActive(false);
-
     }
 }

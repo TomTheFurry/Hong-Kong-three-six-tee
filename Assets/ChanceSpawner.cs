@@ -80,6 +80,7 @@ public class ChanceSpawner : MonoBehaviourPun
             Debug.LogError("Card prefab should be set to inactive!");
             card.gameObject.SetActive(false);
         }
+
         card.Ev = Events[cardId];
         card.Description.text = Events[cardId].Description;
         card.Title.text = Events[cardId].Name;
@@ -119,6 +120,7 @@ public class ChanceSpawner : MonoBehaviourPun
         }
         var e = DrawEventWeighted(DrawGroup, AwaitingPlayer.Luck);
         Debug.Log($"Drawn event: {e.Name}");
+
         card.Ev = e;
         card.Description.text = e.Description;
         card.Title.text = e.Name;
@@ -128,6 +130,8 @@ public class ChanceSpawner : MonoBehaviourPun
         });
         card.gameObject.SetActive(true);
         SpawnCardTcs.SetResult(card);
+        SpawnCardTcs = null;
+        AwaitingPlayer = null;
     }
 
     public async Task<ChanceCard> AwaitForDrawCard(int chanceGroup, GamePlayer player)

@@ -43,6 +43,8 @@ public abstract class GameTile : MonoBehaviourPun
     public abstract bool NeedActionOnEnterTile(GamePlayer player);
     public abstract bool NeedActionOnExitTile(GamePlayer player);
     public abstract bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, [NotNullWhen(true)] [CanBeNull] out Task t, [NotNullWhen(false)] [CanBeNull] out Task<GameState> state);
+    
+    public override string ToString() => $"{this.GetType().Name}[{Name}]({TileId})";
 
     #region UNITY_EDITOR
 #if UNITY_EDITOR
@@ -122,7 +124,7 @@ public abstract class GameTile : MonoBehaviourPun
             GizmoDraw(PrevTile, this);
         }*/
     }
-
 #endif
+
     #endregion
 }
