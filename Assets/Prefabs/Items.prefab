@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 4368577267595629233}
   - component: {fileID: 4368577267595629234}
   - component: {fileID: 4368577267595629235}
+  - component: {fileID: 5701222747814231470}
   m_Layer: 3
   m_Name: "\u9EA5\u96E3\u6C11"
   m_TagString: Untagged
@@ -378,6 +379,22 @@ MonoBehaviour:
   CanBuyInShop: 0
   Nametag: {fileID: 4368577268521964280}
   HeldType: 6
+--- !u!114 &5701222747814231470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577267595629229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577267660837137
 GameObject:
   m_ObjectHideFlags: 0
@@ -831,6 +848,7 @@ GameObject:
   - component: {fileID: 4368577267989984601}
   - component: {fileID: 4368577267989984602}
   - component: {fileID: 4368577267989984603}
+  - component: {fileID: 1384621838}
   m_Layer: 3
   m_Name: "\u6DBC\u8336"
   m_TagString: Untagged
@@ -928,6 +946,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 4368577269201433872}
   HeldType: 4
+--- !u!114 &1384621838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577267989984581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577268123069006
 GameObject:
   m_ObjectHideFlags: 0
@@ -1456,6 +1490,7 @@ GameObject:
   - component: {fileID: 4368577268591497562}
   - component: {fileID: 4368577268591497561}
   - component: {fileID: 4368577268591497560}
+  - component: {fileID: 1956561638}
   m_Layer: 3
   m_Name: "\u5152\u7AE5\u516B\u9054\u901A"
   m_TagString: Untagged
@@ -1514,7 +1549,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 2
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 1956561638}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -1553,6 +1589,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 4368577267660837139}
   HeldType: 0
+--- !u!114 &1956561638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577268591497542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577268612287141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1565,6 +1617,7 @@ GameObject:
   - component: {fileID: 4368577268612287161}
   - component: {fileID: 4368577268612287162}
   - component: {fileID: 4368577268612287163}
+  - component: {fileID: 782459651}
   m_Layer: 3
   m_Name: "\u652C\u7092"
   m_TagString: Untagged
@@ -1662,6 +1715,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 4368577267673074416}
   HeldType: 2
+--- !u!114 &782459651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577268612287141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577268661466819
 GameObject:
   m_ObjectHideFlags: 0
@@ -1868,6 +1937,7 @@ GameObject:
   - component: {fileID: 4368577268896067184}
   - component: {fileID: 4368577268896067187}
   - component: {fileID: 4368577268896067186}
+  - component: {fileID: 1947316621}
   m_Layer: 3
   m_Name: "\u9577\u8005\u516B\u9054\u901A"
   m_TagString: Untagged
@@ -1965,6 +2035,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 4368577267423391289}
   HeldType: 1
+--- !u!114 &1947316621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577268896067180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577269034513078
 GameObject:
   m_ObjectHideFlags: 0
@@ -2074,6 +2160,7 @@ GameObject:
   - component: {fileID: 4368577269068278277}
   - component: {fileID: 4368577269068278278}
   - component: {fileID: 4368577269068278279}
+  - component: {fileID: 1444367421}
   m_Layer: 3
   m_Name: "\u7D9C\u63F4"
   m_TagString: Untagged
@@ -2132,7 +2219,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 2
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 1444367421}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -2171,6 +2259,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 4368577268123069004}
   HeldType: 3
+--- !u!114 &1444367421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577269068278297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577269166981336
 GameObject:
   m_ObjectHideFlags: 0
@@ -2183,6 +2287,7 @@ GameObject:
   - component: {fileID: 4368577269166981316}
   - component: {fileID: 4368577269166981319}
   - component: {fileID: 4368577269166981318}
+  - component: {fileID: 332034692}
   m_Layer: 3
   m_Name: "\u8C46\u8150\u6E23"
   m_TagString: Untagged
@@ -2280,6 +2385,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 4368577268225671309}
   HeldType: 5
+--- !u!114 &332034692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368577269166981336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &4368577269201433874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3099,6 +3220,7 @@ GameObject:
   - component: {fileID: 8340246498959578091}
   - component: {fileID: 8340246498959578088}
   - component: {fileID: 8340246498959578089}
+  - component: {fileID: 1710651500}
   m_Layer: 3
   m_Name: "\u6253\u5361\u71B1\u9EDE"
   m_TagString: Untagged
@@ -3196,6 +3318,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246499585939716}
   EventToTrigger: 11
+--- !u!114 &1710651500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246498959578103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246498978053682
 GameObject:
   m_ObjectHideFlags: 0
@@ -3208,6 +3346,7 @@ GameObject:
   - component: {fileID: 8340246498978053686}
   - component: {fileID: 8340246498978053687}
   - component: {fileID: 8340246498978053684}
+  - component: {fileID: 631030923}
   m_Layer: 3
   m_Name: "\u98A8\u6C34"
   m_TagString: Untagged
@@ -3305,6 +3444,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246500472477883}
   EventToTrigger: 6
+--- !u!114 &631030923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246498978053682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246498982308867
 GameObject:
   m_ObjectHideFlags: 0
@@ -3586,6 +3741,7 @@ GameObject:
   - component: {fileID: 8340246499064163387}
   - component: {fileID: 8340246499064163384}
   - component: {fileID: 8340246499064163385}
+  - component: {fileID: 1339058183}
   m_Layer: 3
   m_Name: "\u85AF\u7247\u53D4\u53D4"
   m_TagString: Untagged
@@ -3683,6 +3839,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246500387347821}
   EventToTrigger: 8
+--- !u!114 &1339058183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499064163335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499068084712
 GameObject:
   m_ObjectHideFlags: 0
@@ -4136,6 +4308,7 @@ GameObject:
   - component: {fileID: 8340246499280542143}
   - component: {fileID: 8340246499280542140}
   - component: {fileID: 8340246499280542141}
+  - component: {fileID: 1726632137}
   m_Layer: 3
   m_Name: "\u5C0F\u5DF4"
   m_TagString: Untagged
@@ -4233,6 +4406,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246499692848066}
   EventToTrigger: 0
+--- !u!114 &1726632137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499280542139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499347954251
 GameObject:
   m_ObjectHideFlags: 0
@@ -4342,6 +4531,7 @@ GameObject:
   - component: {fileID: 8340246499459755000}
   - component: {fileID: 8340246499459755001}
   - component: {fileID: 8340246499459754950}
+  - component: {fileID: 1598801123}
   m_Layer: 3
   m_Name: "\u8209\u5831\u71B1\u7DDA"
   m_TagString: Untagged
@@ -4398,9 +4588,10 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 2
+  OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 1598801123}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -4439,6 +4630,22 @@ MonoBehaviour:
   CanBuyInShop: 0
   Nametag: {fileID: 8340246499068084714}
   EventToTrigger: 2
+--- !u!114 &1598801123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499459754948}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499514723564
 GameObject:
   m_ObjectHideFlags: 0
@@ -4623,6 +4830,7 @@ GameObject:
   - component: {fileID: 8340246499582213911}
   - component: {fileID: 8340246499582213908}
   - component: {fileID: 8340246499582213909}
+  - component: {fileID: 1029968066}
   m_Layer: 3
   m_Name: "\u6D77\u6D1B\u56E0"
   m_TagString: Untagged
@@ -4720,6 +4928,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246499514723566}
   EventToTrigger: 7
+--- !u!114 &1029968066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499582213907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499585117807
 GameObject:
   m_ObjectHideFlags: 0
@@ -5001,6 +5225,7 @@ GameObject:
   - component: {fileID: 8340246499587963152}
   - component: {fileID: 8340246499587963153}
   - component: {fileID: 8340246499587963166}
+  - component: {fileID: 326271744}
   m_Layer: 3
   m_Name: "\u653E\u5927\u93E1"
   m_TagString: Untagged
@@ -5098,6 +5323,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246498721379171}
   EventToTrigger: 4
+--- !u!114 &326271744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499587963164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499692848064
 GameObject:
   m_ObjectHideFlags: 0
@@ -5282,6 +5523,7 @@ GameObject:
   - component: {fileID: 8340246499701538036}
   - component: {fileID: 8340246499701538037}
   - component: {fileID: 8340246499701538034}
+  - component: {fileID: 762576333}
   m_Layer: 3
   m_Name: TG
   m_TagString: Untagged
@@ -5379,6 +5621,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246499118313338}
   EventToTrigger: 3
+--- !u!114 &762576333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499701538032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499786955823
 GameObject:
   m_ObjectHideFlags: 0
@@ -5488,6 +5746,7 @@ GameObject:
   - component: {fileID: 8340246499791225253}
   - component: {fileID: 8340246499791225250}
   - component: {fileID: 8340246499791225251}
+  - component: {fileID: 729149118}
   m_Layer: 3
   m_Name: "\u81EA\u7531\u884C"
   m_TagString: Untagged
@@ -5546,7 +5805,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 2
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 729149118}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -5585,6 +5845,22 @@ MonoBehaviour:
   CanBuyInShop: 0
   Nametag: {fileID: 8340246500459186070}
   EventToTrigger: 9
+--- !u!114 &729149118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499791225249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499885115738
 GameObject:
   m_ObjectHideFlags: 0
@@ -5888,6 +6164,7 @@ GameObject:
   - component: {fileID: 8340246499924342709}
   - component: {fileID: 8340246499924342706}
   - component: {fileID: 8340246499924342707}
+  - component: {fileID: 1525730629}
   m_Layer: 3
   m_Name: "\u5927\u5ABD\u71B1\u821E"
   m_TagString: Untagged
@@ -5946,7 +6223,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 2
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 1525730629}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -5985,6 +6263,22 @@ MonoBehaviour:
   CanBuyInShop: 0
   Nametag: {fileID: 8340246498991302792}
   EventToTrigger: 12
+--- !u!114 &1525730629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499924342705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246499950834640
 GameObject:
   m_ObjectHideFlags: 0
@@ -5997,6 +6291,7 @@ GameObject:
   - component: {fileID: 8340246499950834644}
   - component: {fileID: 8340246499950834645}
   - component: {fileID: 8340246499950834642}
+  - component: {fileID: 1849997444}
   m_Layer: 3
   m_Name: "\u58FD\u661F"
   m_TagString: Untagged
@@ -6094,6 +6389,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246500212869260}
   EventToTrigger: 1
+--- !u!114 &1849997444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246499950834640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246500093131365
 GameObject:
   m_ObjectHideFlags: 0
@@ -6808,6 +7119,7 @@ GameObject:
   - component: {fileID: 8340246500377488949}
   - component: {fileID: 8340246500377488946}
   - component: {fileID: 8340246500377488947}
+  - component: {fileID: 675729699}
   m_Layer: 3
   m_Name: "\u7684\u58EB"
   m_TagString: Untagged
@@ -6905,6 +7217,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246500093131367}
   EventToTrigger: 10
+--- !u!114 &675729699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246500377488945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246500387347819
 GameObject:
   m_ObjectHideFlags: 0
@@ -7433,6 +7761,7 @@ GameObject:
   - component: {fileID: 8340246500518822960}
   - component: {fileID: 8340246500518822961}
   - component: {fileID: 8340246500518822974}
+  - component: {fileID: 361253338}
   m_Layer: 3
   m_Name: "\u6253\u5C0F\u4EBA"
   m_TagString: Untagged
@@ -7530,6 +7859,22 @@ MonoBehaviour:
   CanBuyInShop: 1
   Nametag: {fileID: 8340246498923764631}
   EventToTrigger: 5
+--- !u!114 &361253338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8340246500518822972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &8340246500632293175
 GameObject:
   m_ObjectHideFlags: 0

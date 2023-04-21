@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -127,7 +128,7 @@ public partial class Game : IStateRunner
 
     // Note: ALWAYS use lock()... on this
     public LinkedList<RPCEvent> EventsToProcess = new();
-    public LinkedList<(string[], IClientEvent)> ClientEventsToProcess = new();
+    public ConcurrentQueue<(string[], IClientEvent)> ClientEventsToProcess = new();
 
     public Piece[] PiecesTemplate;
     
@@ -218,36 +219,29 @@ public partial class Game : IStateRunner
         }
         else
         {
-            lock (ClientEventsToProcess)
+            while (ClientEventsToProcess.TryDequeue(out var pair))
             {
-                var node = ClientEventsToProcess.First;
-                while (node != null)
-                {
-                    var next = node.Next;
-                    var (tree, e) = node.Value;
-                    Debug.Log($"Processing CLIENT event {e} for {tree.ToStringFull()}");
+                var (tree, e) = pair;
+                Debug.Log($"Processing CLIENT event {e} for {tree.ToStringFull()}");
 
-                    GameState nextState = null;
-                    if (tree.Length != 0)
-                    {
-                        Assert.AreEqual(State.GetType().Name, tree[0]);
-                        nextState = State.ClientUpdate(tree[1..], e);
-                    }
-                    else if (e is ClientEventSwitchState stateEvent)
-                    {
-                        nextState = ClientCreateState(stateEvent);
-                    }
-                    else
-                    {
-                         OnClientEvent(e);
-                    }
-                    if (nextState != null)
-                    {
-                        Debug.Log($"CLIENT: Switching MAIN state from {State} to {nextState}...");
-                        State = nextState;
-                    }
-                    ClientEventsToProcess.Remove(node);
-                    node = next;
+                GameState nextState = null;
+                if (tree.Length != 0)
+                {
+                    Assert.AreEqual(State.GetType().Name, tree[0]);
+                    nextState = State.ClientUpdate(tree[1..], e);
+                }
+                else if (e is ClientEventSwitchState stateEvent)
+                {
+                    nextState = ClientCreateState(stateEvent);
+                }
+                else
+                {
+                    OnClientEvent(e);
+                }
+                if (nextState != null)
+                {
+                    Debug.Log($"CLIENT: Switching MAIN state from {State} to {nextState}...");
+                    State = nextState;
                 }
             }
         }
@@ -296,10 +290,7 @@ public partial class Game : IStateRunner
         };
 
         Debug.Log($"ClientStateEvent received at [{tree.ToStringFull()}]: {e}");
-        lock (ClientEventsToProcess)
-        {
-            ClientEventsToProcess.AddLast((tree, e));
-        }
+        ClientEventsToProcess.Enqueue((tree, e));
     }
 
     [PunRPC]

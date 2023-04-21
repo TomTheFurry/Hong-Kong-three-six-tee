@@ -68,7 +68,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 2
+  OwnershipTransfer: 1
   observableSearch: 2
   ObservedComponents: []
   sceneViewId: 0
@@ -106,6 +106,7 @@ MonoBehaviour:
   Name: "\u5152\u7AE5\u516B\u9054\u901A"
   Description: "\u4EA4\u901A\u8CBB\u534A\u50F9"
   Illegal: 1
+  CanBuyInShop: 0
   Nametag: {fileID: 5701222747223863922}
   HeldType: 0
 --- !u!1 &5701222746686254845

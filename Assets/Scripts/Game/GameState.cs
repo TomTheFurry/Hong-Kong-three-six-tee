@@ -776,7 +776,7 @@ public class StateTurn : NestedGameState
             [NotNull]
             public new StateTurnEffects Parent;
             public Task Animation;
-            public Task<GameState> SubStateFuture;
+            public Task SubStateFuture;
             public GameState Child;
 
             public StateStepOnTile([NotNull] StateTurnEffects parent) : base(parent)
@@ -784,7 +784,18 @@ public class StateTurn : NestedGameState
                 Parent = parent;
                 GameTile tile = Parent.Parent.Round.ActivePlayerTile;
                 Debug.Log($"Player {Parent.Parent.CurrentPlayer} step on tile {tile}");
-                tile.ActionsOnStop(Parent.Parent.CurrentPlayer, this, out Animation, out SubStateFuture);
+                tile.ActionsOnStop(Parent.Parent.CurrentPlayer, this, out Animation, out var tmp);
+                if (tmp != null)
+                {
+                    SubStateFuture = tmp.ContinueWith(
+                        t =>
+                        {
+                            Assert.IsTrue(t.IsCompleted);
+                            Child = t.Result;
+                            Debug.Log($"Switching to state {Child.GetType()}");
+                        }, TaskContinuationOptions.ExecuteSynchronously
+                    );
+                }
             }
             public override EventResult ProcessEvent(RPCEvent e) => Child?.ProcessEvent(e) ?? EventResult.Deferred;
 
@@ -800,10 +811,7 @@ public class StateTurn : NestedGameState
                 }
                 if (SubStateFuture != null)
                 {
-                    if (!SubStateFuture.IsCompleted) return null;
-                    Child = SubStateFuture.Result;
-                    Debug.Log($"Switching to state {Child.GetType()}");
-                    SendClientStateEvent("UpdateFuture");
+                    if (Child == null) return null;
                     SubStateFuture = null;
                 }
                 Assert.IsNotNull(Child);
@@ -825,13 +833,9 @@ public class StateTurn : NestedGameState
                     if (child is GameStateReturn) return new GameStateReturn(Parent);
                     throw new Exception("Invalid state");
                 }
-                else if (tree.IsEmpty && e is ClientEventString es && es.Key == "UpdateFuture")
+                else
                 {
-                    Child = SubStateFuture.Result;
-                    SubStateFuture = null;
-                    Assert.IsNotNull(Child);
-                    Debug.Log($"Switching to state {Child.GetType()}");
-                    return null;
+                    Debug.LogError("Child state not done yet >.<");
                 }
                 return null;
             }
