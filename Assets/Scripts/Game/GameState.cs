@@ -278,7 +278,7 @@ public class StateStartup : GameStateLeaf
                 // Send idx to all players
                 Game.Instance.photonView.RPC(nameof(Game.SetIdxToPlayer), RpcTarget.AllBufferedViaServer, Game.Instance.IdxToPlayer.Select(p => p.PunConnection).ToArray() as object);
                 // Go to next stage
-                for (int i = 0; i < Game.Instance.IdxToPlayer.Length; i++)
+                for (int i = 0; i < Game.Instance.IdxToPlayer.Length * 100; i++)
                 {
                     PhotonNetwork.InstantiateRoomObject("Dice", Game.Instance.DiceSpawnpoint.position, Game.Instance.DiceSpawnpoint.rotation);
                 }
@@ -344,6 +344,7 @@ public class StateRollOrder : GameStateLeaf
                 var e = node.Value;
                 if (e.RollTask.IsCompleted)
                 {
+                    Assert.IsTrue(e.RollTask.IsCompleted);
                     if (e.RollTask.IsCompletedSuccessfully && e.RollTask.Result > 0)
                     {
                         RollNumByIdx[e.GamePlayer.Idx] = e.RollTask.Result;
@@ -422,6 +423,8 @@ public class StateTurn : NestedGameState
     public int CurrentPlayerIdx => Game.Instance.playerOrder[CurrentOrderIdx];
     [NotNull]
     public GamePlayer CurrentPlayer => Game.Instance.IdxToPlayer[CurrentPlayerIdx];
+    
+    private Task<bool> _delay;
 
     public StateTurn([NotNull] IStateRunner parent, [NotNull] RoundData data) : base(parent)
     {
@@ -429,13 +432,27 @@ public class StateTurn : NestedGameState
         Round.CurrentTurnState = this;
         CurrentOrderIdx = Round.ActiveOrderIdx;
         Debug.Log($"Round {Round.RoundIdx}, Turn {CurrentOrderIdx}, Player {CurrentPlayer}: Go!");
+
+        _delay = Round.CurrentPlayer.ProcessPreTurn();
     }
 
     public override GameState OnSelfUpdate()
     {
         // Start of turn.
-        SendClientSetState<StatePlayerAction>();
-        ChildState = new StatePlayerAction(this);
+        if (!_delay.IsCompleted) return null;
+        Assert.IsTrue(_delay.IsCompleted);
+        if (_delay.Result)
+        {
+            // end turn
+            SendClientSetReturnState<StateEndTurn>();
+            ChildState = new StateEndTurn(this);
+        }
+        else
+        {
+            // start turn
+            SendClientSetState<StatePlayerAction>();
+            ChildState = new StatePlayerAction(this);
+        }
         return null;
     }
     
@@ -601,12 +618,22 @@ public class StateTurn : NestedGameState
                     if (RollEvent.RollTask.IsCompleted)
                     {
                         Debug.Log($"Roll dice future completed");
+                        Assert.IsTrue(RollEvent.RollTask.IsCompleted);
                         if (RollEvent.RollTask.IsCompletedSuccessfully && RollEvent.RollTask.Result > 0)
                         {
                             RollEvent.Success(RollEvent.RollTask.Result);
                             Debug.Log($"Rolled dice {RollEvent.RollTask.Result}");
                             Parent.SendClientStateEvent("RollDice", SerializerUtil.Serialize(RollEvent.RollTask.Result));
-                            return new GameStateReturn<int>(Parent, RollEvent.RollTask.Result);
+                            int steps = RollEvent.RollTask.Result;
+                            float multiplier = Parent.Parent.CurrentPlayer.NextTurnRollMultiplier;
+                            if (multiplier > 1)
+                            {
+                                Debug.Log($"Player {Parent.Parent.CurrentPlayer} has next turn roll multiplier {multiplier}");
+                                Parent.Parent.CurrentPlayer.NextTurnRollMultiplier = 1;
+                                steps = Mathf.CeilToInt(steps * multiplier);
+                            }
+                            Debug.Log($"Moving {steps} steps");
+                            return new GameStateReturn<int>(Parent, steps);
                         }
                         else
                         {
@@ -741,6 +768,7 @@ public class StateTurn : NestedGameState
             [NotNull]
             public new StateTurnEffects Parent;
             public Task Animation;
+            public bool isPlayerBeingHalted;
             public StateEnterTile([NotNull] StateTurnEffects parent) : base(parent)
             {
                 Parent = parent;
@@ -748,6 +776,14 @@ public class StateTurn : NestedGameState
                 var tile = Parent.Parent.Round.ActivePlayerTile.NextTile;
                 Debug.Log($"Player {Parent.Parent.CurrentPlayer} enter tile {tile}");
                 Animation = Parent.Parent.CurrentPlayer.MoveToTile(tile);
+                isPlayerBeingHalted = tile.HaltTurnOnPass;
+                if (tile.HaltTurnOnPass)
+                {
+                    Debug.Log($"Player {Parent.Parent.CurrentPlayer} halt turn on pass tile {tile}");
+                    Animation = Animation.ContinueWith(
+                        t => Task.Delay(1000), TaskContinuationOptions.ExecuteSynchronously
+                    );
+                }
             }
 
             public override EventResult ProcessEvent(RPCEvent e) => EventResult.Deferred;
@@ -763,6 +799,7 @@ public class StateTurn : NestedGameState
                 }
                 else
                 {
+                    if (isPlayerBeingHalted) Parent.Steps = 0;
                     return new GameStateReturn(Parent);
                 }
                 return null;

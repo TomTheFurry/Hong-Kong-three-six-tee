@@ -1,5 +1,8 @@
 using Photon.Pun;
 using System.Threading.Tasks;
+
+using Photon.Realtime;
+
 using UnityEditor;
 using UnityEngine;
 
@@ -29,16 +32,16 @@ public class SpecialTile : GameTile
                 t = Task.CompletedTask;
                 break;
         }
-        t = OnStepRollStaw(player);
         state = null;
         return false;
     }
 
     public TaskCompletionSource<bool> DrawStawTask;
+
     [PunRPC]
-    public void DrawStaw(bool goodLuck, PhotonMessageInfo info)
+    public void DrawStaw(bool goodLuck, Player player)
     {
-        GamePlayer p = info.Sender;
+        GamePlayer p = player;
         if (goodLuck)
         {
             p.Luck += 1;
@@ -48,6 +51,7 @@ public class SpecialTile : GameTile
             p.Luck -= 0.5f;
             if (p.Luck < 0) { p.Luck = 0; }
         }
+        Debug.Log($"Player {p} draw staw: {goodLuck}");
         DrawStawTask.SetResult(goodLuck);
     }
 
@@ -57,10 +61,10 @@ public class SpecialTile : GameTile
         await Task.Delay(1000);
         if (PhotonNetwork.IsMasterClient) {
             bool goodLuck = Random.Range(0, 2) == 0;
-            photonView.RPC(nameof(DrawStaw), RpcTarget.All, goodLuck);
+            photonView.RPC(nameof(DrawStaw), RpcTarget.All, goodLuck, player.PunConnection);
         }
         await DrawStawTask.Task;
-        await Task.Delay(1000);
         DrawStawTask = null;
+        await Task.Delay(1000);
     }
 }

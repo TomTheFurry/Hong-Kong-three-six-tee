@@ -31,7 +31,7 @@ public class GamePlayer
 
     public double Funds = 1000;
     public int HaltTurns = 0;
-    public float NextTurnRollPercent = 1;
+    public float NextTurnRollMultiplier = 1;
     public float Luck = 0.7f;
 
     public GamePlayer(Player punConnection)
@@ -111,5 +111,53 @@ public class GamePlayer
             tile.RemoveOwnership();
         }
         Debug.Log($"Liquidated {this} with new balance of {Funds}.");
+    }
+
+    public bool HasItem(HeldItem.Type type)
+    {
+        return Items.Any(i => (i as HeldItem)?.HeldType == type);
+    }
+    
+    public bool HasItem(ItemUsable.Event type)
+    {
+        return Items.Any(i => (i as ItemUsable)?.EventToTrigger == type);
+    }
+
+    public void RemoveItem(HeldItem.Type type)
+    {
+        HeldItem item = Items.FirstOrDefault(i => (i as HeldItem)?.HeldType == type) as HeldItem;
+        Assert.IsNotNull(item);
+        Items.Remove(item);
+        item.photonView.ViewID = 0;
+        Object.Destroy(item.gameObject);
+    }
+    
+    public void RemoveItem(ItemUsable.Event type)
+    {
+        ItemUsable item = Items.FirstOrDefault(i => (i as ItemUsable)?.EventToTrigger == type) as ItemUsable;
+        Assert.IsNotNull(item);
+        Items.Remove(item);
+        item.photonView.ViewID = 0;
+        Object.Destroy(item.gameObject);
+    }
+
+    // skip turn if return true
+    public async Task<bool> ProcessPreTurn()
+    {
+        await Task.Delay(1000);
+
+        // do item effects
+        if (HasItem(HeldItem.Type.PoorsFunding))
+        {
+            Funds += 500;
+        }
+        
+        // apply skip turns
+        if (HaltTurns > 0)
+        {
+            HaltTurns--;
+            return true;
+        }
+        return false;
     }
 }

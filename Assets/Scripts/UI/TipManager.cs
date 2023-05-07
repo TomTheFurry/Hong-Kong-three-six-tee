@@ -5,6 +5,7 @@ using Photon.Pun;
 using TMPro;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class TipManager : MonoBehaviour
 {
@@ -157,10 +158,11 @@ public class TipManager : MonoBehaviour
                     }
                     else if (tile is SpecialTile st) {
                         if (st.TileType is SpecialTile.Type.RollStaw) {
-                            if (st.DrawStawTask == null) {
+                            if (st.DrawStawTask == null || !st.DrawStawTask.Task.IsCompleted) {
                                 tip += "Drawing a staw....\n";
                             }
                             else {
+                                Assert.IsTrue(st.DrawStawTask.Task.IsCompleted);
                                 bool lucky = st.DrawStawTask.Task.Result;
                                 tip += "You drawed a " + (lucky ? ColorText("lucky", "0ff") : ColorText("unlucky", "f00")) + " staw!\n";
                             }

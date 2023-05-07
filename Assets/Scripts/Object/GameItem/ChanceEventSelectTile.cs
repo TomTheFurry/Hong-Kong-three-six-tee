@@ -52,6 +52,7 @@ public class ChanceEventSelectTile : ChanceEvent
             t.ContinueWith(
                 t =>
                 {
+                    Assert.IsTrue(t.IsCompleted);
                     GameTile tile = t.Result;
                     Assert.IsNotNull(tile);
                     Game.Instance.photonView.RPC(nameof(Game.ClientTrySelectTile), RpcTarget.MasterClient, tile.TileId);

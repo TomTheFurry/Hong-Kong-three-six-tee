@@ -27,6 +27,7 @@ public class ChanceEventSelectPlayer : ChanceEvent
             DebugKeybind.Instance.ChoosePlayer(false).ContinueWith(
                 t =>
                 {
+                    Assert.IsTrue(t.IsCompleted);
                     Assert.IsNotNull(t.Result);
                     Game.Instance.photonView.RPC(nameof(Game.ClientTrySelectPlayer), RpcTarget.MasterClient, t.Result);
                 }

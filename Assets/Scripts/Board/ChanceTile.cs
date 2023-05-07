@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 
+using UnityEngine.Assertions;
+
 public class ChanceTile : GameTile
 {
     private ChanceSpawner Spawner => ChanceSpawner.Instance;
@@ -16,7 +18,11 @@ public class ChanceTile : GameTile
         Task<ChanceCard> card = ChanceSpawner.Instance.AwaitForDrawCard(ChanceGroup, player);
         state = card
             .ContinueWith(
-            t => new ChanceEventState(self, t.Result) as GameState, TaskContinuationOptions.ExecuteSynchronously
+            t =>
+            {
+                Assert.IsTrue(t.IsCompleted);
+                return new ChanceEventState(self, t.Result) as GameState;
+            }, TaskContinuationOptions.ExecuteSynchronously
         );
         t = null;
         return true;

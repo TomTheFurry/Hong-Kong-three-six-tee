@@ -94,7 +94,11 @@ public class DebugKeybind : MonoBehaviour
             }
         }
         return ChooseActionTemp(choices)
-            .ContinueWith(t => Game.Instance.IdxToPlayer[map[t.Result - START]],
+            .ContinueWith(t =>
+                {
+                    Assert.IsTrue(t.IsCompleted);
+                    return Game.Instance.IdxToPlayer[map[t.Result - START]];
+                },
             TaskContinuationOptions.ExecuteSynchronously);
     }
 }

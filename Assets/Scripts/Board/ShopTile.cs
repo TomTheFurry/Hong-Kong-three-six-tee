@@ -16,7 +16,7 @@ public class ShopTile : OwnableTile
     private TaskCompletionSource<int[]> shopItems;
     private TaskCompletionSource<int> buyItem;
 
-    public double BuyItemCost => StepOnPrice * 0.5;
+    public double BuyItemCost => (Level == 0 ? Price * 0.1 * feeMultiplier : StepOnPrice) * 0.5;
 
     [PunRPC]
     public void ServerDrawedShopItem(int[] items)

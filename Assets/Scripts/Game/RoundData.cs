@@ -49,6 +49,10 @@ public GamePlayer PeekNextPlayer()
     {
         RoundIdx++;
         ActiveOrderIdx = 0;
+        foreach (var boardOwnershipItem in Game.Board.OwnershipItems)
+        {
+            boardOwnershipItem.Key.CleanupFeeChanges(RoundIdx);
+        }
     }
 
     public GameTile ActivePlayerTile => CurrentTurnState.CurrentPlayer.Tile;

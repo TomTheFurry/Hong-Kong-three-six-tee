@@ -30,8 +30,14 @@ class StateUsedItemSelectTile : GameStateLeaf, IUseItemState
                 || t is OwnableTile)
                 .ContinueWith(
                     t =>
-                        Game.Instance.photonView.RPC(nameof(Game.Instance.ClientTrySelectTile),
-                            RpcTarget.MasterClient, t.Result.TileId)
+                    {
+                        Assert.IsTrue(t.IsCompleted);
+                        Game.Instance.photonView.RPC(
+                            nameof(Game.Instance.ClientTrySelectTile),
+                            RpcTarget.MasterClient, t.Result.TileId
+                        );
+
+                    }
                 );
         }
     }
@@ -124,6 +130,7 @@ class StateUsedItemSelectPlayer : GameStateLeaf, IUseItemState
             DebugKeybind.Instance.ChoosePlayer(false).ContinueWith(
                 t =>
                 {
+                    Assert.IsTrue(t.IsCompleted);
                     Assert.IsNotNull(t.Result);
                     Game.Instance.photonView.RPC(nameof(Game.ClientTrySelectPlayer), RpcTarget.MasterClient, t.Result);
                 }
@@ -215,7 +222,7 @@ class StateUsedItemQuick : GameStateLeaf, IUseItemState
         switch (Event)
         {
             case ItemUsable.Event.Minibus:
-                parent.Parent.CurrentPlayer.NextTurnRollPercent *= 2;
+                parent.Parent.CurrentPlayer.NextTurnRollMultiplier *= 2;
                 break;
             case ItemUsable.Event.RecieveMoneyFromOthers:
                 foreach (var player in Game.Instance.IdxToPlayer)

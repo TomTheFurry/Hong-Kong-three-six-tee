@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using JetBrains.Annotations;
@@ -55,7 +56,7 @@ public class OwnableTile : GameTile
     }
 
     public double LevelUpPrice => Price * 0.2 * Level+1;
-    public double StepOnPrice => Price * 0.1 * Level;
+    public double StepOnPrice => Price * 0.1 * Level * feeMultiplier;
     // Equal to total cost of buying this tile and all level ups
     public double LiquidatePriceNoHaircut
     {
@@ -74,6 +75,12 @@ public class OwnableTile : GameTile
     public GamePlayer Owner => OwnershipItem.CurrentOwner;
     
     public List<(int,float)> PassbyFeeMultipliers = new List<(int, float)>();
+    public float feeMultiplier => PassbyFeeMultipliers.Aggregate(1f, (acc, x) => acc * x.Item2);
+
+    public void CleanupFeeChanges(int currentRound)
+    {
+        PassbyFeeMultipliers.RemoveAll(x => x.Item1 >= currentRound);
+    }
 
     public bool GamePlayerCanBuy(GamePlayer player)
     {
@@ -86,7 +93,9 @@ public class OwnableTile : GameTile
     {
         if (Owner != player) return false;
         if (Level >= 5) return false;
-        if (player.Funds < LevelUpPrice) return false;
+        bool hasDiscount = player.HasItem(HeldItem.Type.HalfCostLevelUp);
+        double price = LevelUpPrice * (hasDiscount ? 0.5 : 1);
+        if (player.Funds < price) return false;
         return true;
     }
 
@@ -110,18 +119,20 @@ public class OwnableTile : GameTile
         this.Grid.material = player.Piece.Material;
         OwnershipItem.CurrentOwner = player;
         OwnershipItem.transform.position = transform.position + Vector3.up * 2f;
+        float yAngle = Vector3.SignedAngle(Vector3.forward, player.Piece.transform.forward, Vector3.up);
+        OwnershipItem.transform.rotation = Quaternion.Euler(0, yAngle, 0);
         OwnershipItem.gameObject.SetActive(true);
         Level = 1;
         OnStepState.Value.future.SetResult(0);
     }
     
     [PunRPC]
-    public void GamePlayerLevelUp(PhotonMessageInfo info)
+    public void GamePlayerLevelUp(bool useDiscount, PhotonMessageInfo info)
     {
         GamePlayer player = info.Sender;
         if (OnStepState == null || OnStepState.Value.currentPlayer != player)
         {
-            Debug.LogError($"Player {player} request buy, but game state is not valid!");
+            Debug.LogError($"Player {player} request level up, but game state is not valid!");
             return;
         }
         if (!GamePlayerCanLevelUp(player))
@@ -129,8 +140,16 @@ public class OwnableTile : GameTile
             Debug.LogError($"Player {player} cannot level up this tile!");
             return;
         }
-        player.Funds -= LevelUpPrice;
+        if (!player.HasItem(HeldItem.Type.HalfCostLevelUp) && useDiscount)
+        {
+            Debug.LogError($"Player {player} does not have discount item!");
+            return;
+        }
+
+        double cost = LevelUpPrice * (useDiscount ? 0.5 : 1);
+        player.Funds -= cost;
         Level++;
+        player.RemoveItem(HeldItem.Type.HalfCostLevelUp);
         OnStepState.Value.future.SetResult(0);
     }
 
@@ -140,8 +159,35 @@ public class OwnableTile : GameTile
         GamePlayer player = info.Sender;
         if (OnStepState == null || OnStepState.Value.currentPlayer != player)
         {
-            Debug.LogError($"Player {player} request buy, but game state is not valid!");
+            Debug.LogError($"Player {player} request end step, but game state is not valid!");
             return;
+        }
+        OnStepState.Value.future.SetResult(0);
+    }
+
+    [PunRPC]
+    public void GamePlayerSkipFeesWithItem(bool useItem, PhotonMessageInfo info)
+    {
+        GamePlayer player = info.Sender;
+        if (OnStepState == null || OnStepState.Value.currentPlayer != player)
+        {
+            Debug.LogError($"Player {player} request skip fees, but game state is not valid!");
+            return;
+        }
+        bool hasItem = player.HasItem(HeldItem.Type.NoPassbyFee);
+        if (!hasItem && useItem)
+        {
+            Debug.LogError($"Player {player} does not have skip fees item!");
+            return;
+        }
+        if (useItem)
+        {
+            player.RemoveItem(HeldItem.Type.NoPassbyFee);
+        }
+        else
+        {
+            player.Funds -= StepOnPrice;
+            Owner.Funds += StepOnPrice;
         }
         OnStepState.Value.future.SetResult(0);
     }
@@ -157,8 +203,33 @@ public class OwnableTile : GameTile
 
     protected async Task OnStepPayFees(GamePlayer player)
     {
-        player.Funds -= StepOnPrice;
-        Owner.Funds += StepOnPrice;
+        bool hasItem = player.HasItem(HeldItem.Type.NoPassbyFee);
+        if (hasItem)
+        {
+            OnStepState = (player, new TaskCompletionSource<int>());
+            if (player.PunConnection.IsLocal)
+            {
+                // I am the active player
+                KeyCode val = await DebugKeybind.Instance.ChooseActionTemp(new []{(KeyCode.U, "Use item"), (KeyCode.Return, "Don't use item")});
+                switch (val)
+                {
+                    case KeyCode.U:
+                        photonView.RPC(nameof(GamePlayerSkipFeesWithItem), RpcTarget.All, true);
+                        break;
+                    case KeyCode.Return:
+                        photonView.RPC(nameof(GamePlayerSkipFeesWithItem), RpcTarget.All, false);
+                        break;
+                    default: throw new ArgumentOutOfRangeException();
+                }
+            }
+            await OnStepState.Value.future.Task;
+            OnStepState = null;
+        }
+        else
+        {
+            player.Funds -= StepOnPrice;
+            Owner.Funds += StepOnPrice;
+        }
         // TODO: Animation effects
         await Task.Delay(1000);
     }
@@ -177,9 +248,23 @@ public class OwnableTile : GameTile
             {
                 opts.Add((KeyCode.B, "Buy"));
             }
+
+
             if (GamePlayerCanLevelUp(player))
             {
-                opts.Add((KeyCode.L, "Level Up"));
+                bool hasDiscount = player.HasItem(HeldItem.Type.HalfCostLevelUp);
+                if (hasDiscount)
+                {
+                    opts.Add((KeyCode.K, "Level Up (Use Discount)"));
+                    if (player.Funds >= LevelUpPrice)
+                    {
+                        opts.Add((KeyCode.L, "Level Up"));
+                    }
+                }
+                else
+                {
+                    opts.Add((KeyCode.L, "Level Up"));
+                }
             }
 
             KeyCode option = await DebugKeybind.Instance.ChooseActionTemp(opts);
@@ -189,7 +274,10 @@ public class OwnableTile : GameTile
                     photonView.RPC(nameof(GamePlayerBuy), RpcTarget.All);
                     break;
                 case KeyCode.L:
-                    photonView.RPC(nameof(GamePlayerLevelUp), RpcTarget.All);
+                    photonView.RPC(nameof(GamePlayerLevelUp), RpcTarget.All, false);
+                    break;
+                case KeyCode.K:
+                    photonView.RPC(nameof(GamePlayerLevelUp), RpcTarget.All, true);
                     break;
                 case KeyCode.Return:
                     photonView.RPC(nameof(GamePlayerComplete), RpcTarget.All);
@@ -241,6 +329,11 @@ public class OwnableTile : GameTile
         Assert.IsNotNull(OwnershipItem);
         Assert.IsTrue(OwnershipItem.Tile == this);
         AssetDefiner = FindObjectOfType<TileAssetDefiner>();
+
+        // Quickly toggle on and off the item as Pun has a bug where
+        // it will not reserve the view id until the object is active.
+        OwnershipItem.gameObject.SetActive(true);
+        OwnershipItem.gameObject.SetActive(false);
     }
 
     public void RemoveOwnership()
