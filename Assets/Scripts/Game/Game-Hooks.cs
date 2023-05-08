@@ -21,10 +21,7 @@ public partial class Game : MonoBehaviourPun, IInRoomCallbacks, IConnectionCallb
         OnPlayerJoinedCheckHash(newPlayer);
         if (photonView.IsMine)
         {
-            lock (EventsToProcess)
-            {
-                EventsToProcess.AddLast(new RPCEventNewPlayer{GamePlayer = newPlayer});
-            }
+            PushRPCEvent(new RPCEventNewPlayer{GamePlayer = newPlayer});
         }
     }
 

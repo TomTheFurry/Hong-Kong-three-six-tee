@@ -127,8 +127,8 @@ public partial class Game : IStateRunner
     // }
 
     // Note: ALWAYS use lock()... on this
-    public LinkedList<RPCEvent> EventsToProcess = new();
-    public ConcurrentQueue<(string[], IClientEvent)> ClientEventsToProcess = new();
+    private LinkedList<RPCEvent> EventsToProcess = new();
+    private ConcurrentQueue<(string[], IClientEvent)> ClientEventsToProcess = new();
 
     public Piece[] PiecesTemplate;
     
@@ -312,10 +312,7 @@ public partial class Game : IStateRunner
         GamePlayer p = player;
         Debug.Log($"Client {info.Sender} try select player {p}");
         Debug.Assert(photonView.IsMine);
-        lock (EventsToProcess)
-        {
-            EventsToProcess.AddLast(new RPCEventSelectPlayer { GamePlayer = info.Sender, TargetPlayer = p });
-        }
+        PushRPCEvent(new RPCEventSelectPlayer { GamePlayer = info.Sender, TargetPlayer = p });
     }
 
     [PunRPC]
@@ -325,10 +322,7 @@ public partial class Game : IStateRunner
         Assert.IsNotNull(tile);
         Debug.Log($"Client {info.Sender} try select tile {tile}");
         Debug.Assert(photonView.IsMine);
-        lock (EventsToProcess)
-        {
-            EventsToProcess.AddLast(new RPCEventSelectTile { GamePlayer = info.Sender, Tile = tile});
-        }
+        PushRPCEvent(new RPCEventSelectTile { GamePlayer = info.Sender, Tile = tile});
     }
 
     [PunRPC]
@@ -345,11 +339,16 @@ public partial class Game : IStateRunner
     {
         Debug.Log($"Client {info.Sender} try select piece {pieceIdx}");
         Debug.Assert(photonView.IsMine);
-        lock (EventsToProcess)
-        {
-            EventsToProcess.AddLast(new RPCEventSelectPiece { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
-        }
+        PushRPCEvent(new RPCEventSelectPiece { GamePlayer = info.Sender, PieceTemplate = PiecesTemplate[pieceIdx] });
     }
 
+    public void PushRPCEvent(RPCEvent e)
+    {
+        Debug.Log($"PushRPCEvent {e}");
+        lock (EventsToProcess)
+        {
+            EventsToProcess.AddLast(e);
+        }
+    }
 
 }

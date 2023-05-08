@@ -292,7 +292,6 @@ public class ItemUsable : GameItem {
 
     private static bool NeedSelectPlayer(Event e) => e is Event.ReportPlayer or Event.HaltPlayer or Event.SeePlayerItem or Event.MakePlayerBadLuck or Event.MakePlayerGoodLuck;
 
-
     public override IUseItemState GetUseItemState(StateTurn.StatePlayerAction parent)
     {
         if (NeedSelectTile(EventToTrigger))
@@ -307,5 +306,22 @@ public class ItemUsable : GameItem {
         {
             return new StateUsedItemQuick(EventToTrigger, parent);
         }
+    }
+
+    protected override bool OnReleasedItem(GamePlayer player)
+    {
+        if (player != CurrentOwner)
+        {
+            Debug.LogError("Item released by wrong player");
+            return false;
+        }
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            Bounds tableBounds = Game.Instance.Board.UseItemCollider.bounds;
+            if (tableBounds.Contains(transform.position))
+                Game.Instance.PushRPCEvent(new RPCEventUseItem { GamePlayer = player, Item = this });
+        }
+        return false;
     }
 }

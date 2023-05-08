@@ -6744,7 +6744,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 84d3eda221be6fe4eb6dd25ccef15fd7, type: 2}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Price
-      value: 45600
+      value: 4560
       objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: TileId
@@ -10686,6 +10686,7 @@ GameObject:
   - component: {fileID: 1622108041}
   - component: {fileID: 1622108042}
   - component: {fileID: 1622108043}
+  - component: {fileID: 1622108044}
   m_Layer: 0
   m_Name: BoardSmall
   m_TagString: Untagged
@@ -10727,7 +10728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StartingTile: {fileID: 142959047}
-  UseItemCollider: {fileID: 0}
+  UseItemCollider: {fileID: 1622108044}
   JailTile: {fileID: 1307559087}
   ICACTile: {fileID: 255518954}
   Tiles:
@@ -10794,6 +10795,19 @@ MonoBehaviour:
   InfoUI: {fileID: 2023606988}
   DetailedUi: {fileID: 0}
   ScalerByDist: 0.1
+--- !u!65 &1622108044
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1622108040}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 60.76, y: 24.87, z: 30.3}
+  m_Center: {x: 0, y: 10.15, z: 0}
 --- !u!1001 &1627542944
 PrefabInstance:
   m_ObjectHideFlags: 0

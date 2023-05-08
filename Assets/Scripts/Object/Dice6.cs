@@ -21,18 +21,37 @@ public class Dice6 : ItemBase
     [NonSerialized]
     private Rigidbody rb;
 
-    private void Awake() { rb = GetComponent<Rigidbody>(); }
-
     public override bool IsUsable => false;
-    protected override bool OnReleasedItem(GamePlayer player) => true;
+    protected override bool OnReleasedItem(GamePlayer player)
+    {
+        if (PlayerRolling != null)
+        {
+            Debug.LogWarning($"A roll is already in process by {PlayerRolling}, so nope for {player}");
+            return true;
+        }
+
+        OnRollComplete = new TaskCompletionSource<(GamePlayer, int)>();
+        PlayerRolling = player;
+        IsRolling = true;
+
+        ApplyRandomTorque();
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+                Debug.Log($"Player {player} started rolling dice.");
+                Game.Instance.PushRPCEvent(new RPCEventRollDice { Dice = this, GamePlayer = player });
+        }
+
+        return true;
+    }
 
     private new void Start()
     {
         base.Start();
+        rb = GetComponent<Rigidbody>();
         if (TryGetComponent(out PcGrabInteractable grab))
         {
-            grab.GrabCondition = PcGrabCondition;
-            grab.OnReleased.AddListener(ClientRollDice);
+            grab.GrabCondition = _ => !IsRolling && PlayerRolling == null;
         }
     }
 
@@ -91,15 +110,6 @@ public class Dice6 : ItemBase
     public bool IsStopped() { return idleCount > IDLE_COUNT_THRESHOLD || rb.IsSleeping(); }
 
     public bool IsInvalid() { return rb.position.magnitude > MAX_BOUNDS; }
-
-    public void Freeze()
-    {
-        rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-    }
-
-    public void Unfreeze() { rb.isKinematic = false; }
 
     private new void FixedUpdate()
     {
@@ -183,36 +193,12 @@ public class Dice6 : ItemBase
         Gizmos.color = color;
         Gizmos.DrawSphere(transform.position, 0.1f);
     }
-
-    public bool PcGrabCondition(GamePlayer grabber) { return !IsRolling && PlayerRolling == null; }
-
+    
     private void ApplyRandomTorque()
     {
         var spherical = UnityEngine.Random.onUnitSphere;
         var torque = new Vector3(spherical.x, spherical.y, spherical.z) * 100;
         rb.AddTorque(torque, ForceMode.VelocityChange);
-    }
-
-    public void ClientRollDice(GamePlayer player)
-    {
-        if (PlayerRolling != null)
-        {
-            Debug.LogWarning($"A roll is already in process by {PlayerRolling}, so nope for {player}");
-            return;
-        }
-        OnRollComplete = new TaskCompletionSource<(GamePlayer, int)>();
-        PlayerRolling = player;
-        IsRolling = true;
-        ApplyRandomTorque();
-
-        if (PhotonNetwork.IsMasterClient)
-        {
-            lock (Game.Instance.EventsToProcess)
-            {
-                Debug.Log($"Player {player} started rolling dice.");
-                Game.Instance.EventsToProcess.AddLast(new RPCEventRollDice { Dice = this, GamePlayer = player });
-            }
-        }
     }
 
     public async Task<int> WatchForRollDone(GamePlayer expected)

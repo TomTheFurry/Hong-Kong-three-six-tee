@@ -96,11 +96,6 @@ public class RPCEventUseItem : RPCEvent
 
     public override void Fail()
     {
-        // Drop the rpc
-    }
-
-    public void Success(int number)
-    {
-        //Game.Instance.photonView.RPC("PlayerRolledDice", RpcTarget.AllBufferedViaServer, GamePlayer.PunConnection, number);
+        Debug.Log($"Player use item event for {GamePlayer} is ignored.");
     }
 }
