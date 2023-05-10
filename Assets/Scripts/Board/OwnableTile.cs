@@ -324,8 +324,9 @@ public class OwnableTile : GameTile
 #endif
     #endregion
 
-    public void Start()
+    public new void Start()
     {
+        (this as GameTile).Start();
         Assert.IsNotNull(OwnershipItem);
         Assert.IsTrue(OwnershipItem.Tile == this);
         AssetDefiner = FindObjectOfType<TileAssetDefiner>();
@@ -333,6 +334,7 @@ public class OwnableTile : GameTile
         // Quickly toggle on and off the item as Pun has a bug where
         // it will not reserve the view id until the object is active.
         OwnershipItem.gameObject.SetActive(true);
+        OwnershipItem.GetComponent<TileDataSetter>().Set(this);
         OwnershipItem.gameObject.SetActive(false);
     }
 

@@ -833,6 +833,8 @@ public class StateTurn : NestedGameState
                         }, TaskContinuationOptions.ExecuteSynchronously
                     );
                 }
+
+                AsyncSkyboxManager.Instance.SwitchToTile(tile);
             }
             public override EventResult ProcessEvent(RPCEvent e) => Child?.ProcessEvent(e) ?? EventResult.Deferred;
 

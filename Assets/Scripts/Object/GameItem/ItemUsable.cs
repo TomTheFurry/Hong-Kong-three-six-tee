@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using JetBrains.Annotations;
 
 using Photon.Pun;
 using TMPro;
+
+using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -148,7 +153,7 @@ class StateUsedItemSelectPlayer : GameStateLeaf, IUseItemState
         return EventResult.Invalid;
     }
 
-    private Task RunEvent()
+    private async Task RunEvent()
     {
         switch (Event)
         {
@@ -157,21 +162,31 @@ class StateUsedItemSelectPlayer : GameStateLeaf, IUseItemState
                 if (illegal)
                 {
                     PlayerSelected.HaltTurns++;
-                    return PlayerSelected.MoveToTile(Game.Instance.Board.JailTile);
+                    await PlayerSelected.MoveToTile(Game.Instance.Board.JailTile);
                 }
-                return Task.CompletedTask;
+                return;
             case ItemUsable.Event.HaltPlayer:
                 PlayerSelected.HaltTurns++;
-                return Task.CompletedTask;
+                return;
             case ItemUsable.Event.SeePlayerItem:
-                // todo!
-                return Task.CompletedTask;
+                List<Action> actions = new List<Action>();
+                foreach (var item in PlayerSelected.Items)
+                {
+                    if (item is not GameItem gi) continue; 
+                    actions.Add(gi.SetTempVisibleTo(Parent.Parent.CurrentPlayer));
+                }
+                await Task.Delay(10000);
+                foreach (var action in actions)
+                {
+                    action();
+                }
+                return;
             case ItemUsable.Event.MakePlayerGoodLuck:
                 PlayerSelected.Luck += 0.1f;
-                return Task.CompletedTask;
+                return;
             case ItemUsable.Event.MakePlayerBadLuck:
                 PlayerSelected.Luck -= 0.1f;
-                return Task.CompletedTask;
+                return;
             default: throw new System.NotImplementedException();
         }
     }
@@ -250,11 +265,76 @@ public abstract class GameItem : ItemBase
     public bool Illegal;
     public bool CanBuyInShop;
 
+    public VisState VisStateToOthers = VisState.Fogged;
+    public VisState VisStateToOthersOnGrab = VisState.Fogged;
+
     public TextMeshPro Nametag;
 
     public override bool IsIllegal => Illegal;
 
+    public enum VisState {
+        Visible,
+        Fogged,
+        Invisible
+    }
+
+    protected virtual VisState GetVisState()
+    {
+        if (CurrentOwner == null)
+        {
+            return VisState.Visible;
+        }
+        else if (CurrentOwner.PunConnection.IsLocal)
+        {
+            return VisState.Visible;
+        }
+        else if (IsGrabbed)
+        {
+            return VisStateToOthersOnGrab;
+        }
+        else
+        {
+            return VisStateToOthers;
+        }
+    }
+
+    private VisState _lastVisState = VisState.Visible;
+    private GamePlayer _tempVisibleTo = null;
+    
+
     public void Update() {
+        VisState visState;
+        if (_tempVisibleTo != null && _tempVisibleTo.PunConnection.IsLocal)
+        {
+            visState = VisState.Visible;
+        }
+        else
+        {
+            visState = GetVisState();
+        }
+
+        if (visState != _lastVisState)
+        {
+            _lastVisState = visState;
+            switch (visState)
+            {
+                case VisState.Visible:
+                    SetVisible(true);
+                    SetFog(false);
+                    break;
+                case VisState.Fogged:
+                    SetVisible(false);
+                    SetFog(true);
+                    break;
+                case VisState.Invisible:
+                    SetVisible(false);
+                    SetFog(false);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         if (Nametag != null) {
             Nametag.text = Name;
             // make nametag face camera
@@ -262,10 +342,43 @@ public abstract class GameItem : ItemBase
             Nametag.transform.Rotate(0, 180, 0, Space.Self);
         }
     }
+
+    private void SetFog(bool e)
+    {
+        ParticleSystem ps = GetComponent<ParticleSystem>();
+        if (e)
+        {
+            ps.Play();
+        }
+        else
+        {
+            ps.Stop();
+        }
+    }
+
+    private void SetVisible(bool val)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = val;
+        }
+    }
+
+    public Action SetTempVisibleTo(GamePlayer player)
+    {
+        _tempVisibleTo = player;
+        return () =>
+        {
+            if (!this.IsDestroyed()) _tempVisibleTo = null;
+        };
+    }
 }
 
 public class ItemUsable : GameItem {
-    public override bool IsUsable => true;
+    public override bool IsUsable => EventToTrigger != Event.TilePlaceItem || TilePlaceItemIsVisible;
+
+    public bool TilePlaceItemIsVisible = false;
 
     public enum Event
     {
@@ -291,6 +404,20 @@ public class ItemUsable : GameItem {
     private static bool NeedSelectTile(Event e) => e is Event.TilePlaceItem or Event.TileIncreaseLuck or Event.TileHaltTurnOnPass or Event.Taxi or Event.TileDoublePassbyFee or Event.TileHalfPassbyFee;
 
     private static bool NeedSelectPlayer(Event e) => e is Event.ReportPlayer or Event.HaltPlayer or Event.SeePlayerItem or Event.MakePlayerBadLuck or Event.MakePlayerGoodLuck;
+
+    protected override VisState GetVisState()
+    {
+        if (EventToTrigger != Event.TilePlaceItem) return base.GetVisState();
+
+        if (TilePlaceItemIsVisible)
+        {
+            return base.GetVisState();
+        }
+        else
+        {
+            return VisState.Invisible;
+        }
+    }
 
     public override IUseItemState GetUseItemState(StateTurn.StatePlayerAction parent)
     {
@@ -324,4 +451,7 @@ public class ItemUsable : GameItem {
         }
         return false;
     }
+
+
+
 }

@@ -51,8 +51,7 @@ MonoBehaviour:
   TileId: -1
   Type: {fileID: 0}
   Description: 
-  Image: {fileID: 0}
-  VideoUrl: 
+  AssetName: 
   NextTile: {fileID: 0}
   PrevTile: {fileID: 0}
   HaltTurnOnPass: 0

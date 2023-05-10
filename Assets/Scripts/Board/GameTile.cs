@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -18,8 +19,9 @@ public abstract class GameTile : MonoBehaviourPun
     public TileType Type;
 
     public string Description;
-    public Texture2D Image;
-    public string VideoUrl;
+
+    public TaskCompletionSource<Texture2D> ImageLoaded = new();
+    public string AssetName;
 
     // Config this
     [SerializeReference]
@@ -29,7 +31,8 @@ public abstract class GameTile : MonoBehaviourPun
     [HideInInspector]
     [SerializeReference]
     public GameTile PrevTile = null;
-    
+
+
     public virtual IEnumerator<GameTile> GetNextTiles()
     {
         yield return NextTile;
@@ -45,6 +48,21 @@ public abstract class GameTile : MonoBehaviourPun
     public abstract bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, [NotNullWhen(true)] [CanBeNull] out Task t, [NotNullWhen(false)] [CanBeNull] out Task<GameState> state);
     
     public override string ToString() => $"{this.GetType().Name}[{Name}]({TileId})";
+
+    public void Start()
+    {
+        AssetDownloader adl = FindObjectOfType<AssetDownloader>();
+        adl.imgReadyTask.Task.ContinueWith(
+            (t) =>
+            {
+                Texture2D tex = adl.GetImg(AssetName + ".jpg");
+                if (tex != null)
+                {
+                    ImageLoaded.SetResult(tex);
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously
+        );
+    }
 
     #region UNITY_EDITOR
 #if UNITY_EDITOR
