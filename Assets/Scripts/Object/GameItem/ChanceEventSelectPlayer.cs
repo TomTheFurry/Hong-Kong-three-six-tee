@@ -24,7 +24,7 @@ public class ChanceEventSelectPlayer : ChanceEvent
         if (r.Player.PunConnection.IsLocal)
         {
             // client. Do select player
-            DebugKeybind.Instance.ChoosePlayer(false).ContinueWith(
+            PlayerInteractor.Instance.ChoosePlayer(false).ContinueWith(
                 t =>
                 {
                     Assert.IsTrue(t.IsCompleted);

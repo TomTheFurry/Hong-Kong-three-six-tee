@@ -25056,6 +25056,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 697080142}
   m_CullTransparentMesh: 1
+--- !u!1 &713323061 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8340246500159852252, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+  m_PrefabInstance: {fileID: 8340246500411289369}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &720377045
 GameObject:
   m_ObjectHideFlags: 0
@@ -25602,6 +25607,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8340246500159852255, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
   m_PrefabInstance: {fileID: 8340246500411289369}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &822911432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713323061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 98
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &829348098
 GameObject:
   m_ObjectHideFlags: 0
@@ -68348,6 +68375,7 @@ GameObject:
   - component: {fileID: 1622108041}
   - component: {fileID: 1622108042}
   - component: {fileID: 1622108043}
+  - component: {fileID: 1622108045}
   - component: {fileID: 1622108044}
   m_Layer: 0
   m_Name: BoardSmall
@@ -68455,7 +68483,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InfoUI: {fileID: 2023606988}
-  DetailedUi: {fileID: 0}
   ScalerByDist: 0.1
 --- !u!65 &1622108044
 BoxCollider:
@@ -68470,6 +68497,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 60.76, y: 24.87, z: 30.3}
   m_Center: {x: 0, y: 10.15, z: 0}
+--- !u!114 &1622108045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1622108040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f637185a145cded458130353e496b95d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1627542944
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -110678,13 +110717,33 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 847402939}
     m_Modifications:
+    - target: {fileID: 4368577267423391289, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4368577267595629234, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 97
       objectReference: {fileID: 0}
+    - target: {fileID: 4368577267673074416, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4368577267989984602, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 88
+      objectReference: {fileID: 0}
+    - target: {fileID: 4368577268123069004, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4368577268225671309, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4368577268521964280, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4368577268591497542, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: m_IsActive
@@ -110710,6 +110769,18 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 4368577269201433872, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246498721379171, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246498923764631, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8340246498959578088, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 92
@@ -110718,9 +110789,21 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 47
       objectReference: {fileID: 0}
+    - target: {fileID: 8340246498991302792, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8340246499064163384, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 87
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246499068084714, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246499118313338, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8340246499280542140, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
@@ -110738,9 +110821,17 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 86
       objectReference: {fileID: 0}
+    - target: {fileID: 8340246499585939716, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8340246499587963153, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246499692848066, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8340246499701538037, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
@@ -110757,6 +110848,10 @@ PrefabInstance:
     - target: {fileID: 8340246499950834645, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 94
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246500093131367, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8340246500159852252, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: m_Name
@@ -110810,9 +110905,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8340246500212869260, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8340246500377488946, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId
       value: 74
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246500387347821, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246500459186070, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8340246500472477883, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8340246500518822961, guid: 7953b61d7031eb345a70e6ec921265da, type: 3}
       propertyPath: sceneViewId

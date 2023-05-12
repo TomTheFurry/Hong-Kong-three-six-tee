@@ -101,25 +101,37 @@ public class PcControl : MonoBehaviour
         }
         
         GameTile hovered = null;
+        GamePlayer playerHovered = null;
         {
             float sphere = grabSphere * 2f;
             var ray = new Ray(camera.transform.position, camera.transform.forward);
             if (Physics.SphereCast(
-                    ray, sphere, out var hit, grabRange, LayerMask.GetMask("Tile"),
+                    ray, sphere, out var hit, grabRange, LayerMask.GetMask("Tile", "Piece"),
                     QueryTriggerInteraction.Ignore
                 ))
             {
                 var tile = hit.collider.transform.GetComponentInParent<GameTile>();
+                var player = hit.collider.transform.GetComponentInParent<Piece>().Owner;
                 if (tile != null)
                 {
                     hovered = tile;
                     TileInteractor.Instance.OnHover(hovered, camera.transform);
+                }
+                if (player != null)
+                {
+                    playerHovered = player;
+                    PlayerInteractor.Instance.OnHover(playerHovered);
                 }
             }
         }
 
         if (ProcessMouseAction && GrabAction.action.triggered)
         {
+            if (playerHovered != null)
+            {
+                PlayerInteractor.Instance.OnClick(playerHovered);
+            }
+
             if (grabbedObject != null)
             {
                 grabbedObject.ReleaseObject();

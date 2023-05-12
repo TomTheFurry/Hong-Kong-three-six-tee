@@ -132,7 +132,7 @@ class StateUsedItemSelectPlayer : GameStateLeaf, IUseItemState
         if (parent.Parent.CurrentPlayer.PunConnection.IsLocal)
         {
             // client. Do select player
-            DebugKeybind.Instance.ChoosePlayer(false).ContinueWith(
+            PlayerInteractor.Instance.ChoosePlayer(false).ContinueWith(
                 t =>
                 {
                     Assert.IsTrue(t.IsCompleted);
@@ -273,6 +273,7 @@ public abstract class GameItem : ItemBase
     public override bool IsIllegal => Illegal;
 
     public enum VisState {
+        None,
         Visible,
         Fogged,
         Invisible
@@ -298,7 +299,7 @@ public abstract class GameItem : ItemBase
         }
     }
 
-    private VisState _lastVisState = VisState.Visible;
+    private VisState _lastVisState = VisState.None;
     private GamePlayer _tempVisibleTo = null;
     
 
@@ -346,14 +347,7 @@ public abstract class GameItem : ItemBase
     private void SetFog(bool e)
     {
         ParticleSystem ps = GetComponent<ParticleSystem>();
-        if (e)
-        {
-            ps.Play();
-        }
-        else
-        {
-            ps.Stop();
-        }
+        ps.GetComponent<ParticleSystemRenderer>().enabled = e;
     }
 
     private void SetVisible(bool val)
@@ -361,6 +355,7 @@ public abstract class GameItem : ItemBase
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
         foreach (Renderer r in renderers)
         {
+            if (r is ParticleSystemRenderer) continue;
             r.enabled = val;
         }
     }

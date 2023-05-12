@@ -50,6 +50,13 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
             outline.eraseRenderer = !show; // true is not show, false is show
         }
     }
+    public void setOutline(int idx)
+    {
+        foreach (Outline outline in outlines)
+        {
+            outline.color = idx;
+        }
+    }
 
     public void Awake()
     {

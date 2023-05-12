@@ -19,6 +19,7 @@ public class OutlineManager : MonoBehaviour
         {
             foreach (GamePlayer player in g.IdxToPlayer)
             {
+                player.Piece.setOutline(1);
                 player.Piece.setOutline(player == turn.CurrentPlayer);
             }
             foreach (GameTile tile in g.Board.Tiles)
@@ -41,6 +42,14 @@ public class OutlineManager : MonoBehaviour
             {
                 tile.setOutline(tile == TileInteractor.Instance.TileHovered ? 2 : 0);
                 tile.setOutline(true);
+            }
+        }
+        if (PlayerInteractor.Instance.IsRequireSelect)
+        {
+            foreach (GamePlayer player in PlayerInteractor.Instance.GetPredicatePlayer())
+            {
+                player.Piece.setOutline(player == PlayerInteractor.Instance.PlayerHovered ? 2 : 1);
+                player.Piece.setOutline(true);
             }
         }
     }

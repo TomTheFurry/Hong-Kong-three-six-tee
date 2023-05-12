@@ -385,7 +385,7 @@ public class StateRollOrder : GameStateLeaf
 
 
             // Debug code
-            ItemTemplateDefiner.Instance.ServerInstantiateItem(7, Game.Instance.IdxToPlayer[0]);
+            ItemTemplateDefiner.Instance.ServerInstantiateItem(18, Game.Instance.IdxToPlayer[0]); // 10, 18
 
             SendClientSetReturnState<StateTurn>();
             return new StateTurn(Parent, Game.Instance.roundData);
