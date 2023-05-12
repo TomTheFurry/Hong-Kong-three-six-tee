@@ -13,7 +13,7 @@ public class TileInteractor : MonoBehaviour
 
     public TileDataSetter InfoUI;
 
-    public TileInteractorDetail DetailedUi;
+    //public TileInteractorDetail DetailedUi;
 
 
     public float ScalerByDist = 0.5f;
@@ -61,7 +61,7 @@ public class TileInteractor : MonoBehaviour
     public GameTile[] GetPredicateTiles()
     {
         List<GameTile> tiles = new List<GameTile>();
-        foreach (GameTile tile in Game.Instance.Board.Tiles)
+        foreach (GameTile tile in Tiles)
         {
             if (Predicate == null || Predicate(tile)) tiles.Add(tile);
         }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3737913556802283626}
   - component: {fileID: 2905093913536859692}
   - component: {fileID: 970114415891833431}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Nametag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4294902015
   m_fontColor: {r: 0.9996938, g: 0, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 1385715458770569906}
   - component: {fileID: 374085110885539995}
   - component: {fileID: 42826363380101503}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 3275597954983595801}
   - component: {fileID: 3275597954983595805}
   - component: {fileID: 2836884412081161882}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PieceD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,9 +456,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4593130486874181694, guid: b22030e78f162154b8725f5b7d9fad1e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 344732999792547764, guid: b22030e78f162154b8725f5b7d9fad1e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b22030e78f162154b8725f5b7d9fad1e, type: 3}
       propertyPath: m_Name
       value: nunchucks
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b22030e78f162154b8725f5b7d9fad1e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4603337159546281427, guid: b22030e78f162154b8725f5b7d9fad1e, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6841003676236821729, guid: b22030e78f162154b8725f5b7d9fad1e, type: 3}
       propertyPath: m_Materials.Array.data[0]
