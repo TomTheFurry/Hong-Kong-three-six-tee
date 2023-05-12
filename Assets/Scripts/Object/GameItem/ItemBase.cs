@@ -6,7 +6,7 @@ public interface IUseItemState
 {
 }
 
-public abstract class ItemBase : PcGrabInteractable
+public abstract class ItemBase : GrabInteractableBase
 {
     private GamePlayer CurrentOwnerImpl = null;
     [NonSerialized]
@@ -72,7 +72,7 @@ public abstract class ItemBase : PcGrabInteractable
         rb = GetComponent<Rigidbody>();
     }
 
-    public new void FixedUpdate()
+    public void FixedUpdate()
     {
         if (RoomBound.IsOutside(transform))
         {
@@ -80,7 +80,6 @@ public abstract class ItemBase : PcGrabInteractable
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
-        base.FixedUpdate();
     }
 
 }

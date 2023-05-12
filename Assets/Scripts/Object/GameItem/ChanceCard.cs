@@ -10,7 +10,7 @@ using UnityEngine;
 
 using Object = UnityEngine.Object;
 
-public class ChanceCard : PcGrabInteractable, IPunInstantiateMagicCallback
+public class ChanceCard : GrabInteractableBase, IPunInstantiateMagicCallback
 {
     public ChanceEvent Ev;
     public TextMeshPro Title;

@@ -6,13 +6,17 @@ public class SkyboxPlayer : MonoBehaviour
 {
     VideoPlayer videoPlayer;
     public Texture2D DefaultTexture;
+    ReflectionProbe rp;
 
     void Start()
     {
         videoPlayer = GetComponent<VideoPlayer>();
+        rp = FindObjectOfType<ReflectionProbe>();
         if (DefaultTexture != null)
         {
             Graphics.Blit(DefaultTexture, videoPlayer.targetTexture);
+            rp.RenderProbe();
+            DynamicGI.UpdateEnvironment();
         }
     }
 
@@ -44,6 +48,8 @@ public class SkyboxPlayer : MonoBehaviour
         {
             Debug.Log("Blitting loading texture");
             Graphics.Blit(tex, videoPlayer.targetTexture);
+            rp.RenderProbe();
+            DynamicGI.UpdateEnvironment();
         }
     }
 
@@ -64,6 +70,11 @@ public class SkyboxPlayer : MonoBehaviour
         ss = s;
         resetIsPlaying = videoPlayer.isPlaying;
         videoPlayer.enabled = false;
+
+        if (videoPlayer.isPlaying && Time.renderedFrameCount % 30 == 15) {
+            rp.RenderProbe();
+            DynamicGI.UpdateEnvironment();
+        }
 
         if (ss != null)
         {
