@@ -1885,6 +1885,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.262
       objectReference: {fileID: 0}
+    - target: {fileID: 3016901999698980585, guid: 691543126a63c3643a128fc09b167511, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8497129759420213318, guid: 691543126a63c3643a128fc09b167511, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -26078,6 +26082,7 @@ GameObject:
   - component: {fileID: 847402940}
   - component: {fileID: 847402941}
   - component: {fileID: 847402942}
+  - component: {fileID: 847402943}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -26181,6 +26186,18 @@ MonoBehaviour:
   OnRecieveMessage:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &847402943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847402937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa9e3db694b686148a7f62191545b806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &856646696
 GameObject:
   m_ObjectHideFlags: 0

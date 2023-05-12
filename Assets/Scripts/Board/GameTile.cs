@@ -11,6 +11,9 @@ using UnityEditor;
 
 using UnityEngine;
 
+using Outline = cakeslice.Outline;
+using System.Collections.Generic;
+
 public abstract class GameTile : MonoBehaviourPun
 {
     public string Name;
@@ -48,6 +51,35 @@ public abstract class GameTile : MonoBehaviourPun
     public abstract bool ActionsOnStop(GamePlayer player, StateTurn.StateTurnEffects.StateStepOnTile self, [NotNullWhen(true)] [CanBeNull] out Task t, [NotNullWhen(false)] [CanBeNull] out Task<GameState> state);
     
     public override string ToString() => $"{this.GetType().Name}[{Name}]({TileId})";
+
+    private List<Outline> outlines;
+    public void setOutline(bool show)
+    {
+        foreach (Outline outline in outlines)
+        {
+            outline.eraseRenderer = !show; // true is not show, false is show
+        }
+    }
+    public void setOutline(int idx)
+    {
+        foreach (Outline outline in outlines)
+        {
+            outline.color = idx;
+        }
+    }
+
+    private void Awake()
+    {
+        outlines = new List<Outline>();
+        foreach (MeshRenderer meshRenderer in GetComponentsInChildren<MeshRenderer>())
+        {
+            if (meshRenderer.name == "Nametag") continue;
+            Outline ol = meshRenderer.gameObject.AddComponent(typeof(Outline)) as Outline;
+            ol.color = 0;
+            ol.eraseRenderer = true; // true is not show, false is show
+            outlines.Add(ol);
+        }
+    }
 
     public void Start()
     {
