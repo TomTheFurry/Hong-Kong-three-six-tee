@@ -49,7 +49,7 @@ public class Dice6 : ItemBase
     {
         base.Start();
         rb = GetComponent<Rigidbody>();
-        if (TryGetComponent(out PcGrabInteractable grab))
+        if (TryGetComponent(out GrabInteractableBase grab))
         {
             grab.GrabCondition = _ => !IsRolling && PlayerRolling == null;
         }
@@ -111,9 +111,8 @@ public class Dice6 : ItemBase
 
     public bool IsInvalid() { return rb.position.magnitude > MAX_BOUNDS; }
 
-    private new void FixedUpdate()
+    private void FixedUpdate()
     {
-        (this as PcGrabInteractable).FixedUpdate();
         if (RoomBound.IsOutside(transform))
         {
             transform.position = Vector3.zero + Vector3.up * 2f;

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 [RequireComponent(typeof(BoxCollider))]
-public class PlayerCan : PcGrabInteractable, IPunInstantiateMagicCallback
+public class PlayerCan : GrabInteractableBase, IPunInstantiateMagicCallback
 {
     public GamePlayer CanOwner;
     public BoxCollider Collider;

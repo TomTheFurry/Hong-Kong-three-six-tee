@@ -11,7 +11,7 @@ public class PcControl : MonoBehaviour
     private PlayerPc pc;
     public Transform grabOrigin;
     public Transform grabSource;
-    public PcGrabInteractable grabbedObject => pc.gamePlayer.Holding.FirstOrDefault()?.GetComponent<PcGrabInteractable>();
+    public GrabInteractableBase grabbedObject => pc.gamePlayer.Holding.FirstOrDefault()?.GetComponent<GrabInteractableBase>();
     public new Camera camera;
 
     public InputActionReference MoveAction;
@@ -139,7 +139,7 @@ public class PcControl : MonoBehaviour
                     var ray = new Ray(camera.transform.position, camera.transform.forward);
                     if (Physics.SphereCast(ray, sphereRadius, out var hit, grabRange, LayerMask.GetMask("Item"), QueryTriggerInteraction.Ignore))
                     {
-                        if (hit.rigidbody != null && hit.rigidbody.TryGetComponent<PcGrabInteractable>(out var grab))
+                        if (hit.rigidbody != null && hit.rigidbody.TryGetComponent<GrabInteractableBase>(out var grab))
                         {
                             grab.TryGrabObject(grabSource, () => {
                                 Debug.Log("Grabbed");
