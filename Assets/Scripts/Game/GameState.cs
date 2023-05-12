@@ -383,6 +383,10 @@ public class StateRollOrder : GameStateLeaf
             Game.Instance.roundData = new RoundData();
             SendClientStateEvent("InitRoundData");
 
+
+            // Debug code
+            ItemTemplateDefiner.Instance.ServerInstantiateItem(7, Game.Instance.IdxToPlayer[0]);
+
             SendClientSetReturnState<StateTurn>();
             return new StateTurn(Parent, Game.Instance.roundData);
         }

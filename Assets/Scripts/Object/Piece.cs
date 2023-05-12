@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 using UnityEngine.Assertions;
 
+using Outline = cakeslice.Outline;
+using System.Collections.Generic;
+
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(SpringJoint))]
 [RequireComponent(typeof(PhotonView))]
@@ -38,7 +41,29 @@ public class Piece : MonoBehaviourPun, IOnPhotonViewOwnerChange
     /// Will be called when piece move end
     /// </summary>
     public Action movingCallBack;
-    
+
+    private List<Outline> outlines;
+    public void setOutline(bool show)
+    {
+        foreach (Outline outline in outlines)
+        {
+            outline.eraseRenderer = !show; // true is not show, false is show
+        }
+    }
+
+    public void Awake()
+    {
+        outlines = new List<Outline>();
+        foreach (MeshRenderer meshRenderer in GetComponentsInChildren<MeshRenderer>())
+        {
+            if (meshRenderer.name == "Nametag") continue; 
+            Outline ol = meshRenderer.gameObject.AddComponent(typeof(Outline)) as Outline;
+            ol.color = 1;
+            ol.eraseRenderer = true; // true is not show, false is show
+            outlines.Add(ol);
+        }
+    }
+
     public void Start()
     {
         CurrentTile = null;
