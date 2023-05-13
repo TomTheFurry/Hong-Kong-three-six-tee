@@ -76,7 +76,7 @@ public abstract class ItemBase : GrabInteractableBase
     {
         if (RoomBound.IsOutside(transform))
         {
-            transform.position = Vector3.zero + Vector3.up * 2f;
+            transform.position = Game.Instance.DiceSpawnpoint.position;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
