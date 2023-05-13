@@ -111,7 +111,7 @@ public class PcControl : MonoBehaviour
                 ))
             {
                 var tile = hit.collider.transform.GetComponentInParent<GameTile>();
-                var player = hit.collider.transform.GetComponentInParent<Piece>().Owner;
+                var player = hit.collider.transform.GetComponentInParent<Piece>()?.Owner;
                 if (tile != null)
                 {
                     hovered = tile;
