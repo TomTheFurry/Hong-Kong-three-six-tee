@@ -777,7 +777,6 @@ public class StateTurn : NestedGameState
             [NotNull]
             public new StateTurnEffects Parent;
             public Task Animation;
-            public bool isPlayerBeingHalted;
             public StateEnterTile([NotNull] StateTurnEffects parent) : base(parent)
             {
                 Parent = parent;
@@ -785,13 +784,13 @@ public class StateTurn : NestedGameState
                 var tile = Parent.Parent.Round.ActivePlayerTile.NextTile;
                 Debug.Log($"Player {Parent.Parent.CurrentPlayer} enter tile {tile}");
                 Animation = Parent.Parent.CurrentPlayer.MoveToTile(tile);
-                isPlayerBeingHalted = tile.HaltTurnOnPass;
                 if (tile.HaltTurnOnPass)
                 {
                     Debug.Log($"Player {Parent.Parent.CurrentPlayer} halt turn on pass tile {tile}");
                     Animation = Animation.ContinueWith(
                         t => Task.Delay(1000), TaskContinuationOptions.ExecuteSynchronously
                     );
+                    Parent.Steps = 0;
                 }
             }
 
@@ -802,15 +801,24 @@ public class StateTurn : NestedGameState
                 if (!Animation.IsCompleted) return null; // wait for animation
 
                 GameTile tile = Parent.Parent.Round.ActivePlayerTile;
-                if (tile.NeedActionOnEnterTile(Parent.Parent.CurrentPlayer))
-                {
+                var isPlayerBeingHalted = tile.HaltTurnOnPass;
+
+                //if (tile.NeedActionOnEnterTile(Parent.Parent.CurrentPlayer))
+                //{
                     // todo
-                }
-                else
+                //}
+                //else
+                //{
+                if (isPlayerBeingHalted)
                 {
-                    if (isPlayerBeingHalted) Parent.Steps = 0;
-                    return new GameStateReturn(Parent);
+                    tile.HaltTurnOnPass = false;
                 }
+                if (tile.AddTrapItemOnStep)
+                {
+                    tile.AddTrapItemOnStep = false;
+                    ItemTemplateDefiner.Instance.ServerInstantiateItem(Game.Instance.TrapItemID, Parent.Parent.CurrentPlayer);
+                }
+                return new GameStateReturn(Parent);
                 return null;
             }
 

@@ -141,6 +141,7 @@ public partial class Game : IStateRunner
         public GameObject Prefab;
     }
     [SerializeField] private PrefabEntry[] Prefabs; // Only so we can set them in the inspector
+    public int TrapItemID;
 
     void Awake()
     {

@@ -7237,7 +7237,7 @@ VideoPlayer:
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
-  - 1
+  - 0.5
   m_Url: 
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
@@ -27416,6 +27416,7 @@ MonoBehaviour:
     Prefab: {fileID: 1618395922863019275, guid: b219860f6705bb645b6418878ef94896, type: 3}
   - Name: Dice
     Prefab: {fileID: 8222201707864526829, guid: 3f0b470aa19b4b94d9075e5caecf38f1, type: 3}
+  TrapItemID: 9
 --- !u!4 &847402939
 Transform:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ using Photon.Pun;
 
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource), typeof(Rigidbody))]
 public class Dice6 : ItemBase
 {
     public int DiceValueUp = 1;
@@ -17,9 +18,14 @@ public class Dice6 : ItemBase
     public int DiceValueBack = 4;
 
     public bool IsRolling = false;
-    
+
+    public AudioClip HitSound;
+    public float HitSoundScale = 0.1f;
+    public float HitSoundPitchScale = 1f;
+
     [NonSerialized]
     private Rigidbody rb;
+    private AudioSource audioSource;
 
     public override bool IsUsable => false;
     protected override bool OnReleasedItem(GamePlayer player)
@@ -49,6 +55,8 @@ public class Dice6 : ItemBase
     {
         base.Start();
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = HitSound;
         if (TryGetComponent(out GrabInteractableBase grab))
         {
             grab.GrabCondition = _ => !IsRolling && PlayerRolling == null;
@@ -216,5 +224,22 @@ public class Dice6 : ItemBase
             throw new OperationCanceledException("Roll was cancelled.");
         }
         return value;
+    }
+
+    // when collision is detected, play sound
+    private void OnCollisionEnter(Collision collision)
+    {
+        float magnitude = collision.relativeVelocity.magnitude;
+        float withDot = Vector3.Dot(collision.relativeVelocity, collision.GetContact(0).normal);
+
+        if (withDot > 0.05f)
+        {
+            float volume = withDot * HitSoundScale;
+            volume = Mathf.Clamp(volume, 0, 1);
+            float pitch = 1f - HitSoundPitchScale / 2f + volume * HitSoundPitchScale;
+            audioSource.pitch = pitch;
+            audioSource.volume = volume;
+            audioSource.Play();
+        }
     }
 }

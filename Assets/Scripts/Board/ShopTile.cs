@@ -37,7 +37,8 @@ public class ShopTile : OwnableTile
             Debug.Log("BoughtItem: " + ItemTemplateDefiner.Instance.ItemTemplate[itemsList[choice]].Name);
             int id = itemsList[choice];
             itemsList[choice] = -1;
-            ItemTemplateDefiner.Instance.ServerInstantiateItem(id, info.Sender);
+            var item = ItemTemplateDefiner.Instance.ServerInstantiateItem(id, info.Sender);
+            item.photonView.RPC(nameof(ItemUsable.SetIsBoughtFromShop), RpcTarget.All);
         }
     }
 
@@ -67,6 +68,7 @@ public class ShopTile : OwnableTile
                 Assert.IsTrue(itemsList[choice] != -1);
 
                 photonView.RPC(nameof(BoughtItem), RpcTarget.All, choice);
+
                 // TODO: Show UI
                 //List<(KeyCode, string)> opts = new List<(KeyCode, string)>();
                 //opts.Add((KeyCode.Return, "Continue"));

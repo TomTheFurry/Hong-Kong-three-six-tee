@@ -400,6 +400,15 @@ public class ItemUsable : GameItem {
 
     private static bool NeedSelectPlayer(Event e) => e is Event.ReportPlayer or Event.HaltPlayer or Event.SeePlayerItem or Event.MakePlayerBadLuck or Event.MakePlayerGoodLuck;
 
+    [PunRPC]
+    public void SetIsBoughtFromShop()
+    {
+        if (EventToTrigger == Event.TilePlaceItem)
+        {
+            TilePlaceItemIsVisible = true;
+        }
+    }
+
     protected override VisState GetVisState()
     {
         if (EventToTrigger != Event.TilePlaceItem) return base.GetVisState();
