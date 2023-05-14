@@ -278,7 +278,7 @@ public class StateStartup : GameStateLeaf
                 // Send idx to all players
                 Game.Instance.photonView.RPC(nameof(Game.SetIdxToPlayer), RpcTarget.AllBufferedViaServer, Game.Instance.IdxToPlayer.Select(p => p.PunConnection).ToArray() as object);
                 // Go to next stage
-                for (int i = 0; i < Game.Instance.IdxToPlayer.Length * 100; i++)
+                for (int i = 0; i < Game.Instance.IdxToPlayer.Length * 2; i++)
                 {
                     PhotonNetwork.InstantiateRoomObject("Dice", Game.Instance.DiceSpawnpoint.position, Game.Instance.DiceSpawnpoint.rotation);
                 }
