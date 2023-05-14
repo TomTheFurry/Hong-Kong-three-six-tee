@@ -15,7 +15,7 @@ public class TileDataSetter : MonoBehaviour
 
     public void Set(GameTile tile)
     {
-        Debug.Log($"Setting tile {tile.Name}");
+        //Debug.Log($"Setting tile {tile.Name}");
         _textureTask = tile.ImageLoaded.Task;
         Name.text = tile.Name;
         Description.text = tile.Description;

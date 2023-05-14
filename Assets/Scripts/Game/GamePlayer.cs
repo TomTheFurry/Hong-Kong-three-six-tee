@@ -124,18 +124,12 @@ public class GamePlayer
         return Items.Any(i => (i as ItemUsable)?.EventToTrigger == type);
     }
 
-    public void RemoveItem(HeldItem.Type type)
+    public void RemoveItem(HeldItem.Type type) => RemoveItem(Items.FirstOrDefault(i => (i as HeldItem)?.HeldType == type) as HeldItem);
+
+    public void RemoveItem(ItemUsable.Event type) => RemoveItem(Items.FirstOrDefault(i => (i as ItemUsable)?.EventToTrigger == type) as ItemUsable);
+
+    public void RemoveItem(ItemBase item)
     {
-        HeldItem item = Items.FirstOrDefault(i => (i as HeldItem)?.HeldType == type) as HeldItem;
-        Assert.IsNotNull(item);
-        Items.Remove(item);
-        item.photonView.ViewID = 0;
-        Object.Destroy(item.gameObject);
-    }
-    
-    public void RemoveItem(ItemUsable.Event type)
-    {
-        ItemUsable item = Items.FirstOrDefault(i => (i as ItemUsable)?.EventToTrigger == type) as ItemUsable;
         Assert.IsNotNull(item);
         Items.Remove(item);
         item.photonView.ViewID = 0;

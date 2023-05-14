@@ -20,6 +20,7 @@ class StateUsedItemSelectTile : GameStateLeaf, IUseItemState
 
     public GameTile tileSelected;
     public Task AnimationTask;
+    private Task _dontCollect;
 
     public StateUsedItemSelectTile(ItemUsable.Event @event, [NotNull] StateTurn.StatePlayerAction parent) : base(parent)
     {
@@ -28,11 +29,11 @@ class StateUsedItemSelectTile : GameStateLeaf, IUseItemState
 
         if (PhotonNetwork.LocalPlayer == parent.Parent.CurrentPlayer.PunConnection)
         {
-            TileInteractor.Instance.RequestSelectTile(t => !(Event is 
-                    ItemUsable.Event.TileIncreaseLuck or 
-                    ItemUsable.Event.TileDoublePassbyFee or
-                    ItemUsable.Event.TileHalfPassbyFee)
-                || t is OwnableTile)
+            _dontCollect = TileInteractor.Instance.RequestSelectTile(t => !(Event is 
+                                                                           ItemUsable.Event.TileIncreaseLuck or 
+                                                                           ItemUsable.Event.TileDoublePassbyFee or
+                                                                           ItemUsable.Event.TileHalfPassbyFee)
+                                                                       || t is OwnableTile)
                 .ContinueWith(
                     t =>
                     {
@@ -41,8 +42,7 @@ class StateUsedItemSelectTile : GameStateLeaf, IUseItemState
                             nameof(Game.Instance.ClientTrySelectTile),
                             RpcTarget.MasterClient, t.Result.TileId
                         );
-
-                    }
+                    }, TaskContinuationOptions.ExecuteSynchronously
                 );
         }
     }

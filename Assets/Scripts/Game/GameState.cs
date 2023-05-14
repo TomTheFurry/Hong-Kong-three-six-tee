@@ -550,16 +550,17 @@ public class StateTurn : NestedGameState
                 {
                     if (shouldSkipTurn.Data)
                     {
+                        SendClientSetReturnState<StateEndTurn>();
                         return new StateEndTurn(Parent);
                     }
                     else
                     {
-                        return new StateWaitForAction(this);
+                        SendClientSetState<StateWaitForAction>();
+                        ChildState = new StateWaitForAction(this);
+                        return null;
                     }
                 }
-
             }
-
             return null;
         }
 
@@ -650,7 +651,9 @@ public class StateTurn : NestedGameState
                 else if (UseItem != null)
                 {
                     SendClientStateEvent("UseItem", SerializerUtil.SerializeItem(UseItem));
-                    return UseItem.GetUseItemState(Parent) as GameState;
+                    IUseItemState state = UseItem.GetUseItemState(Parent);
+                    UseItem.CurrentOwner.RemoveItem(UseItem);
+                    return state as GameState;
                 }
                 return null;
             }
@@ -666,7 +669,9 @@ public class StateTurn : NestedGameState
                 {
                     UseItem = SerializerUtil.DeserializeItem(d2.Data);
                     Debug.Log($"Used item {UseItem}");
-                    return UseItem.GetUseItemState(Parent) as GameState;
+                    IUseItemState state = UseItem.GetUseItemState(Parent);
+                    UseItem.CurrentOwner.RemoveItem(UseItem);
+                    return state as GameState;
                 }
                 return null;
             }

@@ -49,6 +49,7 @@ public class TileInteractor : MonoBehaviour
     {
         if (SelectTileTcs != null && (Predicate == null || Predicate(tile)))
         {
+            Debug.Log($"Selected tile {tile}");
             SelectTileTcs.SetResult(tile);
             SelectTileTcs = null;
             Predicate = null;
@@ -70,8 +71,9 @@ public class TileInteractor : MonoBehaviour
 
     public Task<GameTile> RequestSelectTile(Func<GameTile, bool> predicate)
     {
-        Predicate = predicate;
         Assert.IsNull(SelectTileTcs);
+        Predicate = predicate;
+        Debug.Log("Request select tile...");
         SelectTileTcs = new TaskCompletionSource<GameTile>();
         return SelectTileTcs.Task;
     }

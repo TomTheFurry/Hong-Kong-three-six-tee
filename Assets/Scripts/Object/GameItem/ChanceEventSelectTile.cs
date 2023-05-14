@@ -21,6 +21,7 @@ public class ChanceEventSelectTile : ChanceEvent
     private GameTile SelectedTile = null;
     private Task _animation;
     private bool skipDueToImpossible = false;
+    private Task _dontCollect;
 
     public override void OnCreate(ChanceEventState r)
     {
@@ -49,14 +50,14 @@ public class ChanceEventSelectTile : ChanceEvent
             {
                 t = TileInteractor.Instance.RequestSelectTile(t => t is OwnableTile);
             }
-            t.ContinueWith(
+            _dontCollect = t.ContinueWith(
                 t =>
                 {
                     Assert.IsTrue(t.IsCompleted);
                     GameTile tile = t.Result;
                     Assert.IsNotNull(tile);
                     Game.Instance.photonView.RPC(nameof(Game.ClientTrySelectTile), RpcTarget.MasterClient, tile.TileId);
-                }
+                }, TaskContinuationOptions.ExecuteSynchronously
             );
         }
     }
