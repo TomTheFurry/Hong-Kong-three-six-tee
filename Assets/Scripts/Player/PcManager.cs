@@ -1,9 +1,14 @@
+using JetBrains.Annotations;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 [RequireComponent(typeof(PcControl))]
 public class PcManager : MonoBehaviour
 {
-    public Canvas CanvasUI;
+    public Transform UI;
 
     private Vector3 LocalOffset;
     private Quaternion LocalRot;
@@ -11,29 +16,30 @@ public class PcManager : MonoBehaviour
     private Quaternion CanvasRotation;
     private Vector3 CanvasAbsOffset;
     PcControl pc;
-    private float time = 0;
+
+    private PlayerUiShop ShopUi;
 
     void Start()
     {
-        time = Time.time;
-        LocalOffset = CanvasUI.transform.localPosition;
-        LocalRot = CanvasUI.transform.localRotation;
+        LocalOffset = UI.localPosition;
+        LocalRot = UI.localRotation;
 
-        CanvasRotation = CanvasUI.transform.rotation;
-        CanvasAbsOffset = CanvasUI.transform.position - transform.position;
+        CanvasRotation = UI.rotation;
+        CanvasAbsOffset = UI.position - transform.position;
         //Debug.Log($"CanvasOffect: {CanvasOffect}");
         pc = GetComponent<PcControl>();
+
+        ShopUi = UI.GetComponentInChildren<PlayerUiShop>();
+        GetShopUi().init();
     }
 
     public void Update()
     {
-        if (Time.time - time > 1)
-        {
-            time = Time.time;
-            ShowUi();
-        }
-        CanvasUI.transform.position = transform.position + CanvasAbsOffset;
-        CanvasUI.transform.rotation = CanvasRotation;
+        if (!PlayerUiIcon.IsHovered) PlayerUiIcon.PlayerUiIconHovered = null;
+        PlayerUiIcon.IsHovered = false;
+
+        UI.position = transform.position + CanvasAbsOffset;
+        UI.rotation = CanvasRotation;
         GameState state = Game.Instance.State;
         bool allowInput = state is not StateStartup;
         pc.ProcessKeyboardAction = allowInput;
@@ -48,12 +54,33 @@ public class PcManager : MonoBehaviour
         }
     }
 
-    public void ShowUi()
+    public PlayerUiShop GetShopUi()
     {
-        CanvasUI.transform.localPosition = LocalOffset;
-        CanvasUI.transform.localRotation = LocalRot;
+        return ShopUi;
+    }
 
-        CanvasRotation = CanvasUI.transform.rotation;
-        CanvasAbsOffset = CanvasUI.transform.position - transform.position;
+    public void HideUi()
+    {
+        foreach (Transform obj in UI.transform)
+        {
+            obj.gameObject.SetActive(false);
+        }
+        UI.gameObject.SetActive(true);
+    }
+
+    public void ShowUi(GameObject gameObject = null)
+    {
+        foreach (Transform obj in UI.transform)
+        {
+            obj.gameObject.SetActive(false);
+        }
+        if (gameObject != null) gameObject.SetActive(true);
+        UI.gameObject.SetActive(true);
+
+        UI.localPosition = LocalOffset;
+        UI.localRotation = LocalRot;
+
+        CanvasRotation = UI.rotation;
+        CanvasAbsOffset = UI.position - transform.position;
     }
 }

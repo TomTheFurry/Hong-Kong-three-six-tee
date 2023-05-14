@@ -102,16 +102,18 @@ public class PcControl : MonoBehaviour
         
         GameTile hovered = null;
         GamePlayer playerHovered = null;
+        PlayerUiIcon uiIconHovered = null;
         {
             float sphere = grabSphere * 2f;
             var ray = new Ray(camera.transform.position, camera.transform.forward);
             if (Physics.SphereCast(
-                    ray, sphere, out var hit, grabRange, LayerMask.GetMask("Tile", "Piece"),
+                    ray, sphere, out var hit, grabRange, LayerMask.GetMask("Tile", "Piece", "3D_UI"),
                     QueryTriggerInteraction.Ignore
                 ))
             {
                 var tile = hit.collider.transform.GetComponentInParent<GameTile>();
-                var player = hit.collider.transform.GetComponentInParent<Piece>().Owner;
+                var player = hit.collider.transform.GetComponentInParent<Piece>()?.Owner;
+                var uiIcon = hit.collider.transform.GetComponentInParent<PlayerUiIcon>();
                 if (tile != null)
                 {
                     hovered = tile;
@@ -122,16 +124,16 @@ public class PcControl : MonoBehaviour
                     playerHovered = player;
                     PlayerInteractor.Instance.OnHover(playerHovered);
                 }
+                if (uiIcon != null)
+                {
+                    uiIconHovered = uiIcon;
+                    uiIconHovered.OnHover();
+                }
             }
         }
 
         if (ProcessMouseAction && GrabAction.action.triggered)
         {
-            if (playerHovered != null)
-            {
-                PlayerInteractor.Instance.OnClick(playerHovered);
-            }
-
             if (grabbedObject != null)
             {
                 grabbedObject.ReleaseObject();
@@ -139,6 +141,14 @@ public class PcControl : MonoBehaviour
             else if (hovered != null)
             {
                 TileInteractor.Instance.OnClick(hovered);
+            }
+            else if (playerHovered != null)
+            {
+                PlayerInteractor.Instance.OnClick(playerHovered);
+            }
+            else if (uiIconHovered != null)
+            {
+                uiIconHovered.OnClick();
             }
             else
             {
@@ -153,7 +163,8 @@ public class PcControl : MonoBehaviour
                     {
                         if (hit.rigidbody != null && hit.rigidbody.TryGetComponent<GrabInteractableBase>(out var grab))
                         {
-                            grab.TryGrabObject(grabSource, () => {
+                            grab.TryGrabObject(grabSource, () =>
+                            {
                                 Debug.Log("Grabbed");
                             });
                             break;

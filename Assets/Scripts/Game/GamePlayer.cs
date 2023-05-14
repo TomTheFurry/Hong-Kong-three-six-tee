@@ -20,6 +20,7 @@ public class GamePlayer
     public Piece Piece = null;
     public GameTile Tile = null;
     public PlayerCan Can = null;
+    public PcManager PcManager => PlayerObj.GetComponent<PcManager>();
     public int Idx = -1;
     public ControlType Control = ControlType.Unknown;
 

@@ -49,26 +49,45 @@ public class ShopTile : OwnableTile
 
             while (itemRemaining > 0) {
                 // I am the active player
-                // TODO: Show UI
-                List<(KeyCode, string)> opts = new List<(KeyCode, string)>();
-                opts.Add((KeyCode.Return, "Continue"));
-
-                for (int i = 0; i < 3; i++) {
+                List<(GameItem, double, int)> options = new List<(GameItem, double, int)>();
+                for (int i = 0; i < 3; i++)
+                {
                     if (itemsList[i] == -1) continue;
-                    opts.Add(((KeyCode) ((int) KeyCode.Alpha1 + i), "Buy " + ItemTemplateDefiner.Instance.ItemTemplate[itemsList[i]].Name + " for " + BuyItemCost));
+                    options.Add((ItemTemplateDefiner.Instance.ItemTemplate[itemsList[i]], BuyItemCost, i));
                 }
 
-                KeyCode option = await DebugKeybind.Instance.ChooseActionTemp(opts);
-                if (option is KeyCode.Return) break;
+                PlayerUiShop playerUiShop = ((StateTurn)Game.Instance.State).CurrentPlayer.PcManager.GetShopUi();
+                int option = await playerUiShop.ShowShop(options);
+                if (option == -1) break;
 
                 itemRemaining--;
-                int choice = (int) option - (int) KeyCode.Alpha1;
+                int choice = option;
+                Debug.Log($"Shop choice: {choice}");
                 Assert.IsFalse(choice < 0 || choice > 2);
                 Assert.IsTrue(itemsList[choice] != -1);
 
                 photonView.RPC(nameof(BoughtItem), RpcTarget.All, choice);
+                // TODO: Show UI
+                //List<(KeyCode, string)> opts = new List<(KeyCode, string)>();
+                //opts.Add((KeyCode.Return, "Continue"));
+
+                //for (int i = 0; i < 3; i++) {
+                //    if (itemsList[i] == -1) continue;
+                //    opts.Add(((KeyCode) ((int) KeyCode.Alpha1 + i), "Buy " + ItemTemplateDefiner.Instance.ItemTemplate[itemsList[i]].Name + " for " + BuyItemCost));
+                //}
+
+                //KeyCode option = await DebugKeybind.Instance.ChooseActionTemp(opts);
+                //if (option is KeyCode.Return) break;
+
+                //itemRemaining--;
+                //int choice = (int) option - (int) KeyCode.Alpha1;
+                //Assert.IsFalse(choice < 0 || choice > 2);
+                //Assert.IsTrue(itemsList[choice] != -1);
+
+                //photonView.RPC(nameof(BoughtItem), RpcTarget.All, choice);
             }
             photonView.RPC(nameof(BoughtItem), RpcTarget.All, -1);
+            ((StateTurn)Game.Instance.State).CurrentPlayer.PcManager.HideUi();
         }
         await buyItem.Task;
         buyItem = null;

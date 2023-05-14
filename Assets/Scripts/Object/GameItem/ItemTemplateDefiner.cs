@@ -31,6 +31,11 @@ public class ItemTemplateDefiner : MonoBehaviourPun
             if (child.CanBuyInShop) {
                 ShopItems.Add(child);
             }
+            foreach (MeshRenderer meshRenderer in child.GetComponentsInChildren<MeshRenderer>())
+            {
+                if (meshRenderer.name == "Nametag") continue;
+                meshRenderer.gameObject.AddComponent<BoxCollider>();
+            }
         }
     }
 

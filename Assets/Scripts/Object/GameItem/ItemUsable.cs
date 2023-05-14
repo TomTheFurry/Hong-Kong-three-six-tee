@@ -301,7 +301,7 @@ public abstract class GameItem : ItemBase
 
     private VisState _lastVisState = VisState.None;
     private GamePlayer _tempVisibleTo = null;
-    
+
 
     public void Update() {
         VisState visState;

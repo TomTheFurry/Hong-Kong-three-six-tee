@@ -27,6 +27,7 @@ public class OutlineManager : MonoBehaviour
                 tile.setOutline(0);
                 tile.setOutline(false);
             }
+
             if (turn.ChildState is StateTurn.StateTurnEffects effect)
             {
                 if (effect.ChildState is StateTurn.StateTurnEffects.StateStepOnTile onTile)
@@ -52,5 +53,10 @@ public class OutlineManager : MonoBehaviour
                 player.Piece.setOutline(true);
             }
         }
+        foreach (PlayerUiIcon icon in PlayerUiIcon.Instances)
+        {
+            icon.setOutline(false);
+        }
+        if (PlayerUiIcon.PlayerUiIconHovered != null) PlayerUiIcon.PlayerUiIconHovered.setOutline(true);
     }
 }
