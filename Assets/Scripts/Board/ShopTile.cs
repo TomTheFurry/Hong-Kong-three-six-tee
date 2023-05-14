@@ -38,7 +38,10 @@ public class ShopTile : OwnableTile
             int id = itemsList[choice];
             itemsList[choice] = -1;
             var item = ItemTemplateDefiner.Instance.ServerInstantiateItem(id, info.Sender);
-            item.photonView.RPC(nameof(ItemUsable.SetIsBoughtFromShop), RpcTarget.All);
+            if (item is ItemUsable iu && iu.EventToTrigger == ItemUsable.Event.TilePlaceItem)
+            {
+                item.photonView.RPC(nameof(ItemUsable.SetIsBoughtFromShop), RpcTarget.All);
+            }
         }
     }
 
