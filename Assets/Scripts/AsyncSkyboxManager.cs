@@ -82,6 +82,7 @@ public class AsyncSkyboxManager : MonoBehaviour
         skyboxPlayer = FindObjectOfType<SkyboxPlayer>();
         assetDownloader = FindObjectOfType<AssetDownloader>();
         SwitchToTile(null);
+        Random.InitState(System.DateTime.Now.Millisecond);
     }
 
     public void SwitchToTile(GameTile tile)

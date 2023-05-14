@@ -57,9 +57,16 @@ public class SkyboxPlayer : MonoBehaviour
     private bool resetIsPlaying = false;
     private void Update()
     {
+        if (videoPlayer.isPlaying /*&& Time.frameCount % 30 == 15*/) {
+            //Debug.Log("Rerendering skys");
+            rp.RenderProbe();
+            DynamicGI.UpdateEnvironment();
+        }
+
         SurroundSound s = FindObjectOfType<SurroundSound>();
         if (s == ss)
         {
+            if (videoPlayer.enabled) return;
             videoPlayer.enabled = true;
             if (resetIsPlaying)
             {
@@ -70,11 +77,6 @@ public class SkyboxPlayer : MonoBehaviour
         ss = s;
         resetIsPlaying = videoPlayer.isPlaying;
         videoPlayer.enabled = false;
-
-        if (videoPlayer.isPlaying && Time.renderedFrameCount % 30 == 15) {
-            rp.RenderProbe();
-            DynamicGI.UpdateEnvironment();
-        }
 
         if (ss != null)
         {

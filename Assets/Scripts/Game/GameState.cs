@@ -385,7 +385,7 @@ public class StateRollOrder : GameStateLeaf
 
 
             // Debug code
-            ItemTemplateDefiner.Instance.ServerInstantiateItem(18, Game.Instance.IdxToPlayer[0]); // 10, 18
+            //ItemTemplateDefiner.Instance.ServerInstantiateItem(18, Game.Instance.IdxToPlayer[0]); // 10, 18
 
             SendClientSetReturnState<StateTurn>();
             return new StateTurn(Parent, Game.Instance.roundData);
@@ -857,10 +857,10 @@ public class StateTurn : NestedGameState
 
             public override GameState Update()
             {
-                Debug.Log("Step On Tile Update");
+                //Debug.Log("Step On Tile Update");
                 if (Animation != null)
                 {
-                    Debug.Log("Chance Step Animation: Is completed = " + Animation.IsCompleted);
+                    //Debug.Log("Chance Step Animation: Is completed = " + Animation.IsCompleted);
                     if (Animation.IsFaulted) throw Animation.Exception;
 
                     return Animation.IsCompleted ? new GameStateReturn(Parent) : null;
@@ -873,7 +873,7 @@ public class StateTurn : NestedGameState
                 Assert.IsNotNull(Child);
                 GameState child = Child.Update();
                 if (child == null) return null;
-                Debug.Log("Chance Step Exit?");
+                //Debug.Log("Chance Step Exit?");
                 if (child is GameStateReturn) return new GameStateReturn(Parent);
                 throw new Exception("Invalid state");
             }

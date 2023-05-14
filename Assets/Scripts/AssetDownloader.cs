@@ -32,9 +32,17 @@ public class AssetDownloader : MonoBehaviour
         StartCoroutine(LoadCaches());
     }
 
+    private bool isFolderValid(string path)
+    {
+        if (!Directory.Exists(path)) return false;
+        string[] files = Directory.GetFiles(path);
+        if (files.Length == 0) return false;
+        return true;
+    }
+
     private IEnumerator LoadCaches()
     {
-        if (!Directory.Exists(imgCachePath))
+        if (!isFolderValid(imgCachePath))
         {
             Debug.Log($"imgCachePath not found. Downloading cache to {imgCachePath}...");
             yield return DownloadAndUnzipFiles(imgCachePath, imageZipUrls);
@@ -45,7 +53,7 @@ public class AssetDownloader : MonoBehaviour
             Debug.Log($"imgCachePath found at {imgCachePath}");
         }
         imgReadyTask.SetResult(true);
-        if (!Directory.Exists(img360CachePath))
+        if (!isFolderValid(img360CachePath))
         {
             Debug.Log($"img360CachePath not found. Downloading cache to {img360CachePath}...");
             yield return DownloadAndUnzipFiles(img360CachePath, image360ZipUrls);
@@ -56,7 +64,7 @@ public class AssetDownloader : MonoBehaviour
             Debug.Log($"img360CachePath found at {img360CachePath}");
         }
         img360ReadyTask.SetResult(true);
-        if (!Directory.Exists(vid360CachePath))
+        if (!isFolderValid(vid360CachePath))
         {
             Debug.Log($"vid360CachePath not found. Downloading cache to {vid360CachePath}...");
             yield return DownloadAndUnzipFiles(vid360CachePath, viddo360ZipUrls);
@@ -85,6 +93,7 @@ public class AssetDownloader : MonoBehaviour
             foreach (string url in urls)
             {
                 using UnityWebRequest www = UnityWebRequest.Get(url);
+                Debug.Log($"Starting download on {url}...");
                 yield return www.SendWebRequest();
 
                 if (www.result != UnityWebRequest.Result.Success)
@@ -93,6 +102,7 @@ public class AssetDownloader : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log($"Completed download on {url}. Unzipping...");
                     // unzip file
                     using MemoryStream ms = new MemoryStream(www.downloadHandler.data);
                     using ZipArchive zip = new ZipArchive(ms);
