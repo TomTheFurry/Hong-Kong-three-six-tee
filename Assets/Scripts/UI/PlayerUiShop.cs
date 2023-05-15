@@ -75,7 +75,7 @@ public class PlayerUiShop : MonoBehaviour
         }
 
         int iconCount = iconsList.Count;
-        float xOffset = iconCount % 2 == 0 ? (iconCount / 2f - 0.5f) : 0f;
+        float xOffset = iconCount / 2f - (iconCount % 2 == 0 ? 0.5f : 0f);
         for (int i = 0; i < iconCount; i++)
         {
             int index = iconsList[i].Item3;
