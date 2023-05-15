@@ -180,7 +180,7 @@ PrefabInstance:
       objectReference: {fileID: 1936110435}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: AssetName
-      value: Tile8Missing
+      value: OceanPark
       objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Description
@@ -26776,7 +26776,7 @@ PrefabInstance:
       objectReference: {fileID: 1758415651}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: AssetName
-      value: Tile38Missing
+      value: victoriaPark
       objectReference: {fileID: 0}
     - target: {fileID: 2734029445617689632, guid: d1c482c551775b64c928e05db7253eb2, type: 3}
       propertyPath: Description
@@ -54648,7 +54648,7 @@ MonoBehaviour:
   TileId: 4
   Type: {fileID: 11400000, guid: a880fe68caffdd641a05068aa1b1cca2, type: 2}
   Description: "\u570B\u5BB6\u5B89\u5168\u8655\u662F\u4E2D\u570B\u5927\u9678\u5728\u9999\u6E2F\u8A2D\u7ACB\u7684\u4E00\u500B\u6A5F\u69CB\uFF0C\u8CA0\u8CAC\u7DAD\u8B77\u9999\u6E2F\u7684\u570B\u5BB6\u5B89\u5168\u548C\u7A69\u5B9A\u3002\u8A72\u6A5F\u69CB\u65BC2020\u5E746\u6708\u6210\u7ACB\uFF0C\u5F15\u8D77\u4E86\u570B\u969B\u793E\u6703\u7684\u95DC\u6CE8\u548C\u722D\u8B70\u3002\u570B\u5B89\u8655\u7684\u6210\u7ACB\u88AB\u8A8D\u70BA\u662F\u4E2D\u570B\u653F\u5E9C\u52A0\u5F37\u5C0D\u9999\u6E2F\u7BA1\u6CBB\u7684\u4E00\u500B\u91CD\u8981\u8209\u63AA\u3002"
-  AssetName: Tile5Missing
+  AssetName: NSD
   NextTile: {fileID: 1729200271}
   PrevTile: {fileID: 1379731760}
   HaltTurnOnPass: 0
@@ -76957,7 +76957,7 @@ MonoBehaviour:
   TileId: 5
   Type: {fileID: 11400000, guid: a880fe68caffdd641a05068aa1b1cca2, type: 2}
   Description: "\u4E2D\u806F\u8FA6\u662F\u4E2D\u592E\u4EBA\u6C11\u653F\u5E9C\u5728\u9999\u6E2F\u7684\u4EE3\u8868\u6A5F\u69CB\uFF0C\u8CA0\u8CAC\u5354\u8ABF\u9999\u6E2F\u8207\u4E2D\u592E\u653F\u5E9C\u7684\u95DC\u4FC2\u3002\u8A72\u6A5F\u69CB\u65BC1997\u5E74\u6210\u7ACB\uFF0C\u662F\u4E2D\u592E\u653F\u5E9C\u5C0D\u9999\u6E2F\u7684\u91CD\u8981\u7BA1\u8F44\u6A5F\u69CB\u4E4B\u4E00\u3002\u4E2D\u806F\u8FA6\u7684\u8077\u80FD\u5305\u62EC\u652F\u6301\u9999\u6E2F\u7279\u5340\u653F\u5E9C\u5DE5\u4F5C\u3001\u7DAD\u8B77\u570B\u5BB6\u5B89\u5168\u548C\u4E3B\u6B0A\u7B49\u3002"
-  AssetName: Tile6Missing
+  AssetName: LiaisonOffice
   NextTile: {fileID: 1936110435}
   PrevTile: {fileID: 1274006300}
   HaltTurnOnPass: 0
